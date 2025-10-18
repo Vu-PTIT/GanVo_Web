@@ -1,92 +1,52 @@
 body{
-  font-style: 17px;
-  font-family: sans-serif;
+  font-size: 16px; 
+  line-height: 26px; 
+  font-weight: 400; 
+  color: #171A1F;
 }
-#log-in{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.box-input-form{
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  border: 1px solid #C9C9C9;
-  border-radius: 10px;
-  width: 250px;
-  padding: 30px 25px;
-}
-input.input-form, select.input-form{
-  border-radius: 5px;
-  padding: 7px 10px;
-  font-size: 17px;
-  border: 1px solid #77859a;
-  margin-bottom: 15px;
-  width: 100%;
-}
-option{
-  border: none;
-}
-.btn-long{
-  font-size: 17px;
-  border-radius: 5px;
-  width: 100%;
-  background-color: #2563EB;
-  color: white;
-  border: none;
-  padding: 5px 0;
-}
-.txt-ct{
+.title-text{
   text-align: center;
+  font-size: 30px; 
+  line-height: 36px; 
+  font-weight: 700; 
+  color: #171A1F;
 }
-.fs-35{
-  font-size: 35px;
+.title-text-under{
+  font-size: 14px; 
+  line-height: 20px; 
+  font-weight: 400; 
+  color: #565D6D;
 }
-.header{
-  background-color: #D9D9D9;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 20px;
-}
-.main-menu{
-  display: flex;
-  flex-direction: row;
-  gap:40px;
-}
-.appointment{
-  display: flex;
-  flex-direction: row;
-}
-.appointment-left-site{
-  width: 60%;
-  background-color: #9D9D9D;
-  border: 1px solid black;
-}
-.appointment-right-site{
-  width: 40%;
+.input-form-box{
+  width: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
 }
-.btn-cont-2{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap:30px;
+.input-form-box label{
+  font-size: 14px; 
+  line-height: 22px; 
+  font-weight: 500; 
 }
-.btn-short{
-  width: 100px;
-  padding: 5px 10px;
+.input-form-box input{
+  font-size: 14px; 
+  line-height: 22px; 
+  font-weight: 500; 
+  padding: 10px;
+  border-radius: 6px;
+  border-color: #DEE1E6;
+  border-style: solid;
+}
+.btn-sign-in-up{
+  width: 100%;
+  background-color: #0076D2;
+  padding: 12px;
+  text-align: center;
+  border-radius: 6px; 
+  color: #ffffff;
   border: none;
-  border-radius: 5px;
-}
-.cl-gray{
-  background-color: #CBD5E1;
 }
 .cl-blue{
-  background-color: #2563EB;
+  color: #0076D2;
 }

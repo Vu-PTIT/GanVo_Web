@@ -1,10 +1,9 @@
 import '../assets/css/index.css';
 import '../assets/css/asset.css';
-import '../assets/css/sign-in.css';
 
 export function Sign_in(){
     return(
-        <>
+        <div id='sign-in'>
             <div className="cont-sign-in">
                 <div className="content-sign-in">
                     <h1 className="title-text mb-15">Đăng ký tài khoản</h1>
@@ -22,6 +21,6 @@ export function Sign_in(){
                     <p className='title-text-under m-0'>Chưa có tài khoản?<span className='cl-blue'> Đăng kí</span></p>
                 </div>
             </div>
-        </>
+        </div>
     )
 }

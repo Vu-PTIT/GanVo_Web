@@ -4,6 +4,54 @@ body{
   font-weight: 400; 
   color: #171A1F;
 }
+#sign-in{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+#sign-in .cont-sign-in{
+  margin-top: 100px;
+  width: 450px;
+  background: #FAFAFB;
+  justify-content: center;
+  align-items: center;
+  padding: 32px;
+  border-radius: 10px; 
+  box-shadow: 0px 0px 1px #171a1f12, 0px 0px 2px #171a1f1F;
+}
+#sign-in .content-sign-in{
+  background: #FFFFFF;
+  border-radius: 10px; 
+  padding: 24px;
+}
+#sign-in .title-text-under{
+  text-align: center;
+}
+#sign-up{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+#sign-up .cont-sign-up{
+  margin-top: 20px;
+  width: 450px;
+  background: #FAFAFB;
+  justify-content: center;
+  align-items: center;
+  padding: 32px;
+  border-radius: 10px; 
+  box-shadow: 0px 0px 1px #171a1f12, 0px 0px 2px #171a1f1F;
+}
+#sign-up .content-sign-up{
+  background: #FFFFFF;
+  border-radius: 10px; 
+  padding: 24px;
+}
+#sign-up .title-text-under{
+  text-align: center;
+}
 .title-text{
   text-align: center;
   font-size: 30px; 
@@ -38,6 +86,26 @@ body{
   border-color: #DEE1E6;
   border-style: solid;
 }
+.cont-avt{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+}
+.cont-avt img{
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+}
+.input-form-box textarea{
+  font-size: 14px; 
+  line-height: 22px; 
+  font-weight: 500; 
+  padding: 10px;
+  border-radius: 6px;
+  border-color: #DEE1E6;
+  border-style: solid;
+}
 .btn-sign-in-up{
   width: 100%;
   background-color: #0076D2;
@@ -49,4 +117,19 @@ body{
 }
 .cl-blue{
   color: #0076D2;
+}
+
+#complete-profile{
+  min-height: 100vh;
+  background: #FAFAFB;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.cont-complete-profile{
+  width: 670px;
+  background: #FFFFFF;
+  padding: 55px;
+  border-radius: 10px; 
+  box-shadow: 0px 0px 1px #171a1f12, 0px 0px 2px #171a1f1F;
 }

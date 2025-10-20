@@ -1,24 +1,22 @@
-import '../css/asset.css'
-import '../css/index.css'
-import '../css/asset-sm.css'
+import { HeartHandshake, Search, Bell, UserCircle } from "lucide-react";
+import '../css/asset.css';
+import '../css/index.css';
 
 export function Header(){
     return(
-        <>
+        <header>
             <div className="header">
                 <div className="header-left-site">
                     <div className="logo"></div>
-                    <input className="input-search"></input>    
+                    <p className="name-web">Kết nối vui vẻ</p>    
                 </div>
-                <div className="header-right-site">
-                    <ul className="main-menu">
-                        <li>Trang lịch hẹn</li>
-                        <li>Trang nhắn tin</li>
-                        <li>Thông báo</li>
-                        <li>Trang thông tin cá nhân</li>
-                    </ul>
-                </div>
+                <ul className="header-right-site">
+                    <li><HeartHandshake/></li>
+                    <li><Search/></li>    
+                    <li><Bell/></li>             
+                    <li><UserCircle/></li>
+                </ul>
             </div>
-        </>
+        </header>
     )
 }

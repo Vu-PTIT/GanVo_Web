@@ -1,6 +1,7 @@
 import { Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
 import '../css/asset.css';
 import '../css/index.css';
+import { Link } from "react-router-dom";
 
 export function Footer(){
     return(

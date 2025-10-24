@@ -1,6 +1,7 @@
 import { HeartHandshake, Search, Bell, UserCircle } from "lucide-react";
 import '../css/asset.css';
 import '../css/index.css';
+import { Link } from "react-router-dom";
 
 export function Header(){
     return(

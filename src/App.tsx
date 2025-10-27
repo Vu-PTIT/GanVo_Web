@@ -1,15 +1,15 @@
-import '../assets/css/index.css';
-import '../assets/css/asset.css';
-import { Appointment } from './page/appointment';
-import { Chat } from './page/chat';
+import './assets/css/index.css';
+import './assets/css/asset.css';
 import { BrowserRouter as  Routes, Route } from 'react-router-dom';
 import { Connect } from './page/connect';
 import { Profile } from './page/profile';
 import {Sign_in} from './page/sign-in';
 import {Sign_up} from './page/sign-up';
 import {Complete_profile} from './page/complete-profile';
+import { Appointment } from './page/appointment';
+import { Chat } from './page/chat';
 
-function App() {
+export function App() {
     return (
         <Routes>
             <Route path="/appointment" element={<Appointment />} />

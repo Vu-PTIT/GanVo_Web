@@ -206,7 +206,7 @@ main {
   flex-direction: row;
   gap: 20px;
 }
-.appointment{
+.appointment, .profile, .connect, .chat{
   display: flex;
   min-height: 100vh;
   flex-direction: row;
@@ -300,4 +300,10 @@ main {
 }
 textarea{
   resize: vertical;
+}
+.txt-ct{
+  text-align: center;
+}
+.fs-35{
+  font-size: 35px;
 }

@@ -9,8 +9,8 @@ export function Profile(){
     return(
         <div className="layout">
             <Header />
-            <main id="connect">
-                <div className="connect">
+            <main id="profile">
+                <div className="profile">
                     <Menu />
                     <ProfileForm />
                 </div>

@@ -1,4 +1,6 @@
 import './appointment-form.css';
+import '../../css/asset.css';
+import '../../css/index.css';
 
 export function AppointmentForm(){ 
     return(
@@ -46,8 +48,8 @@ export function AppointmentForm(){
                     <textarea className='input-form' name="appointment-reason" placeholder='Bạn muốn kết nối vì lý do gì?'></textarea>
                 </div>
                 <div className="btn-cont-2 mt-15">
-                        <button className='btn-short cl-white'>Huỷ</button>
-                        <button className='btn-short cl-blue'>Kết nối</button>
+                    <button className='btn-short cl-white-for-btn'>Huỷ</button>
+                    <button className='btn-short cl-blue-for-btn'>Kết nối</button>
                 </div>    
                 </div>
             </div>

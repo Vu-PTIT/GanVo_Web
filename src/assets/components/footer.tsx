@@ -15,10 +15,10 @@ export function Footer(){
                     </ul>  
                 </div>
                 <ul className="footer-right-site">
-                    <li><Facebook/></li>
-                    <li><Twitter/></li>    
-                    <li><Instagram/></li>             
-                    <li><Linkedin/></li>
+                    <li><Facebook className='style-icon'/></li>
+                    <li><Twitter className='style-icon'/></li>    
+                    <li><Instagram className='style-icon'/></li>             
+                    <li><Linkedin className='style-icon'/></li>
                 </ul>
             </div>
         </footer>

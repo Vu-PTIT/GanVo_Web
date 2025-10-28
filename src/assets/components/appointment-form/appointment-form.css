@@ -75,16 +75,7 @@
   line-height: 22px; 
   font-weight: 500; 
 }
-.cl-blue{
-  border: none;
-  color: #FFFFFF;
-  background-color: #0076D1;
-}
-.cl-white{
-  color: #171A1F;
-  background-color: #FFFFFF;
-  border: 1px solid #DEE1E6;
-}
+
 textarea{
   resize: vertical;
 }

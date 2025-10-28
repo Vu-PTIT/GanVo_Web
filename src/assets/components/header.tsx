@@ -12,10 +12,10 @@ export function Header(){
                     <p className="name-web">Kết nối vui vẻ</p>    
                 </div>
                 <ul className="header-right-site">
-                    <li><HeartHandshake/></li>
-                    <li><Search/></li>    
-                    <li><Bell/></li>             
-                    <li><UserCircle/></li>
+                    <li><HeartHandshake className='style-icon'/></li>
+                    <li><Search className='style-icon'/></li>    
+                    <li><Bell className='style-icon'/></li>             
+                    <li><UserCircle className='style-icon'/></li>
                 </ul>
             </div>
         </header>

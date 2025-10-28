@@ -288,12 +288,12 @@ main {
   line-height: 22px; 
   font-weight: 500; 
 }
-.cl-blue{
+.cl-blue-for-btn{
   border: none;
   color: #FFFFFF;
   background-color: #0076D1;
 }
-.cl-white{
+.cl-white-for-btn{
   color: #171A1F;
   background-color: #FFFFFF;
   border: 1px solid #DEE1E6;
@@ -306,4 +306,12 @@ textarea{
 }
 .fs-35{
   font-size: 35px;
+}
+.style-icon{
+  width: 20px;
+  height: 20px;
+  color: #565D6D;
+}
+.style-icon.cl-blue{
+  color: #0076D1;
 }

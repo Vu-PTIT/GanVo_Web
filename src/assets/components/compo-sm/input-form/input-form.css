@@ -1,0 +1,84 @@
+/* Small responsive input form styles for reuse */
+.input-form-box {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	width: 100%;
+    margin-bottom: 10px;
+}
+
+.input-label {
+	font-size: 14px; 
+    line-height: 22px; 
+    font-weight: 500; 
+	color: #333;
+	margin-left: 2px;
+}
+
+.input-inner {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	background: #fff;
+	border: 1px solid #dcdcdc;
+	border-radius: 8px;
+	padding: 8px 10px;
+}
+
+.input-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	color: #666;
+}
+
+.input {
+	border: none;
+	outline: none;
+	flex: 1 1 auto;
+	font-size: 0.95rem;
+	background: transparent;
+}
+
+.input::placeholder {
+	color: #bfbfbf;
+}
+
+/* Make select/textarea use same input styles when placed inside .input-inner */
+.input-inner select,
+.input-inner textarea {
+	border: none;
+	outline: none;
+	flex: 1 1 auto;
+	font-size: 0.95rem;
+	background: transparent;
+	width: 100%;
+}
+
+.input-inner textarea {
+	min-height: 90px;
+	resize: vertical;
+	padding-top: 4px; /* small padding so text isn't glued to top */
+}
+
+.input-error {
+	color: #c0392b;
+	font-size: 0.75rem;
+	margin-left: 2px;
+}
+
+.has-error .input-inner {
+	border-color: #c0392b;
+}
+
+/* Small device tweaks */
+@media (max-width: 480px) {
+	.input-inner {
+		padding: 6px 8px;
+		border-radius: 6px;
+	}
+	.input-label {
+		font-size: 0.75rem;
+	}
+}
+

@@ -1,31 +1,40 @@
 import '../assets/css/index.css';
 import '../assets/css/asset.css';
 import avatar from '../assets/img/avatar.jpg';
+import InputForm from '../assets/components/compo-sm/input-form/input-form';
+import AvatarUploader from '../assets/components/compo-sm/avatar-uploader/avatar-uploader';
+import Button from '../assets/components/compo-sm/button/button'
 
 export function Complete_profile(){
     return(
         <div id='complete-profile'>
             <div className="cont-complete-profile">
                 <h1 className="title-text mb-30">Hoàn thiện Hồ sơ của bạn</h1>
-                <div className="input-form-box">
-                    <label>Ngày sinh</label>
-                    <input type='email' placeholder='your@example.com'></input>
-                </div>
-                <div className="input-form-box">
-                    <label>Giới tính</label>
-                    <input type='password' placeholder='Nhập mật khẩu'></input>
-                </div>
-                <div className="input-form-box">
-                    <label>Tiểu sử</label>
-                    <textarea rows={5} placeholder='Nhập mật khẩu'></textarea>
-                </div>
+                <InputForm
+                    label="Ngày sinh"
+                    type="date"
+                    placeholder='Chọn ngày sinh'
+                />
+                <InputForm
+                    label="Giới tính"
+                    as="select"
+                    options={[
+                        { value: 'male', label: 'Nam' },
+                        { value: 'female', label: 'Nữ' },
+                        { value: 'other', label: 'Khác' }
+                    ]}
+                />
+                <InputForm
+                    as="textarea"
+                    label="Tiểu sử"
+                    placeholder='Nhập tiểu sử'
+                    rows={5}
+                />
                 <div className="input-form-box mb-50">
                     <label>Ảnh đại diện</label>
-                    <div className="cont-avt">
-                        <img src={avatar} alt="Avatar"/>
-                    </div>
+                    <AvatarUploader initialSrc={avatar} onChange={(f) => console.log('avatar file', f)} />
                 </div>
-                <button className='btn-sign-in-up mb-35'>Cập nhật Hồ sơ</button>
+                <Button className='mb-35'>Cập nhật Hồ sơ</Button>
             </div>
         </div>
     )

@@ -6,31 +6,39 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Label } from "../ui/label";
-import { useAuthStore } from "@/stores/useAuthStore";
-import { useNavigate } from "react-router";
+// import { useAuthStore } from "@/stores/useAuthStore"; // Có thể không cần nếu store không có hàm forgotPassword
+// import { useNavigate } from "react-router"; // Có thể không cần nếu không chuyển hướng ngay lập tức
 
-const signInSchema = z.object({
-  username: z.string().min(3, "Tên đăng nhập phải có ít nhất 3 ký tự"),
-  password: z.string().min(6, "Mật khẩu phải có ít nhất 6 ký tự"),
+// Schema chỉ cần trường email
+const forgotPasswordSchema = z.object({
+  email: z.email("Email không hợp lệ"),
 });
 
-type SignInFormValues = z.infer<typeof signInSchema>;
+type ForgotPasswordFormValues = z.infer<typeof forgotPasswordSchema>;
 
-export function SigninForm({ className, ...props }: React.ComponentProps<"div">) {
-  const { signIn } = useAuthStore();
-  const navigate = useNavigate();
+export function ForgotPasswordForm({ className, ...props }: React.ComponentProps<"div">) {
+  // Thay thế bằng logic cần thiết, ví dụ: const { forgotPassword } = useAuthStore();
+  // Nếu có useNavigate, hãy giữ lại
+  // const navigate = useNavigate(); 
+  
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<SignInFormValues>({
-    resolver: zodResolver(signInSchema),
+  } = useForm<ForgotPasswordFormValues>({
+    resolver: zodResolver(forgotPasswordSchema),
   });
 
-  const onSubmit = async (data: SignInFormValues) => {
-    const { username, password } = data;
-    await signIn(username, password);
-    navigate("/");
+  // Hàm xử lý khi submit form
+  const onSubmit = async (data: ForgotPasswordFormValues) => {
+    const { email } = data;
+
+    // TODO: GỌI BACKEND ĐỂ GỬI EMAIL ĐẶT LẠI MẬT KHẨU
+    console.log("Gửi yêu cầu đặt lại mật khẩu cho email:", email);
+    // await forgotPassword(email);
+
+    // TODO: Sau khi gọi backend thành công, thông báo cho người dùng và có thể chuyển hướng
+    // navigate("/message/check-email");
   };
 
   return (
@@ -57,76 +65,54 @@ export function SigninForm({ className, ...props }: React.ComponentProps<"div">)
                   />
                 </a>
 
-                <h1 className="text-2xl font-bold">Chào mừng quay lại</h1>
+                <h1 className="text-2xl font-bold">Quên Mật khẩu</h1>
                 <p className="text-muted-foreground text-balance">
-                  Đăng nhập vào tài khoản GanVo của bạn
+                  Nhập email của bạn để nhận liên kết đặt lại mật khẩu.
                 </p>
               </div>
 
-              {/* username */}
+              {/* email */}
               <div className="flex flex-col gap-3">
                 <Label
-                  htmlFor="username"
+                  htmlFor="email"
                   className="block text-sm"
                 >
-                  Tên đăng nhập
+                  Email
                 </Label>
                 <Input
-                  type="text"
-                  id="username"
-                  placeholder="GanVo"
-                  {...register("username")}
+                  type="email"
+                  id="email"
+                  placeholder="m@gmail.com"
+                  {...register("email")}
                 />
-                {errors.username && (
-                  <p className="text-destructive text-sm">
-                    {errors.username.message}
-                  </p>
+                {errors.email && (
+                  <p className="text-destructive text-sm">{errors.email.message}</p>
                 )}
               </div>
 
-              {/* password */}
-              <div className="flex flex-col gap-3">
-                <Label
-                  htmlFor="password"
-                  className="block text-sm"
-                >
-                  Mật khẩu
-                </Label>
-                <Input
-                  type="password"
-                  id="password"
-                  {...register("password")}
-                />
-                {errors.password && (
-                  <p className="text-destructive text-sm">
-                    {errors.password.message}
-                  </p>
-                )}
-              </div>
-
-              {/* nút đăng nhập */}
+              {/* nút gửi yêu cầu */}
               <Button
                 type="submit"
                 className="w-full"
                 disabled={isSubmitting}
               >
-                Đăng nhập
+                Gửi Yêu cầu Đặt lại
               </Button>
 
               <div className="text-center text-sm">
-                Chưa có tài khoản?{" "}
+                Nhớ mật khẩu rồi?{" "}
                 <a
-                  href="/signup"
+                  href="/signin"
                   className="underline underline-offset-4"
                 >
-                  Đăng ký
+                  Đăng nhập
                 </a>
               </div>
             </div>
           </form>
           <div className="bg-muted relative hidden md:block">
             <img
-              src="/placeholder.png"
+              src="/placeholderSignUp.png"
               alt="Image"
               className="absolute top-1/2 -translate-y-1/2 object-cover"
             />
@@ -134,8 +120,7 @@ export function SigninForm({ className, ...props }: React.ComponentProps<"div">)
         </CardContent>
       </Card>
       <div className=" text-xs text-balance px-6 text-center *:[a]:hover:text-primary text-muted-foreground *:[a]:underline *:[a]:underline-offetset-4">
-        Bằng cách tiếp tục, bạn đồng ý với <a href="#">Điều khoản dịch vụ</a> và{" "}
-        <a href="#">Chính sách bảo mật</a> của chúng tôi.
+        Chúng tôi sẽ gửi một liên kết đặt lại mật khẩu đến email này.
       </div>
     </div>
   );

@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import { connectDB } from "./libs/db.js";
 import authRoute from "./routes/authRoute.js";
 import userRoute from "./routes/userRoute.js";
+import personRoute from "./routes/personRoute.js"; // [THÊM MỚI] Import route person
 import cookieParser from "cookie-parser";
 import { protectedRoute } from "./middlewares/authMiddleware.js";
 import cors from "cors";
@@ -20,9 +21,10 @@ app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
 // public routes
 app.use("/api/auth", authRoute);
 
-// private routes
-app.use(protectedRoute);
+// private routes (Yêu cầu đăng nhập)
+app.use(protectedRoute); // Middleware bảo vệ các route bên dưới
 app.use("/api/users", userRoute);
+app.use("/api/people", personRoute); // Đăng ký route /api/people
 
 connectDB().then(() => {
   app.listen(PORT, () => {

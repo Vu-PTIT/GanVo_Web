@@ -4,8 +4,6 @@ import { getExplorations, getMatches } from "../controllers/matchController.js";
 
 const router = express.Router();
 
-// --- THÊM MỚI (Đưa lên đầu để tránh conflict với /:id) ---
-
 // Lấy danh sách khám phá (chưa match)
 // GET /api/people/explore
 router.get("/explore", getExplorations);

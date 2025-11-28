@@ -31,6 +31,12 @@ const userSchema = new mongoose.Schema(
     // --- TRẠNG THÁI ---
     isOnline: { type: Boolean, default: false },
     lastSeen: { type: Date, default: Date.now },
+      // Thêm trường này: Mảng chứa các số thực
+    embedding: { 
+      type: [Number], 
+      default: [],
+      select: false // Mặc định không lấy ra để đỡ nặng query, chỉ lấy khi cần
+    }, 
   },
   { timestamps: true }
 );

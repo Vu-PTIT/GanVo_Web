@@ -1,10 +1,17 @@
 import React, { useState } from "react";
 import "./appointment.css";
 import MapPickerLeaflet from "../components/appointment-form/MapPickerLeaflet";
-import axiosClient from "../api/axiosClient"; // đường dẫn từ /page tới /api
+import axiosClient from "../api/axiosClient";
 
 const AppointmentPage: React.FC = () => {
-  const [dateTime, setDateTime] = useState("2025-10-17T10:00");
+  const getCurrentDateTime = () => {
+    const now = new Date();
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+    return now.toISOString().slice(0, 16);
+  };
+
+  const [dateTime, setDateTime] = useState(getCurrentDateTime());
+
   const [city, setCity] = useState("Thành phố Hồ Chí Minh, Việt Nam");
   const [type, setType] = useState("Cà Phê");
   const [reason, setReason] = useState("");
@@ -13,38 +20,33 @@ const AppointmentPage: React.FC = () => {
   const [latitude, setLatitude] = useState(16.047); // gần Đà Nẵng
   const [longitude, setLongitude] = useState(108.206);
 
-  // const handleSubmit = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   setLoading(true);
-  //   setMessage(null);
+  // bước 1 / 2: ẩn/hiện card chi tiết
+  const [showDetail, setShowDetail] = useState(false);
 
-  //   try {
-  //     const payload = {
-  //       dateTime,
-  //       city,
-  //       type,
-  //       reason,
-  //       // tạm thời fix toạ độ, sau này lấy từ map
-  //       latitude: 10.77,
-  //       longitude: 106.7,
-  //     };
+  // reverse geocoding lấy địa chỉ từ lat/lng
+  const fetchAddressFromLatLng = async (lat: number, lng: number) => {
+    const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&accept-language=vi`;
+    const res = await fetch(url);
+    if (!res.ok) return;
+    const data = await res.json();
+    if (data?.display_name) {
+      setCity(data.display_name);
+    }
+  };
 
-  //     const res = await axiosClient.post("/appointments", payload);
-
-  //     setMessage(res.data.message || "Tạo lịch hẹn thành công!");
-  //   } catch (err: any) {
-  //     console.error(err);
-  //     setMessage(err?.response?.data?.message || "Tạo lịch hẹn thất bại");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
+  const handleConfirmLocation = async () => {
+    // cập nhật địa điểm dựa trên vị trí vừa chọn trên map
+    try {
+      await fetchAddressFromLatLng(latitude, longitude);
+    } catch (e) {
+      console.error(e);
+    }
+    // sau khi xác nhận -> mở form chi tiết
+    setShowDetail(true);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(">>> handleSubmit được gọi");
-    alert("Đã bấm Kết Nối"); // thêm tạm để test
-
     setLoading(true);
     setMessage(null);
 
@@ -125,9 +127,18 @@ const AppointmentPage: React.FC = () => {
             </p>
           </div>
 
-          <div className="appointment-layout">
+          <div
+            className="appointment-layout"
+            style={
+              showDetail ? undefined : { gridTemplateColumns: "minmax(0, 1fr)" } // chỉ 1 cột khi chưa show form
+            }
+          >
             {/* LEFT CARD – MAP */}
-            <section className="card card--map">
+            <section
+              className={
+                showDetail ? "card card--map" : "card card--map card--map-full" // full width khi chưa hiện detail
+              }
+            >
               <div className="card__header">
                 <h2 className="card__title">Chọn Vị Trí Cuộc Hẹn</h2>
                 <p className="card__subtitle">
@@ -145,7 +156,11 @@ const AppointmentPage: React.FC = () => {
               />
 
               <div className="map-footer">
-                <button type="button" className="btn btn--primary">
+                <button
+                  type="button"
+                  className="btn btn--primary"
+                  onClick={handleConfirmLocation}
+                >
                   Xác nhận vị trí
                 </button>
                 <span className="map-coords">
@@ -154,69 +169,61 @@ const AppointmentPage: React.FC = () => {
               </div>
             </section>
 
-            {/* RIGHT CARD – FORM */}
-            <section className="card card--detail">
-              <div className="card__header">
-                <h2 className="card__title">Chi Tiết Cuộc Hẹn</h2>
-                <p className="card__subtitle">
-                  Điền thông tin cuộc hẹn của bạn.
-                </p>
-              </div>
-
-              <form className="detail-form" onSubmit={handleSubmit}>
-                <div className="form-group">
-                  <label className="form-label">Ngày &amp; Giờ</label>
-                  <input
-                    type="datetime-local"
-                    className="form-input"
-                    value={dateTime}
-                    onChange={(e) => setDateTime(e.target.value)}
-                  />
+            {/* RIGHT CARD – FORM (chỉ hiện sau khi xác nhận vị trí) */}
+            {showDetail && (
+              <section className="card card--detail">
+                <div className="card__header">
+                  <h2 className="card__title">Chi Tiết Cuộc Hẹn</h2>
+                  <p className="card__subtitle">
+                    Điền thông tin cuộc hẹn của bạn.
+                  </p>
                 </div>
 
-                <div className="form-group">
-                  <label className="form-label">Địa Điểm</label>
-                  <input
-                    className="form-input"
-                    value={city}
-                    onChange={(e) => setCity(e.target.value)}
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label className="form-label">Loại Cuộc Hẹn</label>
-                  <select
-                    className="form-input"
-                    value={type}
-                    onChange={(e) => setType(e.target.value)}
-                  >
-                    <option value="Cà Phê">Cà Phê</option>
-                    <option value="Ăn trưa">Ăn trưa</option>
-                    <option value="Ăn tối">Ăn tối</option>
-                    <option value="Đi dạo">Đi dạo</option>
-                  </select>
-                </div>
-
-                <div className="form-group form-group--grow">
-                  <label className="form-label">Lý Do Kết Nối / Tin Nhắn</label>
-                  <textarea
-                    className="form-input form-input--textarea"
-                    placeholder="Bạn muốn kết nối vì lý do gì?"
-                    value={reason}
-                    onChange={(e) => setReason(e.target.value)}
-                  />
-                </div>
-
-                {/* <div className="detail-actions">
-                  <button type="button" className="btn btn--ghost">
-                    Hủy
-                  </button>
-                  <button type="submit" className="btn btn--primary">
-                    Kết Nối
-                  </button>
-                </div> */}
                 <form className="detail-form" onSubmit={handleSubmit}>
-                  {/* ... các input ... */}
+                  <div className="form-group">
+                    <label className="form-label">Ngày &amp; Giờ</label>
+                    <input
+                      type="datetime-local"
+                      className="form-input"
+                      value={dateTime}
+                      onChange={(e) => setDateTime(e.target.value)}
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label className="form-label">Địa Điểm</label>
+                    <input
+                      className="form-input"
+                      value={city}
+                      onChange={(e) => setCity(e.target.value)}
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label className="form-label">Loại Cuộc Hẹn</label>
+                    <select
+                      className="form-input"
+                      value={type}
+                      onChange={(e) => setType(e.target.value)}
+                    >
+                      <option value="Cà Phê">Cà Phê</option>
+                      <option value="Ăn trưa">Ăn trưa</option>
+                      <option value="Ăn tối">Ăn tối</option>
+                      <option value="Đi dạo">Đi dạo</option>
+                    </select>
+                  </div>
+
+                  <div className="form-group form-group--grow">
+                    <label className="form-label">
+                      Lý Do Kết Nối / Tin Nhắn
+                    </label>
+                    <textarea
+                      className="form-input form-input--textarea"
+                      placeholder="Bạn muốn kết nối vì lý do gì?"
+                      value={reason}
+                      onChange={(e) => setReason(e.target.value)}
+                    />
+                  </div>
 
                   <div className="detail-actions">
                     <button type="button" className="btn btn--ghost">
@@ -232,13 +239,19 @@ const AppointmentPage: React.FC = () => {
                   </div>
 
                   {message && (
-                    <p style={{ marginTop: 8, fontSize: 12, color: "#0369a1" }}>
+                    <p
+                      style={{
+                        marginTop: 8,
+                        fontSize: 12,
+                        color: "#0369a1",
+                      }}
+                    >
                       {message}
                     </p>
                   )}
                 </form>
-              </form>
-            </section>
+              </section>
+            )}
           </div>
 
           {/* FOOTER */}

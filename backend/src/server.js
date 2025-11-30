@@ -25,7 +25,7 @@ app.use("/api/auth", authRoute);
 app.use(protectedRoute); // Middleware bảo vệ các route bên dưới
 app.use("/api/users", userRoute);
 app.use("/api/people", personRoute); // Đăng ký route /api/people
-
+app.use("/api/match", matchRoute);
 connectDB().then(() => {
   app.listen(PORT, () => {
     console.log(`server bắt đầu trên cổng ${PORT}`);

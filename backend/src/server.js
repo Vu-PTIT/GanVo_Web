@@ -11,6 +11,7 @@ import conversationRoute from "./routes/conversationRoute.js";
 import personRoute from "./routes/personRoute.js";
 import matchRoute from "./routes/matchRoute.js"; // <--- THÊM DÒNG NÀY
 
+import appointmentRoute from "./routes/appointmentRoute.js";
 import cookieParser from "cookie-parser";
 import { protectedRoute } from "./middlewares/authMiddleware.js";
 import cors from "cors";
@@ -54,15 +55,16 @@ app.use((req, res, next) => {
 app.use("/api/auth", authRoute);
 
 // private routes (Yêu cầu đăng nhập)
-app.use(protectedRoute); 
+app.use(protectedRoute);
 
 app.use("/api/users", userRoute);
 app.use("/api/friends", friendRoute);
 app.use("/api/messages", messageRoute);
 app.use("/api/conversations", conversationRoute);
+app.use("/api/appointments", appointmentRoute);
 
 // Match & Person Routes
-app.use("/api/people", personRoute); 
+app.use("/api/people", personRoute);
 app.use("/api/match", matchRoute); // Bây giờ dòng này mới chạy được vì đã import ở trên
 
 // Socket.io middleware

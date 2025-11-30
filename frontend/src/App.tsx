@@ -35,13 +35,29 @@
 // }
 
 // export default App;
-import "leaflet/dist/leaflet.css";
-import React from "react";
+// import "leaflet/dist/leaflet.css";
+// import React from "react";
+// import AppointmentPage from "./pages/appointment";
+
+// const App: React.FC = () => {
+//   return <AppointmentPage />;
+// };
+
+// export default App;
+
+
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import AppointmentPage from "./pages/appointment";
 
-const App: React.FC = () => {
-  return <AppointmentPage />;
-};
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/appointment" element={<AppointmentPage />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}
 
 export default App;
 

@@ -1,31 +1,58 @@
 import mongoose from "mongoose";
 
-const matchSchema = new mongoose.Schema(
+const userSchema = new mongoose.Schema(
   {
-    // Người thực hiện hành động (Like/Dislike)
-    requester: { 
-      type: mongoose.Schema.Types.ObjectId, 
-      ref: "User", 
-      required: true 
-    },
-    // Người nhận hành động
-    recipient: { 
-      type: mongoose.Schema.Types.ObjectId, 
-      ref: "User", 
-      required: true 
-    },
-    // Trạng thái mối quan hệ
-    status: {
-      type: String,
-      enum: ["pending", "matched", "rejected"], 
-      default: "pending",
-    },
+    // --- AUTH & ACCOUNT ---
+    username: { type: String, required: true, unique: true, trim: true, lowercase: true },
+    hashedPassword: { type: String, required: true },
+    email: { type: String, required: true, unique: true, lowercase: true, trim: true },
+    displayName: { type: String, required: true, trim: true },
+    
+    // Avatar & Photos
+    avatarUrl: { type: String, default: "" },
+    avatarId: { type: String }, // ID từ Cloudinary
+    photos: [
+      {
+        url: { type: String, required: true },
+        id: { type: String },
+      }
+    ],
+
+    // --- THÔNG TIN CÁ NHÂN ---
+    bio: { type: String, maxlength: 500, default: "" }, // Giới thiệu bản thân
+    gender: { type: String, enum: ["male", "female", "other"] },
+    dateOfBirth: { type: Date },
+    location: { type: String, default: "Việt Nam" },
+    
+    // --- SỞ THÍCH & TÌM KIẾM ---
+    interests: [{ type: String }], // Ví dụ: ["Du lịch", "Đọc sách"]
+    lookingFor: { type: String, default: "" }, // Ví dụ: "Hẹn hò nghiêm túc"
+
+    // --- TRẠNG THÁI ---
+    isOnline: { type: Boolean, default: false },
+    lastSeen: { type: Date, default: Date.now },
+    
+    // --- AI FEATURE ---
+    // Vector embedding để gợi ý kết bạn thông minh
+    embedding: { 
+      type: [Number], 
+      default: [],
+      select: false // Không select mặc định để nhẹ query
+    }, 
   },
   { timestamps: true }
 );
 
-// Index 1 chiều duy nhất: Một người A chỉ được tạo 1 record với người B
-// Tránh việc spam like nhiều lần
-matchSchema.index({ requester: 1, recipient: 1 }, { unique: true });
+// Virtual field tính tuổi từ ngày sinh
+userSchema.virtual('age').get(function() {
+  if (!this.dateOfBirth) return null;
+  const diff_ms = Date.now() - this.dateOfBirth.getTime();
+  const age_dt = new Date(diff_ms); 
+  return Math.abs(age_dt.getUTCFullYear() - 1970);
+});
 
-export default mongoose.model("Match", matchSchema);
+// Config để khi res.json() sẽ hiện field 'age'
+userSchema.set('toJSON', { virtuals: true });
+userSchema.set('toObject', { virtuals: true });
+
+export default mongoose.model("User", userSchema);

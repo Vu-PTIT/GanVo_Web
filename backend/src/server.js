@@ -8,7 +8,8 @@ import friendRoute from "./routes/friendRoute.js";
 import messageRoute from "./routes/messageRoute.js";
 import conversationRoute from "./routes/conversationRoute.js";
 
-import personRoute from "./routes/personRoute.js"; // [THÊM MỚI] Import route person
+import personRoute from "./routes/personRoute.js";
+import matchRoute from "./routes/matchRoute.js"; // <--- THÊM DÒNG NÀY
 
 import cookieParser from "cookie-parser";
 import { protectedRoute } from "./middlewares/authMiddleware.js";
@@ -40,9 +41,8 @@ app.use(cookieParser());
 app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
 
 // swagger
-const swaggerDocument = JSON.parse(fs.readFileSync("./src/swagger.json", "utf8"));
-
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+// const swaggerDocument = JSON.parse(fs.readFileSync("./src/swagger.json", "utf8"));
+// app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Make io accessible in routes
 app.use((req, res, next) => {
@@ -54,22 +54,24 @@ app.use((req, res, next) => {
 app.use("/api/auth", authRoute);
 
 // private routes (Yêu cầu đăng nhập)
-app.use(protectedRoute); // Middleware bảo vệ các route bên dưới
-app.use("/api/users", userRoute);
+app.use(protectedRoute); 
 
+app.use("/api/users", userRoute);
 app.use("/api/friends", friendRoute);
 app.use("/api/messages", messageRoute);
 app.use("/api/conversations", conversationRoute);
 
+// Match & Person Routes
+app.use("/api/people", personRoute); 
+app.use("/api/match", matchRoute); // Bây giờ dòng này mới chạy được vì đã import ở trên
+
 // Socket.io middleware
 io.use(socketAuthMiddleware);
 
-// Socket.io connection
 io.on("connection", (socket) => {
   console.log("A user connected:", socket.id);
   const userId = socket.user._id.toString();
 
-  // Join user to their own room for targeted events (like friend requests)
   socket.join(userId);
   console.log(`User ${userId} joined their personal room`);
 
@@ -82,10 +84,6 @@ io.on("connection", (socket) => {
     console.log("User disconnected:", socket.id);
   });
 });
-
-app.use("/api/people", personRoute); // Đăng ký route /api/people
-app.use("/api/match", matchRoute);
-
 
 connectDB().then(() => {
   server.listen(PORT, () => {

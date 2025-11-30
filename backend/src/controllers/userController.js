@@ -1,14 +1,7 @@
-
-import User from "../models/User.js";
-
-
-// --- START OF FILE controllers/userController.js ---
-
 import User from "../models/User.js";
 import { getEmbedding } from "../utils/gemini.js"; // Import hàm vừa tạo
 
 // Lấy thông tin profile của chính mình
-
 export const authMe = async (req, res) => {
   try {
     const user = req.user; 
@@ -19,11 +12,11 @@ export const authMe = async (req, res) => {
   }
 };
 
-
+// Tìm kiếm danh sách users
 export const getUsers = async (req, res) => {
   try {
     const { search } = req.query;
-    const currentUserId = req.user._id;
+    // const currentUserId = req.user._id; // Có thể dùng để loại trừ bản thân nếu cần
     const sanitizedSearch = search ? search.trim() : "";
 
     let query = {};
@@ -36,7 +29,7 @@ export const getUsers = async (req, res) => {
       ];
     }
 
-    const users = await User.find(query).select("-password");
+    const users = await User.find(query).select("-hashedPassword"); // Đã sửa -password thành -hashedPassword cho đúng model
 
     res.status(200).json(users);
   } catch (error) {
@@ -80,15 +73,9 @@ export const updateProfile = async (req, res) => {
 
     // --- LOGIC TÍCH HỢP GEMINI AI ---
     // Kiểm tra xem có trường dữ liệu nào quan trọng thay đổi không
-    // Nếu người dùng chỉ đổi avatar thì không cần gọi AI tốn tài nguyên
     const shouldUpdateEmbedding = bio || interests || lookingFor || location;
 
     if (shouldUpdateEmbedding) {
-      // 1. Chuẩn bị dữ liệu text để gửi cho Gemini
-      // Chúng ta cần kết hợp dữ liệu mới (từ req.body) và dữ liệu cũ (nếu req.body thiếu)
-      // Tuy nhiên để đơn giản và chính xác, ta ưu tiên dữ liệu từ req.body.
-      // *Lưu ý: Frontend nên gửi đầy đủ bộ field này khi update profile để AI hiểu ngữ cảnh tốt nhất*
-      
       const interestText = Array.isArray(interests) ? interests.join(", ") : (interests || "");
       
       // Tạo một câu mô tả hoàn chỉnh về người dùng
@@ -106,7 +93,7 @@ export const updateProfile = async (req, res) => {
 
       // 3. Nếu thành công, lưu vào updateData
       if (vector && vector.length > 0) {
-        updateData.embedding = vector; // Đảm bảo Model User đã có field 'embedding'
+        updateData.embedding = vector; 
       }
     }
     // --- KẾT THÚC LOGIC AI ---

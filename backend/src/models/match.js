@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+
 const matchSchema = new mongoose.Schema(
   {
     // Người thực hiện hành động (Like/Dislike)
@@ -7,7 +8,7 @@ const matchSchema = new mongoose.Schema(
       ref: "User", 
       required: true 
     },
-    // Người nhận (người được hiển thị trên thẻ)
+    // Người nhận hành động
     recipient: { 
       type: mongoose.Schema.Types.ObjectId, 
       ref: "User", 
@@ -23,8 +24,7 @@ const matchSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Đảm bảo 1 cặp chỉ có 1 bản ghi tương tác theo chiều xuôi (requester -> recipient)
-// Giúp tránh việc một người like cùng một người nhiều lần
+// Index 1 chiều duy nhất: Một người A chỉ được tạo 1 record với người B
 matchSchema.index({ requester: 1, recipient: 1 }, { unique: true });
 
 export default mongoose.model("Match", matchSchema);

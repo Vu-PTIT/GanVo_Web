@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 
+// --- Schema cho từng người tham gia ---
 const participantSchema = new mongoose.Schema(
   {
     userId: {
@@ -17,11 +18,16 @@ const participantSchema = new mongoose.Schema(
   }
 );
 
+// --- Schema thông tin nhóm ---
 const groupSchema = new mongoose.Schema(
   {
     name: {
       type: String,
       trim: true,
+    },
+    avatar: {
+      type: String,
+      default: "",
     },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
@@ -33,6 +39,7 @@ const groupSchema = new mongoose.Schema(
   }
 );
 
+// --- Schema lưu tin nhắn cuối cùng (để hiển thị preview) ---
 const lastMessageSchema = new mongoose.Schema(
   {
     _id: { type: String },
@@ -54,20 +61,35 @@ const lastMessageSchema = new mongoose.Schema(
   }
 );
 
+// --- Schema chính: Conversation ---
 const conversationSchema = new mongoose.Schema(
   {
+    // Loại: 'direct' (chat riêng) hoặc 'group' (chat nhóm)
     type: {
       type: String,
       enum: ["direct", "group"],
       required: true,
     },
+    
+    // Danh sách người tham gia
     participants: {
       type: [participantSchema],
       required: true,
     },
+
+    // Thông tin nhóm (nếu type là group)
     group: {
       type: groupSchema,
     },
+
+    // Nếu chat theo sự kiện (Event) -> Link tới Event
+    eventId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Event",
+      default: null,
+    },
+
+    // Quản lý trạng thái xem/tin nhắn mới
     lastMessageAt: {
       type: Date,
     },
@@ -92,30 +114,11 @@ const conversationSchema = new mongoose.Schema(
   }
 );
 
+// Tạo index để tối ưu tìm kiếm hội thoại của user
 conversationSchema.index({
-  "participant.userId": 1,
+  "participants.userId": 1,
   lastMessageAt: -1,
 });
-      enum: ["private", "group"],
-      required: true,
-    },
-
-    members: [
-      { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }
-    ],
-
-    // Chỉ dùng khi là group chat
-    eventId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Event",
-      default: null,
-    },
-
-    groupName: { type: String },
-    groupAvatar: { type: String },
-  },
-  { timestamps: true }
-);
 
 const Conversation = mongoose.model("Conversation", conversationSchema);
 export default Conversation;

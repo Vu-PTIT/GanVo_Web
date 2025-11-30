@@ -1,17 +1,13 @@
-import Match from "../models/Match.js"; // Đảm bảo import đúng file Match.js
+import Match from "../models/Match.js";
 import User from "../models/User.js";
-
 // 1. Lấy danh sách "Khám Phá" (Những người chưa từng tương tác)
 export const getExplorations = async (req, res) => {
   try {
     const currentUserId = req.user._id;
-
     // Bước 1: Tìm những người MÌNH đã từng Like/Dislike (mình là requester)
     const interactedMatches = await Match.find({ requester: currentUserId }).select("recipient");
     const interactedIds = interactedMatches.map((m) => m.recipient);
-
     // Bước 2: Tìm những người đã Match với mình (mình là recipient, status matched)
-    // (Để tránh hiện lại người yêu/bạn bè cũ trong list khám phá)
     const friendMatches = await Match.find({ recipient: currentUserId, status: "matched" }).select("requester");
     const friendIds = friendMatches.map((m) => m.requester);
 

@@ -1,6 +1,6 @@
 // --- START OF FILE controllers/userController.js ---
 
-import User from "../models/User.js";
+import User from "../models/Users.js";
 import { getEmbedding } from "../utils/gemini.js"; // Import hàm vừa tạo
 
 // Lấy thông tin profile của chính mình

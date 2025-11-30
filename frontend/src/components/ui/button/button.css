@@ -1,0 +1,51 @@
+.gv-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 16px;
+  line-height: 22px;
+  font-weight: 600;
+  color: #ffffff;
+  background-color: #0076D2;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  padding: 12px 16px;
+}
+
+/* Full width variant (100%) */
+.gv-btn--full {
+  width: 100%;
+  padding-left: 12px;
+  padding-right: 12px;
+}
+
+/* Small variant: keep compact width and horizontal padding only */
+.gv-btn--small {
+  width: auto;
+  padding: 8px 14px;
+}
+
+.gv-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Utility spacing class matching project pattern */
+.mb-35 {
+  margin-bottom: 35px;
+}
+.mb-45 {
+  margin-bottom: 45px;
+}
+.cl-blue-for-btn{
+  border: none;
+  color: #FFFFFF;
+  background-color: #0076D1;
+}
+.cl-white-for-btn{
+  color: #171A1F;
+  background-color: #FFFFFF;
+  border: 1px solid #DEE1E6;
+}

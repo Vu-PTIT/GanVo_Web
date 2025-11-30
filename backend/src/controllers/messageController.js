@@ -1,74 +1,65 @@
-import Conversation from "../models/Conversation.js";
 import Message from "../models/Message.js";
-import { updateConversationAfterCreateMessage } from "../utils/messageHelper.js";
+import Conversation from "../models/Conversation.js";
 
-export const sendDirectMessage = async (req, res) => {
+export const sendMessage = async (req, res) => {
   try {
-    const { recipientId, content, conversationId } = req.body;
+    const { conversationId, content, imgUrl } = req.body;
     const senderId = req.user._id;
 
-    let conversation;
-
-    if (!content) {
-      return res.status(400).json({ message: "Thiếu nội dung" });
+    if (!content && !imgUrl) {
+      return res.status(400).json({ message: "Message content or image is required" });
     }
 
-    if (conversationId) {
-      conversation = await Conversation.findById(conversationId);
-    }
-
-    if (!conversation) {
-      conversation = await Conversation.create({
-        type: "direct",
-        participants: [
-          { userId: senderId, joinedAt: new Date() },
-          { userId: recipientId, joinedAt: new Date() },
-        ],
-        lastMessageAt: new Date(),
-        unreadCounts: new Map(),
-      });
-    }
-
-    const message = await Message.create({
-      conversationId: conversation._id,
-      senderId,
-      content,
-    });
-
-    updateConversationAfterCreateMessage(conversation, message, senderId);
-
-    await conversation.save();
-
-    return res.status(201).json({ message });
-  } catch (error) {
-    console.error("Lỗi xảy ra khi gửi tin nhắn trực tiếp", error);
-    return res.status(500).json({ message: "Lỗi hệ thống" });
-  }
-};
-
-export const sendGroupMessage = async (req, res) => {
-  try {
-    const { conversationId, content } = req.body;
-    const senderId = req.user._id;
-    const conversation = req.conversation;
-
-    if (!content) {
-      return res.status(400).json("Thiếu nội dung");
-    }
-
-    const message = await Message.create({
+    const newMessage = await Message.create({
       conversationId,
       senderId,
       content,
+      imgUrl,
     });
 
-    updateConversationAfterCreateMessage(conversation, message, senderId);
+    // Update conversation last message
+    await Conversation.findByIdAndUpdate(conversationId, {
+      lastMessageAt: new Date(),
+      lastMessage: {
+        _id: newMessage._id.toString(),
+        content: content || "Sent an image",
+        senderId,
+        createdAt: newMessage.createdAt,
+      },
+      // Increment unread counts for other participants (logic to be refined)
+    });
 
-    await conversation.save();
+    // Populate sender info for realtime update
+    const populatedMessage = await newMessage.populate("senderId", "username displayName avatarUrl");
 
-    return res.status(201).json({ message });
+    // Emit to room
+    req.io.to(conversationId).emit("receive_message", populatedMessage);
+
+    res.status(201).json(populatedMessage);
   } catch (error) {
-    console.error("Lỗi xảy ra khi gửi tin nhắn nhóm", error);
-    return res.status(500).json({ message: "Lỗi hệ thống" });
+    console.error("Error in sendMessage:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const getMessages = async (req, res) => {
+  try {
+    const { conversationId } = req.params;
+    const { limit = 50, before } = req.query;
+
+    const query = { conversationId };
+    if (before) {
+      query.createdAt = { $lt: new Date(before) };
+    }
+
+    const messages = await Message.find(query)
+      .sort({ createdAt: -1 })
+      .limit(parseInt(limit))
+      .populate("senderId", "username displayName avatarUrl");
+
+    res.status(200).json(messages.reverse());
+  } catch (error) {
+    console.error("Error in getMessages:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };

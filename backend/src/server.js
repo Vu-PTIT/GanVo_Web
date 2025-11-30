@@ -12,9 +12,22 @@ import cors from "cors";
 import swaggerUi from "swagger-ui-express";
 import fs from "fs";
 
+import http from "http";
+import { Server } from "socket.io";
+import { socketAuthMiddleware } from "./middlewares/socketAuthMiddleware.js";
+
 dotenv.config();
 
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: process.env.CLIENT_URL,
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
+});
+
 const PORT = process.env.PORT || 5001;
 
 // middlewares
@@ -27,6 +40,12 @@ const swaggerDocument = JSON.parse(fs.readFileSync("./src/swagger.json", "utf8")
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
+// Make io accessible in routes
+app.use((req, res, next) => {
+  req.io = io;
+  next();
+});
+
 // public routes
 app.use("/api/auth", authRoute);
 
@@ -37,8 +56,30 @@ app.use("/api/friends", friendRoute);
 app.use("/api/messages", messageRoute);
 app.use("/api/conversations", conversationRoute);
 
+// Socket.io middleware
+io.use(socketAuthMiddleware);
+
+// Socket.io connection
+io.on("connection", (socket) => {
+  console.log("A user connected:", socket.id);
+  const userId = socket.user._id.toString();
+
+  // Join user to their own room for targeted events (like friend requests)
+  socket.join(userId);
+  console.log(`User ${userId} joined their personal room`);
+
+  socket.on("join_conversation", (conversationId) => {
+    socket.join(conversationId);
+    console.log(`User ${userId} joined conversation ${conversationId}`);
+  });
+
+  socket.on("disconnect", () => {
+    console.log("User disconnected:", socket.id);
+  });
+});
+
 connectDB().then(() => {
-  app.listen(PORT, () => {
+  server.listen(PORT, () => {
     console.log(`server bắt đầu trên cổng ${PORT}`);
   });
 });

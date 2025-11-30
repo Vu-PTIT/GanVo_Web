@@ -1,151 +1,78 @@
 import Conversation from "../models/Conversation.js";
-import Message from "../models/Message.js";
+import User from "../models/User.js";
 
-export const createConversation = async (req, res) => {
+export const getOrCreateDirectConversation = async (req, res) => {
   try {
-    const { type, name, memberIds } = req.body;
+    const { friendId } = req.body;
     const userId = req.user._id;
 
-    if (
-      !type ||
-      (type === "group" && !name) ||
-      !memberIds ||
-      !Array.isArray(memberIds) ||
-      memberIds.length === 0
-    ) {
-      return res
-        .status(400)
-        .json({ message: "Tên nhóm và danh sách thành viên là bắt buộc" });
+    if (!friendId) {
+      return res.status(400).json({ message: "Friend ID is required" });
     }
 
-    let conversation;
-
-    if (type === "direct") {
-      const participantId = memberIds[0];
-
-      conversation = await Conversation.findOne({
-        type: "direct",
-        "participants.userId": { $all: [userId, participantId] },
-      });
-
-      if (!conversation) {
-        conversation = new Conversation({
-          type: "direct",
-          participants: [{ userId }, { userId: participantId }],
-          lastMessageAt: new Date(),
-        });
-
-        await conversation.save();
-      }
-    }
-
-    if (type === "group") {
-      conversation = new Conversation({
-        type: "group",
-        participants: [{ userId }, ...memberIds.map((id) => ({ userId: id }))],
-        group: {
-          name,
-          createdBy: userId,
-        },
-        lastMessageAt: new Date(),
-      });
-
-      await conversation.save();
-    }
+    // Check if conversation exists
+    let conversation = await Conversation.findOne({
+      type: "direct",
+      "participants.userId": { $all: [userId, friendId] },
+    });
 
     if (!conversation) {
-      return res.status(400).json({ message: "Conversation type không hợp lệ" });
+      conversation = await Conversation.create({
+        type: "direct",
+        participants: [
+          { userId: userId },
+          { userId: friendId },
+        ],
+        lastMessageAt: new Date(),
+      });
     }
 
-    await conversation.populate([
-      { path: "participants.userId", select: "displayName avatarUrl" },
-      {
-        path: "seenBy",
-        select: "displayName avatarUrl",
-      },
-      { path: "lastMessage.senderId", select: "displayName avatarUrl" },
-    ]);
+    // Populate participants info
+    const populatedConversation = await Conversation.findById(conversation._id)
+      .populate("participants.userId", "username displayName avatarUrl");
 
-    return res.status(201).json({ conversation });
+    res.status(200).json(populatedConversation);
   } catch (error) {
-    console.error("Lỗi khi tạo conversation", error);
-    return res.status(500).json({ message: "Lỗi hệ thống" });
+    console.error("Error in getOrCreateDirectConversation:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
 export const getConversations = async (req, res) => {
   try {
     const userId = req.user._id;
+
     const conversations = await Conversation.find({
       "participants.userId": userId,
     })
-      .sort({ lastMessageAt: -1, updatedAt: -1 })
-      .populate({
-        path: "participants.userId",
-        select: "displayName avatarUrl",
-      })
-      .populate({
-        path: "lastMessage.senderId",
-        select: "displayName avatarUrl",
-      })
-      .populate({
-        path: "seenBy",
-        select: "displayName avatarUrl",
-      });
+      .sort({ lastMessageAt: -1 })
+      .populate("participants.userId", "username displayName avatarUrl")
+      .populate("lastMessage.senderId", "username displayName");
 
-    const formatted = conversations.map((convo) => {
-      const participants = (convo.participants || []).map((p) => ({
-        _id: p.userId?._id,
-        displayName: p.userId?.displayName,
-        avatarUrl: p.userId?.avatarUrl ?? null,
-        joinedAt: p.joinedAt,
-      }));
-
-      return {
-        ...convo.toObject(),
-        unreadCounts: convo.unreadCounts || {},
-        participants,
-      };
-    });
-
-    return res.status(200).json({ conversations: formatted });
+    res.status(200).json(conversations);
   } catch (error) {
-    console.error("Lỗi xảy ra khi lấy conversations", error);
-    return res.status(500).json({ message: "Lỗi hệ thống" });
+    console.error("Error in getConversations:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
-export const getMessages = async (req, res) => {
+export const getConversationById = async (req, res) => {
   try {
-    const { conversationId } = req.params;
-    const { limit = 50, cursor } = req.query;
+    const { id } = req.params;
+    const userId = req.user._id;
 
-    const query = { conversationId };
+    const conversation = await Conversation.findOne({
+      _id: id,
+      "participants.userId": userId
+    }).populate("participants.userId", "username displayName avatarUrl");
 
-    if (cursor) {
-      query.createAt = { $lt: new Date(cursor) };
+    if (!conversation) {
+      return res.status(404).json({ message: "Conversation not found" });
     }
 
-    let messages = await Message.find(query)
-      .sort({ createdAt: -1 })
-      .limit(Number(limit) + 1);
-
-    let nextCursor = null;
-
-    if (messages.length > Number(limit)) {
-      const nextMessage = messages[messages.length - 1];
-      nextCursor = nextMessage.createdAt.toISOtring();
-      messages.pop();
-    }
-
-    messages = messages.reverse();
-
-    return res.status(200).json({
-      messages,
-      nextCursor,
-    });
+    res.status(200).json(conversation);
   } catch (error) {
-    console.error("Lỗi xảy ra khi lấy messages", error);
-    return res.status(500).json({ message: "Lỗi hệ thống" });
+    console.error("Error in getConversationById:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
-};
+}

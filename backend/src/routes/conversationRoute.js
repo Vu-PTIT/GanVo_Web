@@ -1,15 +1,10 @@
 import express from "express";
-import {
-  createConversation,
-  getConversations,
-  getMessages,
-} from "../controllers/conversationController.js";
-import { checkFriendship } from "../middlewares/friendMiddleware.js";
+import { getOrCreateDirectConversation, getConversations, getConversationById } from "../controllers/conversationController.js";
 
 const router = express.Router();
 
-router.post("/", checkFriendship, createConversation);
 router.get("/", getConversations);
-router.get("/:conversationId/messages", getMessages);
+router.post("/direct", getOrCreateDirectConversation);
+router.get("/:id", getConversationById);
 
 export default router;

@@ -1,6 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
-import { connectDB } from "./libs/db.js";
+import connectDB  from "./libs/db.js";
 import authRoute from "./routes/authRoute.js";
 import userRoute from "./routes/userRoute.js";
 import personRoute from "./routes/personRoute.js"; // [THÊM MỚI] Import route person

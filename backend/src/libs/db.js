@@ -1,12 +1,16 @@
 import mongoose from "mongoose";
+import dotenv from "dotenv";
 
-export const connectDB = async () => {
+dotenv.config();
+
+const connectDB = async () => {
   try {
-    // @ts-ignore
-    await mongoose.connect(process.env.MONGODB_CONNECTIONSTRING);
-    console.log("Liên kết CSDL thành công!");
+    console.log(" MONGO_URI:", process.env.MONGO_URI); // debug
+    await mongoose.connect(process.env.MONGO_URI);
+    console.log(" Đã kết nối MongoDB!");
   } catch (error) {
-    console.log("Lỗi khi kết nối CSDL:", error);
-    process.exit(1);
+    console.error(" Lỗi khi kết nối CSDL:", error);
   }
 };
+
+export default connectDB;

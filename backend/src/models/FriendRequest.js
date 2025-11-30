@@ -3,13 +3,13 @@ import mongoose from "mongoose";
 const friendRequestSchema = new mongoose.Schema(
   {
     // Người gửi yêu cầu
-    senderId: {
+    from: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
     // Người nhận yêu cầu
-    receiverId: {
+    to: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
@@ -33,8 +33,7 @@ const friendRequestSchema = new mongoose.Schema(
 );
 
 // Đảm bảo tính duy nhất: A chỉ gửi cho B được 1 yêu cầu tại một thời điểm
-// Tránh spam request
-friendRequestSchema.index({ senderId: 1, receiverId: 1 }, { unique: true });
+friendRequestSchema.index({ from: 1, to: 1 }, { unique: true });
 
 const FriendRequest = mongoose.model("FriendRequest", friendRequestSchema);
 export default FriendRequest;

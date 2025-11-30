@@ -5,24 +5,22 @@ import FriendRequest from "../models/FriendRequest.js";
 export const sendFriendRequest = async (req, res) => {
   try {
     const { to, message } = req.body;
-
     const from = req.user._id;
 
-    if (from === to) {
+    if (from.toString() === to) {
       return res
         .status(400)
         .json({ message: "Không thể gửi lời mời kết bạn cho chính mình" });
     }
 
     const userExists = await User.exists({ _id: to });
-
     if (!userExists) {
       return res.status(404).json({ message: "Người dùng không tồn tại" });
     }
 
+    // Sort để tạo userA, userB
     let userA = from.toString();
     let userB = to.toString();
-
     if (userA > userB) {
       [userA, userB] = [userB, userA];
     }
@@ -77,11 +75,14 @@ export const acceptFriendRequest = async (req, res) => {
         .json({ message: "Bạn không có quyền chấp nhận lời mời này" });
     }
 
-    const friend = await Friend.create({
-      userA: request.from,
-      userB: request.to,
-    });
+    // Sort để tạo userA, userB
+    let userA = request.from.toString();
+    let userB = request.to.toString();
+    if (userA > userB) {
+      [userA, userB] = [userB, userA];
+    }
 
+    await Friend.create({ userA, userB });
     await FriendRequest.findByIdAndDelete(requestId);
 
     const from = await User.findById(request.from)
@@ -130,16 +131,12 @@ export const declineFriendRequest = async (req, res) => {
 
 export const getAllFriends = async (req, res) => {
   try {
-    const userId = req.user._id;
+    const userId = req.user._id.toString();
 
     const friendships = await Friend.find({
       $or: [
-        {
-          userA: userId,
-        },
-        {
-          userB: userId,
-        },
+        { userA: userId },
+        { userB: userId },
       ],
     })
       .populate("userA", "_id displayName avatarUrl")
@@ -151,7 +148,7 @@ export const getAllFriends = async (req, res) => {
     }
 
     const friends = friendships.map((f) =>
-      f.userA._id.toString() === userId.toString() ? f.userB : f.userA
+      f.userA._id.toString() === userId ? f.userB : f.userA
     );
 
     return res.status(200).json({ friends });

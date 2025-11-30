@@ -8,8 +8,6 @@ const messageSchema = new mongoose.Schema(
       required: true,
       index: true,
     },
-    },
-
     senderId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -22,6 +20,12 @@ const messageSchema = new mongoose.Schema(
     imgUrl: {
       type: String,
     },
+    seenBy: [
+      { 
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: "User" 
+      }
+    ],
   },
   {
     timestamps: true,
@@ -29,17 +33,6 @@ const messageSchema = new mongoose.Schema(
 );
 
 messageSchema.index({ conversationId: 1, createdAt: -1 });
-
-const Message = mongoose.model("Message", messageSchema);
-
-
-    text: { type: String },
-    imageUrl: { type: String },
-
-    seenBy: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
-  },
-  { timestamps: true }
-);
 
 const Message = mongoose.model("Message", messageSchema);
 export default Message;

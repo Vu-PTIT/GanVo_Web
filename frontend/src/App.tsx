@@ -35,35 +35,3 @@ function App() {
 }
 
 export default App;
-
-// Code mới
-// import './assets/css/index.css';
-// import './assets/css/asset.css';
-// import { BrowserRouter, Routes, Route, Navigate } from 'react-router';
-// import { Connect } from './pages/connect';
-// import { Profile } from './pages/profile';
-// import { Sign_in } from './pages/sign-in';
-// import { Sign_up } from './pages/sign-up';
-// import { Complete_profile } from './pages/complete-profile';
-// import { Appointment } from './pages/appointment';
-// import { Chat } from './pages/chat';
-
-// export function App() {
-//   return (
-//     <BrowserRouter>
-//       <Routes>
-//         <Route path="/" element={<Navigate to="/sign-in" />} />
-
-//         <Route path="/appointment" element={<Appointment />} />
-//         <Route path="/chat" element={<Chat />} />
-//         <Route path="/connect" element={<Connect />} />
-//         <Route path="/profile" element={<Profile />} />
-//         <Route path="/sign-in" element={<Sign_in />} />
-//         <Route path="/sign-up" element={<Sign_up />} />
-//         <Route path="/complete-profile" element={<Complete_profile />} />
-//       </Routes>
-//     </BrowserRouter>
-//   );
-// }
-
-// export default App;

@@ -9,17 +9,3 @@ export interface User {
   createdAt?: string;
   updatedAt?: string;
 }
-
-export interface Friend {
-  _id: string;
-  username: string;
-  displayName: string;
-  avatarUrl?: string;
-}
-
-export interface FriendRequest {
-  id: string;
-  username: string;
-  displayName: string;
-  avatarUrl?: string;
-}

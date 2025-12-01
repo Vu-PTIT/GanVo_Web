@@ -1,5 +1,0 @@
-.item-chat-box{display:flex;flex-direction:column;gap:8px;padding-top:10px}
-.item-chat-box .item-friend{width:100%}
-.item-chat-box{max-height:70vh;overflow-y:auto;padding-right:4px}
-.item-chat-box::-webkit-scrollbar{width:8px}
-.item-chat-box::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:6px}

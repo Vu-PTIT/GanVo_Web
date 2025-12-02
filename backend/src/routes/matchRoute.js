@@ -1,29 +1,35 @@
+// routes/matchRoute.js
 import express from "express";
 import {
   getExplorations,
   swipe,
   getMatches,
-  sendFriendRequest,
-  acceptFriendRequest,
-  declineFriendRequest,
-  getAllFriends,
-  getFriendRequests
+  getWhoLikesMe,
+  unmatch
 } from "../controllers/matchController.js";
 import { protectedRoute } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
+
+// Tất cả routes đều cần đăng nhập
 router.use(protectedRoute);
 
-// SWIPE MODE (Giống Tinder)
-router.get("/explore", getExplorations);       // Khám phá người lạ (có AI sort)
-router.post("/swipe", swipe);                   // Like/Dislike
-router.get("/matches", getMatches);             // Danh sách đã match
+// KHÁM PHÁ & SWIPE
+// GET /api/match/explore?minAge=20&maxAge=30&gender=female&location=Hà Nội
+router.get("/explore", getExplorations);
 
-// TRADITIONAL FRIEND REQUEST MODE 
-router.post("/friends/request", sendFriendRequest);           // Gửi lời mời kết bạn
-router.post("/friends/request/:requestId/accept", acceptFriendRequest);
-router.post("/friends/request/:requestId/decline", declineFriendRequest);
-router.get("/friends/requests", getFriendRequests);           // Lời mời đã gửi/nhận
-router.get("/friends", getAllFriends);                        // Tất cả bạn bè (matched + friends)
+// POST /api/match/swipe
+// Body: { targetUserId: "123", action: "like" | "dislike" }
+router.post("/swipe", swipe);
+
+// DANH SÁCH MATCH
+// GET /api/match/list - Những người đã match
+router.get("/list", getMatches);
+
+// GET /api/match/likes - Ai đã like mình (chưa match)
+router.get("/likes", getWhoLikesMe);
+
+// DELETE /api/match/:matchId - Xóa match
+router.delete("/:matchId", unmatch);
 
 export default router;

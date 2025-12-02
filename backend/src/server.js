@@ -1,23 +1,22 @@
+// server.js - CẤU HÌNH HOÀN CHỈNH
 import express from "express";
 import dotenv from "dotenv";
-import connectDB  from "./libs/db.js";
+import connectDB from "./libs/db.js";
+import cookieParser from "cookie-parser";
+import cors from "cors";
+import http from "http";
+import { Server } from "socket.io";
+
+// Routes
 import authRoute from "./routes/authRoute.js";
 import userRoute from "./routes/userRoute.js";
-
+import matchRoute from "./routes/matchRoute.js";
+import personRoute from "./routes/personRoute.js";
 import messageRoute from "./routes/messageRoute.js";
 import conversationRoute from "./routes/conversationRoute.js";
 
-import personRoute from "./routes/personRoute.js";
-import matchRoute from "./routes/matchRoute.js"; // <--- THÊM DÒNG NÀY
-
-import cookieParser from "cookie-parser";
+// Middlewares
 import { protectedRoute } from "./middlewares/authMiddleware.js";
-import cors from "cors";
-import swaggerUi from "swagger-ui-express";
-import fs from "fs";
-
-import http from "http";
-import { Server } from "socket.io";
 import { socketAuthMiddleware } from "./middlewares/socketAuthMiddleware.js";
 
 dotenv.config();
@@ -26,7 +25,7 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: process.env.CLIENT_URL,
+    origin: process.env.CLIENT_URL || "http://localhost:3000",
     methods: ["GET", "POST"],
     credentials: true,
   },
@@ -34,14 +33,13 @@ const io = new Server(server, {
 
 const PORT = process.env.PORT || 5001;
 
-// middlewares
+// ===== MIDDLEWARES =====
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
-
-// swagger
-// const swaggerDocument = JSON.parse(fs.readFileSync("./src/swagger.json", "utf8"));
-// app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use(cors({ 
+  origin: process.env.CLIENT_URL || "http://localhost:3000", 
+  credentials: true 
+}));
 
 // Make io accessible in routes
 app.use((req, res, next) => {
@@ -49,43 +47,56 @@ app.use((req, res, next) => {
   next();
 });
 
-// public routes
+// ===== PUBLIC ROUTES =====
 app.use("/api/auth", authRoute);
 
-// private routes (Yêu cầu đăng nhập)
-app.use(protectedRoute); 
+// ===== PROTECTED ROUTES (Yêu cầu đăng nhập) =====
+app.use(protectedRoute);
 
 app.use("/api/users", userRoute);
-app.use("/api/friends", friendRoute);
+app.use("/api/match", matchRoute);        // ⭐ MAIN ROUTE - Swipe & Match
+app.use("/api/people", personRoute);      // Xem thông tin người khác
 app.use("/api/messages", messageRoute);
 app.use("/api/conversations", conversationRoute);
 
-// Match & Person Routes
-app.use("/api/people", personRoute); 
-app.use("/api/match", matchRoute); // Bây giờ dòng này mới chạy được vì đã import ở trên
-
-// Socket.io middleware
+// ===== SOCKET.IO =====
 io.use(socketAuthMiddleware);
 
 io.on("connection", (socket) => {
-  console.log("A user connected:", socket.id);
+  console.log(" User connected:", socket.id);
   const userId = socket.user._id.toString();
 
+  // Join personal room
   socket.join(userId);
-  console.log(`User ${userId} joined their personal room`);
+  console.log(`User ${userId} joined personal room`);
 
+  // Update online status
+  User.findByIdAndUpdate(userId, { isOnline: true }).exec();
+
+  // Join conversation rooms
   socket.on("join_conversation", (conversationId) => {
     socket.join(conversationId);
     console.log(`User ${userId} joined conversation ${conversationId}`);
   });
 
+  // Disconnect
   socket.on("disconnect", () => {
-    console.log("User disconnected:", socket.id);
+    console.log(" User disconnected:", socket.id);
+    User.findByIdAndUpdate(userId, { 
+      isOnline: false, 
+      lastSeen: new Date() 
+    }).exec();
   });
 });
 
+//  START SERVER
 connectDB().then(() => {
   server.listen(PORT, () => {
-    console.log(`server bắt đầu trên cổng ${PORT}`);
+    console.log(` Server đang chạy trên cổng ${PORT}`);
+    console.log(` API: http://localhost:${PORT}/api`);
+    console.log(` Socket.IO: ws://localhost:${PORT}`);
   });
 });
+
+// Global io for notifications
+global.io = io;

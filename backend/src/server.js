@@ -6,7 +6,7 @@ import cors from "cors";
 import http from "http";
 import { Server } from "socket.io";
 
-// ✅ Models
+// Models
 import User from "./models/User.js";
 
 // Routes
@@ -35,7 +35,7 @@ const io = new Server(server, {
 
 const PORT = process.env.PORT || 5001;
 
-// ===== MIDDLEWARES =====
+// MIDDLEWARES 
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(cookieParser());
@@ -50,7 +50,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// ===== PUBLIC ROUTES =====
+// PUBLIC ROUTES 
 app.use("/api/auth", authRoute);
 
 // Health check
@@ -62,16 +62,16 @@ app.get("/api/health", (req, res) => {
   });
 });
 
-// ===== PROTECTED ROUTES (Yêu cầu đăng nhập) =====
+//  PROTECTED ROUTES (Yêu cầu đăng nhập) 
 app.use("/api/users", protectedRoute, userRoute);
 app.use("/api/match", protectedRoute, matchRoute);
 app.use("/api/people", protectedRoute, personRoute);
 app.use("/api/messages", protectedRoute, messageRoute);
 app.use("/api/conversations", protectedRoute, conversationRoute);
 
-// ===== ERROR HANDLING =====
+// ERROR HANDLING 
 app.use((err, req, res, next) => {
-  console.error("❌ Global Error:", err);
+  console.error(" Global Error:", err);
   res.status(err.status || 500).json({
     message: err.message || "Lỗi hệ thống",
     ...(process.env.NODE_ENV === "development" && { stack: err.stack })
@@ -83,7 +83,7 @@ app.use((req, res) => {
   res.status(404).json({ message: "API endpoint không tồn tại" });
 });
 
-// ===== SOCKET.IO =====
+//  SOCKET.IO
 io.use(socketAuthMiddleware);
 
 io.on("connection", (socket) => {
@@ -92,7 +92,7 @@ io.on("connection", (socket) => {
 
   // Join personal room
   socket.join(userId);
-  console.log(`✅ User ${userId} joined personal room`);
+  console.log(` User ${userId} joined personal room`);
 
   // Update online status
   User.findByIdAndUpdate(userId, { 
@@ -103,13 +103,13 @@ io.on("connection", (socket) => {
   // Join conversation rooms
   socket.on("join_conversation", (conversationId) => {
     socket.join(conversationId);
-    console.log(`💬 User ${userId} joined conversation ${conversationId}`);
+    console.log(` User ${userId} joined conversation ${conversationId}`);
   });
 
   // Leave conversation rooms
   socket.on("leave_conversation", (conversationId) => {
     socket.leave(conversationId);
-    console.log(`👋 User ${userId} left conversation ${conversationId}`);
+    console.log(` User ${userId} left conversation ${conversationId}`);
   });
 
   // Typing indicator
@@ -122,7 +122,7 @@ io.on("connection", (socket) => {
 
   // Disconnect
   socket.on("disconnect", () => {
-    console.log("🔌 User disconnected:", socket.id);
+    console.log(" User disconnected:", socket.id);
     User.findByIdAndUpdate(userId, { 
       isOnline: false, 
       lastSeen: new Date() 
@@ -130,7 +130,7 @@ io.on("connection", (socket) => {
   });
 });
 
-// ✅ START SERVER
+//  START SERVER
 connectDB().then(() => {
   server.listen(PORT, () => {
     console.log(` Server đang chạy trên cổng ${PORT}`);
@@ -148,10 +148,10 @@ global.io = io;
 
 // Graceful shutdown
 process.on("SIGINT", async () => {
-  console.log("\n⏳ Đang tắt server...");
+  console.log("\n Đang tắt server...");
   await User.updateMany({}, { isOnline: false });
   server.close(() => {
-    console.log("✅ Server đã tắt");
+    console.log(" Server đã tắt");
     process.exit(0);
   });
 });

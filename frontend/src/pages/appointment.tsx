@@ -1,9 +1,12 @@
 import React, { useState } from "react";
 import "./appointment.css";
 import MapPickerLeaflet from "../components/appointment-form/MapPickerLeaflet";
-import axiosClient from "../api/axiosClient";
+import axiosClient from "../lib/axios";
+import { useNavigate } from "react-router-dom";
 
 const AppointmentPage: React.FC = () => {
+  
+  const navigate = useNavigate();
   const getCurrentDateTime = () => {
     const now = new Date();
     now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
@@ -51,20 +54,16 @@ const AppointmentPage: React.FC = () => {
     setMessage(null);
 
     try {
-      const payload = {
-        dateTime,
-        city,
-        type,
-        reason,
-        latitude,
-        longitude,
-      };
-
+      const payload = { dateTime, city, type, reason, latitude, longitude };
       const res = await axiosClient.post("/appointments", payload);
-      setMessage(res.data.message || "Tạo lịch hẹn thành công!");
-    } catch (err: any) {
-      console.error(err);
-      setMessage(err?.response?.data?.message || "Tạo lịch hẹn thất bại");
+
+      setMessage("Tạo lịch hẹn thành công!");
+
+      setTimeout(() => {
+        navigate("/my-appointments");   // 🚀 chuyển trang sau khi tạo
+      }, 600);
+    } catch (err) {
+      setMessage("Tạo lịch hẹn thất bại");
     } finally {
       setLoading(false);
     }

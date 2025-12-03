@@ -39,7 +39,17 @@ const PORT = process.env.PORT || 5001;
 // middlewares
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
+// app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
+
+app.use(
+  cors({
+    origin: "http://localhost:5173",  // FE port
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
+
 
 // swagger
 // const swaggerDocument = JSON.parse(fs.readFileSync("./src/swagger.json", "utf8"));

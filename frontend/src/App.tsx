@@ -48,18 +48,24 @@
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import AppointmentPage from "./pages/appointment";
+import MyAppointmentsPage from "./pages/my-appointments";
+import AdminAppointmentsPage from "./pages/admin/AdminAppointmentsPage";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/appointment" element={<AppointmentPage />} />
+        <Route path="/" element={<AppointmentPage />} />
+        <Route path="/admin/appointments" element={<AdminAppointmentsPage />} />
+        <Route path="/my-appointments" element={<MyAppointmentsPage />} />
+
       </Routes>
     </BrowserRouter>
   );
 }
 
 export default App;
+
 
 // Code mới
 // import './assets/css/index.css';

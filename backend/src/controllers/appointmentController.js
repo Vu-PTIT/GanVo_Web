@@ -1,82 +1,49 @@
 import Appointment from "../models/appointmentModel.js";
-import { appointmentSchema } from "../validations/appointmentValidation.js";
+import { createAppointmentSchema } from "../validations/appointmentValidation.js";
 
 export const createAppointment = async (req, res) => {
   try {
-    const userId = req.user._id;
+    const { error } = createAppointmentSchema.validate(req.body);
+    if (error) return res.status(400).json({ message: error.message });
 
-    const { error } = appointmentSchema.validate(req.body);
-    if (error) return res.status(400).json({ message: error.details[0].message });
-
-    const newApp = await Appointment.create({
+    const appointment = await Appointment.create({
       ...req.body,
-      userId,
+      userId: req.user.userId,
     });
 
-    res.status(201).json({
-      message: "Tạo lịch hẹn thành công",
-      data: newApp,
+    return res.status(201).json({
+      message: "Tạo lịch hẹn thành công!",
+      appointment,
     });
-  } catch (error) {
-    res.status(500).json({ message: "Lỗi server", error: error.message });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ message: "Lỗi hệ thống" });
   }
 };
 
 export const getMyAppointments = async (req, res) => {
-  try {
-    const list = await Appointment.find({ userId: req.user._id }).sort({ createdAt: -1 });
-    res.json(list);
-  } catch (error) {
-    res.status(500).json({ message: "Lỗi server" });
-  }
+  const data = await Appointment.find({ userId: req.user.userId }).sort({
+    dateTime: 1,
+  });
+  res.json(data);
+};
+
+export const getAllAppointments = async (req, res) => {
+  const data = await Appointment.find()
+    .populate("userId", "username displayName email")
+    .sort({ dateTime: 1 });
+
+  res.json(data);
 };
 
 export const updateAppointment = async (req, res) => {
-  try {
-    const userId = req.user._id;
-
-    const appointment = await Appointment.findOne({
-      _id: req.params.id,
-      userId: userId,
-    });
-
-    if (!appointment)
-      return res.status(404).json({ message: "Không tìm thấy lịch hẹn" });
-
-    const { error } = appointmentSchema.validate(req.body);
-    if (error) return res.status(400).json({ message: error.details[0].message });
-
-    const updated = await Appointment.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true }
-    );
-
-    res.json({
-      message: "Cập nhật thành công",
-      data: updated,
-    });
-  } catch (error) {
-    res.status(500).json({ message: "Lỗi server" });
-  }
+  const updated = await Appointment.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+  });
+  res.json(updated);
 };
 
 export const deleteAppointment = async (req, res) => {
-  try {
-    const userId = req.user._id;
-
-    const appointment = await Appointment.findOne({
-      _id: req.params.id,
-      userId: userId,
-    });
-
-    if (!appointment)
-      return res.status(404).json({ message: "Không tìm thấy lịch hẹn" });
-
-    await Appointment.findByIdAndDelete(req.params.id);
-
-    res.json({ message: "Xoá lịch hẹn thành công" });
-  } catch (error) {
-    res.status(500).json({ message: "Lỗi server" });
-  }
+  await Appointment.findByIdAndDelete(req.params.id);
+  res.json({ message: "Đã xóa lịch hẹn" });
 };

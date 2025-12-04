@@ -16,6 +16,8 @@ import cookieParser from "cookie-parser";
 import { protectedRoute } from "./middlewares/authMiddleware.js";
 import cors from "cors";
 
+import profileRoute from "./routes/profileRoutes.js";
+
 dotenv.config();
 
 const app = express();
@@ -80,3 +82,6 @@ connectDB().then(() => {
     console.log(`server bắt đầu trên cổng ${PORT}`);
   });
 });
+
+// Mount profile routes
+app.use("/api/profile", profileRoutes);

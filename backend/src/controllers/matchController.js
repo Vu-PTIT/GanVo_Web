@@ -208,7 +208,7 @@ export const swipe = async (req, res) => {
       existingMatch.similarityScore = similarityScore;
       await existingMatch.save();
 
-      // 🔔 TẠO THÔNG BÁO MATCH CHO CẢ 2 NGƯỜI
+      // TẠO THÔNG BÁO MATCH CHO CẢ 2 NGƯỜI
       await createMatchNotification(currentUserId, targetUserId, existingMatch._id);
       
       return res.status(200).json({ 

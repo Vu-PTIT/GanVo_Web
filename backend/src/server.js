@@ -16,6 +16,7 @@ import matchRoute from "./routes/matchRoute.js";
 import personRoute from "./routes/personRoute.js";
 import messageRoute from "./routes/messageRoute.js";
 import conversationRoute from "./routes/conversationRoute.js";
+import notificationRoute from "./routes/notificationRoute.js"; 
 
 // Middlewares
 import { protectedRoute } from "./middlewares/authMiddleware.js";
@@ -68,6 +69,7 @@ app.use("/api/match", protectedRoute, matchRoute);
 app.use("/api/people", protectedRoute, personRoute);
 app.use("/api/messages", protectedRoute, messageRoute);
 app.use("/api/conversations", protectedRoute, conversationRoute);
+app.use("/api/notifications", protectedRoute, notificationRoute); //  THÊM MỚI
 
 // ERROR HANDLING 
 app.use((err, req, res, next) => {
@@ -87,10 +89,10 @@ app.use((req, res) => {
 io.use(socketAuthMiddleware);
 
 io.on("connection", (socket) => {
-  console.log("🔌 User connected:", socket.id);
+  console.log(" User connected:", socket.id);
   const userId = socket.user._id.toString();
 
-  // Join personal room
+  // Join personal room (để nhận thông báo realtime)
   socket.join(userId);
   console.log(` User ${userId} joined personal room`);
 
@@ -122,7 +124,7 @@ io.on("connection", (socket) => {
 
   // Disconnect
   socket.on("disconnect", () => {
-    console.log(" User disconnected:", socket.id);
+    console.log("🔌 User disconnected:", socket.id);
     User.findByIdAndUpdate(userId, { 
       isOnline: false, 
       lastSeen: new Date() 

@@ -2,7 +2,10 @@
 import Match from "../models/Match.js";
 import User from "../models/User.js";
 import { calculateSimilarity } from "../utils/gemini.js";
-
+import { 
+  createLikeNotification, 
+  createMatchNotification 
+} from "../controllers/notificationController.js";
 // KHÁM PHÁ HỒ SƠ MỚI (Swipe Mode) 
 export const getExplorations = async (req, res) => {
   try {
@@ -205,11 +208,11 @@ export const swipe = async (req, res) => {
       existingMatch.similarityScore = similarityScore;
       await existingMatch.save();
 
-      // TODO: Tạo notification
-      // TODO: Tạo conversation tự động
+      // 🔔 TẠO THÔNG BÁO MATCH CHO CẢ 2 NGƯỜI
+      await createMatchNotification(currentUserId, targetUserId, existingMatch._id);
       
       return res.status(200).json({ 
-        message: `Bạn và ${targetUser.displayName} đã match! 💕`, 
+        message: `Bạn và ${targetUser.displayName} đã match! `, 
         isMatch: true,
         matchData: {
           userId: targetUserId,
@@ -226,6 +229,9 @@ export const swipe = async (req, res) => {
       status: "pending",
     });
 
+    //  TẠO THÔNG BÁO CHO NGƯỜI BỊ LIKE
+    await createLikeNotification(currentUserId, targetUserId);
+
     return res.status(200).json({ 
       message: "Đã gửi yêu cầu thích", 
       isMatch: false 
@@ -239,7 +245,6 @@ export const swipe = async (req, res) => {
     return res.status(500).json({ message: "Lỗi hệ thống" });
   }
 };
-
 // DANH SÁCH ĐÃ MATCH 
 export const getMatches = async (req, res) => {
   try {

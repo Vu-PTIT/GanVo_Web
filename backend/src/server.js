@@ -3,7 +3,6 @@ import dotenv from "dotenv";
 import connectDB  from "./libs/db.js";
 import authRoute from "./routes/authRoute.js";
 import userRoute from "./routes/userRoute.js";
-<<<<<<< HEAD
 
 import friendRoute from "./routes/friendRoute.js";
 import messageRoute from "./routes/messageRoute.js";
@@ -12,9 +11,7 @@ import conversationRoute from "./routes/conversationRoute.js";
 import personRoute from "./routes/personRoute.js";
 import matchRoute from "./routes/matchRoute.js"; // <--- THÊM DÒNG NÀY
 
-=======
 import personRoute from "./routes/personRoute.js"; // [THÊM MỚI] Import route person
->>>>>>> parent of 5408caf (Merge branch 'main' of https://github.com/Vu-PTIT/GanVo_Web into ducdev)
 import cookieParser from "cookie-parser";
 import { protectedRoute } from "./middlewares/authMiddleware.js";
 import cors from "cors";
@@ -29,7 +26,6 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
 
-<<<<<<< HEAD
 // swagger
 // const swaggerDocument = JSON.parse(fs.readFileSync("./src/swagger.json", "utf8"));
 // app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
@@ -40,13 +36,10 @@ app.use((req, res, next) => {
   next();
 });
 
-=======
->>>>>>> parent of 5408caf (Merge branch 'main' of https://github.com/Vu-PTIT/GanVo_Web into ducdev)
 // public routes
 app.use("/api/auth", authRoute);
 
 // private routes (Yêu cầu đăng nhập)
-<<<<<<< HEAD
 app.use(protectedRoute); 
 
 app.use("/api/users", userRoute);
@@ -78,12 +71,10 @@ io.on("connection", (socket) => {
   });
 });
 
-=======
 app.use(protectedRoute); // Middleware bảo vệ các route bên dưới
 app.use("/api/users", userRoute);
 app.use("/api/people", personRoute); // Đăng ký route /api/people
 app.use("/api/match", matchRoute);
->>>>>>> parent of 5408caf (Merge branch 'main' of https://github.com/Vu-PTIT/GanVo_Web into ducdev)
 connectDB().then(() => {
   app.listen(PORT, () => {
     console.log(`server bắt đầu trên cổng ${PORT}`);

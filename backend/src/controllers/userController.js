@@ -1,8 +1,5 @@
-<<<<<<< HEAD
-=======
 // --- START OF FILE controllers/userController.js ---
 
->>>>>>> parent of 5408caf (Merge branch 'main' of https://github.com/Vu-PTIT/GanVo_Web into ducdev)
 import User from "../models/User.js";
 import { getEmbedding } from "../utils/gemini.js"; // Import hàm vừa tạo
 
@@ -17,7 +14,6 @@ export const authMe = async (req, res) => {
   }
 };
 
-<<<<<<< HEAD
 // Tìm kiếm danh sách users
 export const getUsers = async (req, res) => {
   try {
@@ -44,8 +40,6 @@ export const getUsers = async (req, res) => {
   }
 };
 
-=======
->>>>>>> parent of 5408caf (Merge branch 'main' of https://github.com/Vu-PTIT/GanVo_Web into ducdev)
 // Cập nhật thông tin hồ sơ
 export const updateProfile = async (req, res) => {
   try {

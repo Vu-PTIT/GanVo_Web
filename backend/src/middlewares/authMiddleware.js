@@ -10,7 +10,7 @@ export const protectedRoute = async (req, res, next) => {
 
       // tạo user giả
       req.user = {
-        userId: "67abcde00000000000000001",
+        userId: "69330bbcde2b9afae1dc5dda",
         username: "test_user",
         displayName: "Test User",
         role: "admin",

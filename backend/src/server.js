@@ -17,6 +17,7 @@ import { protectedRoute } from "./middlewares/authMiddleware.js";
 import cors from "cors";
 
 import profileRoute from "./routes/profileRoutes.js";
+import dashboardRoutes from "./routes/dashboardRoutes.js";
 
 dotenv.config();
 
@@ -53,6 +54,10 @@ app.use("/api/conversations", conversationRoute);
 app.use("/api/people", personRoute); 
 app.use("/api/match", matchRoute); // Bây giờ dòng này mới chạy được vì đã import ở trên
 
+// Mount profile routes
+app.use("/api/profile", profileRoute);
+
+app.use("/api/dashboard", dashboardRoutes);
 // Socket.io middleware
 io.use(socketAuthMiddleware);
 
@@ -83,5 +88,3 @@ connectDB().then(() => {
   });
 });
 
-// Mount profile routes
-app.use("/api/profile", profileRoutes);

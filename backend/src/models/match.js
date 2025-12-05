@@ -20,6 +20,12 @@ const matchSchema = new mongoose.Schema(
       enum: ["pending", "matched", "rejected"], 
       default: "pending",
     },
+    // ĐẾM SỐ LƯỢT MATCH (lần tạo match)
+    matchCount: {
+      type: Number,
+      default: 1
+    }
+
   },
   { timestamps: true }
 );

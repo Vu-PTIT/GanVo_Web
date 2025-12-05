@@ -1,4 +1,4 @@
-import type { User } from "./user";
+import type { User, UserRole } from "./user";
 
 export interface AuthState {
   accessToken: string | null;
@@ -18,4 +18,8 @@ export interface AuthState {
   signOut: () => Promise<void>;
   fetchMe: () => Promise<void>;
   refresh: () => Promise<void>;
+
+  // Role-based authorization helpers
+  isAdmin: () => boolean;
+  hasRole: (role: UserRole) => boolean;
 }

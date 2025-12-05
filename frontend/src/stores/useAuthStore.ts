@@ -94,4 +94,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       set({ loading: false });
     }
   },
+
+  // Role-based authorization helpers
+  isAdmin: () => get().user?.role === "admin",
+  hasRole: (role) => get().user?.role === role,
 }));

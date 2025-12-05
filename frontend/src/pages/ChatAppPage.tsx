@@ -1,3 +1,5 @@
+import '../assets/css/index.css';
+import '../assets/css/asset.css';
 import { useEffect } from "react";
 import { useChatStore } from "@/stores/useChatStore";
 import ConversationList from "@/components/chat/ConversationList";
@@ -16,8 +18,8 @@ const ChatAppPage = () => {
   return (
     <div className="layout">
       <Header />
-      <main id="chat-app" className="h-[calc(100vh-80px)] w-full flex justify-center p-4">
-        <div className="flex w-full max-w-[1400px] gap-4 h-full">
+      <main id="chat">
+        <div className="chat-layout scoll-auto">
           <Menu />
           <div className="flex-1 bg-base-100 rounded-lg shadow-xl overflow-hidden flex border border-base-300 h-full">
             <div className="flex w-80 flex-col border-r border-base-300 h-full">

@@ -1,0 +1,21 @@
+.menu {
+  width: 250px;
+  border-right: 1px solid #DEE1E6;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 10px;
+}
+
+.main-menu ul li a {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+
+a {
+  all: unset;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}

@@ -1,33 +1,107 @@
-import { BrowserRouter, Route, Routes } from "react-router";
-import SignInPage from "./pages/SignInPage";
-import ChatAppPage from "./pages/ChatAppPage";
-import { Toaster } from "sonner";
-import SignUpPage from "./pages/SignUpPage";
-import ProtectedRoute from "./components/auth/ProtectedRoute";
+import './assets/css/index.css';
+import './assets/css/asset.css';
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Connect } from './pages/connect';
+import { Profile } from './pages/profile';
+import SignInPage from './pages/SignInPage';
+import SignUpPage from './pages/SignUpPage';
+import { Complete_profile } from './pages/complete-profile';
+import ChatAppPage from './pages/ChatAppPage';
+import ProtectedRoute from './components/auth/ProtectedRoute';
+import RequireAdmin from './components/auth/RequireAdmin';
+import { Toaster } from 'sonner';
+import { useAuthStore } from './stores/useAuthStore';
 
-function App() {
+import AppointmentPage from "./pages/appointment";
+import MyAppointmentsPage from "./pages/my-appointments";
+import AdminAppointmentsPage from "./pages/admin/AdminAppointmentsPage";
+import AdminUsersPage from "./pages/admin/AdminUsersPage";
+import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
+import DebugRolePage from "./pages/DebugRolePage";
+
+export function App() {
+  const { accessToken, refresh } = useAuthStore();
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+
+  // Auto-refresh token on app mount (after F5)
+  useEffect(() => {
+    const init = async () => {
+      if (!accessToken) {
+        console.log("🔄 No access token found, attempting to refresh from cookie...");
+        try {
+          await refresh();
+          console.log("✅ Token refreshed successfully");
+        } catch (error) {
+          console.log("❌ Failed to refresh token:", error);
+        }
+      }
+      setIsCheckingAuth(false);
+    };
+    init();
+  }, []);
+
+  if (isCheckingAuth) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
   return (
     <>
       <Toaster richColors />
+
       <BrowserRouter>
         <Routes>
-          {/* public routes */}
-          <Route
-            path="/signin"
-            element={<SignInPage />}
-          />
-          <Route
-            path="/signup"
-            element={<SignUpPage />}
-          />
 
-          {/* protectect routes */}
+          {/* Default redirect */}
+          <Route path="/" element={<Navigate to="/signin" />} />
+
+          {/* Public routes */}
+          <Route path="/signin" element={<SignInPage />} />
+          <Route path="/signup" element={<SignUpPage />} />
+
+          {/* Appointment routes (public hoặc protected tùy bạn) */}
+          <Route path="/appointment" element={<AppointmentPage />} />
+          <Route
+            path="/admin/appointments"
+            element={
+              <RequireAdmin fallback={<Navigate to="/chat" replace />}>
+                <AdminAppointmentsPage />
+              </RequireAdmin>
+            }
+          />
+          <Route
+            path="/admin/users"
+            element={
+              <RequireAdmin fallback={<Navigate to="/chat" replace />}>
+                <AdminUsersPage />
+              </RequireAdmin>
+            }
+          />
+          <Route
+            path="/admin/dashboard"
+            element={
+              <RequireAdmin fallback={<Navigate to="/chat" replace />}>
+                <AdminDashboardPage />
+              </RequireAdmin>
+            }
+          />
+          <Route path="/my-appointments" element={<MyAppointmentsPage />} />
+          <Route path="/chat" element={<ChatAppPage />} />
+          <Route path="/connect" element={<Connect />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/complete-profile" element={<Complete_profile />} />
+          {/* Protected routes */}
           <Route element={<ProtectedRoute />}>
-            <Route
-              path="/"
-              element={<ChatAppPage />}
-            />
+            {/* <Route path="/chat" element={<ChatAppPage />} />
+            <Route path="/connect" element={<Connect />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/complete-profile" element={<Complete_profile />} /> */}
           </Route>
+
         </Routes>
       </BrowserRouter>
     </>

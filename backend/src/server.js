@@ -7,6 +7,7 @@ import http from "http";
 import { Server } from "socket.io";
 
 // Models
+// Models
 import User from "./models/User.js";
 
 // Routes
@@ -17,6 +18,7 @@ import personRoute from "./routes/personRoute.js";
 import messageRoute from "./routes/messageRoute.js";
 import conversationRoute from "./routes/conversationRoute.js";
 import appointmentRoute from "./routes/appointmentRoute.js";
+import notificationRoute from "./routes/notificationRoute.js"; 
 
 // Middlewares
 import { protectedRoute } from "./middlewares/authMiddleware.js";
@@ -43,7 +45,7 @@ const io = new Server(server, {
 
 const PORT = process.env.PORT || 5001;
 
-// ================== MIDDLEWARE ==================
+// MIDDLEWARES 
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(cookieParser());
@@ -63,7 +65,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// ================== PUBLIC ROUTES ==================
+// PUBLIC ROUTES 
 app.use("/api/auth", authRoute);
 
 // Health check
@@ -75,6 +77,27 @@ app.get("/api/health", (req, res) => {
   });
 });
 
+//  PROTECTED ROUTES (Yêu cầu đăng nhập) 
+app.use("/api/users", protectedRoute, userRoute);
+app.use("/api/match", protectedRoute, matchRoute);
+app.use("/api/people", protectedRoute, personRoute);
+app.use("/api/messages", protectedRoute, messageRoute);
+app.use("/api/conversations", protectedRoute, conversationRoute);
+app.use("/api/notifications", protectedRoute, notificationRoute); 
+
+// ERROR HANDLING 
+app.use((err, req, res, next) => {
+  console.error(" Global Error:", err);
+  res.status(err.status || 500).json({
+    message: err.message || "Lỗi hệ thống",
+    ...(process.env.NODE_ENV === "development" && { stack: err.stack })
+  });
+});
+
+// 404 Handler
+app.use((req, res) => {
+  res.status(404).json({ message: "API endpoint không tồn tại" });
+});
 // ================== PROTECTED ROUTES ==================
 app.use(protectedRoute);
 
@@ -85,14 +108,16 @@ app.use("/api/appointments", appointmentRoute);
 app.use("/api/people", personRoute);
 app.use("/api/match", matchRoute);
 
-// ================== SOCKET.IO ==================
+//  SOCKET.IO
 io.use(socketAuthMiddleware);
 
 io.on("connection", (socket) => {
-  console.log("🔌 User connected:", socket.id);
-
+  console.log(" User connected:", socket.id);
   const userId = socket.user._id.toString();
+
+  // Join personal room (để nhận thông báo realtime)
   socket.join(userId);
+  console.log(` User ${userId} joined personal room`);
 
   // Online status
   User.findByIdAndUpdate(userId, {
@@ -103,11 +128,13 @@ io.on("connection", (socket) => {
   // Join conversation room
   socket.on("join_conversation", (conversationId) => {
     socket.join(conversationId);
+    console.log(` User ${userId} joined conversation ${conversationId}`);
   });
 
   // Leave conversation
   socket.on("leave_conversation", (conversationId) => {
     socket.leave(conversationId);
+    console.log(` User ${userId} left conversation ${conversationId}`);
   });
 
   // Typing indicator
@@ -128,39 +155,25 @@ io.on("connection", (socket) => {
   });
 });
 
-// ================== ERROR HANDLING ==================
-app.use((err, req, res, next) => {
-  console.error("❌ Global Error:", err);
-  res.status(err.status || 500).json({
-    message: err.message || "Lỗi hệ thống",
-    ...(process.env.NODE_ENV === "development" && { stack: err.stack }),
+//  START SERVER
+connectDB().then(() => {
+  server.listen(PORT, () => {
+    console.log(` Server đang chạy trên cổng ${PORT}`);
+    console.log(` API: http://localhost:${PORT}/api`);
+    console.log(` Socket.IO: ws://localhost:${PORT}`);
+    console.log(` Environment: ${process.env.NODE_ENV || "development"}`);
   });
+}).catch(error => {
+  console.error(" Không thể khởi động server:", error);
+  process.exit(1);
 });
-
-// 404
-app.use((req, res) => {
-  res.status(404).json({ message: "API endpoint không tồn tại" });
-});
-
-// ================== START SERVER ==================
-connectDB()
-  .then(() => {
-    server.listen(PORT, () => {
-      console.log(`🚀 Server đang chạy tại PORT: ${PORT}`);
-      console.log(`📡 API: http://localhost:${PORT}/api`);
-    });
-  })
-  .catch((err) => {
-    console.error("❌ Không thể khởi động server:", err);
-    process.exit(1);
-  });
 
 // ================== GRACEFUL SHUTDOWN ==================
 process.on("SIGINT", async () => {
-  console.log("\n⏳ Đang tắt server...");
+  console.log("\n Đang tắt server...");
   await User.updateMany({}, { isOnline: false });
   server.close(() => {
-    console.log("✅ Server đã tắt hoàn toàn");
+    console.log(" Server đã tắt");
     process.exit(0);
   });
 });

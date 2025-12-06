@@ -1,14 +1,14 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "description": "",
+  "description": "Dating app backend with AI matching",
   "main": "src/server.js",
   "scripts": {
     "dev": "nodemon src/server.js",
     "start": "node src/server.js"
   },
   "type": "module",
-  "keywords": [],
+  "keywords": ["dating", "ai", "socket.io", "mongodb"],
   "author": "",
   "license": "ISC",
   "dependencies": {

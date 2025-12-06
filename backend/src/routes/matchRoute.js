@@ -1,19 +1,35 @@
+// routes/matchRoute.js
 import express from "express";
-import { getExplorations, getMatches, swipe } from "../controllers/matchController.js";
-import { protectedRoute } from "../middlewares/authMiddleware.js"; // Nhớ thêm middleware bảo vệ
+import {
+  getExplorations,
+  swipe,
+  getMatches,
+  getWhoLikesMe,
+  unmatch
+} from "../controllers/matchController.js";
+import { protectedRoute } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
-// Tất cả các route này đều cần đăng nhập
+// Tất cả routes đều cần đăng nhập
 router.use(protectedRoute);
 
-// GET /api/matches/explore
+// KHÁM PHÁ & SWIPE
+// GET /api/match/explore?minAge=20&maxAge=30&gender=female&location=Hà Nội
 router.get("/explore", getExplorations);
 
-// GET /api/matches/list
+// POST /api/match/swipe
+// Body: { targetUserId: "123", action: "like" | "dislike" }
+router.post("/swipe", swipe);
+
+// DANH SÁCH MATCH
+// GET /api/match/list - Những người đã match
 router.get("/list", getMatches);
 
-// POST /api/matches/swipe
-router.post("/swipe", swipe);
+// GET /api/match/likes - Ai đã like mình (chưa match)
+router.get("/likes", getWhoLikesMe);
+
+// DELETE /api/match/:matchId - Xóa match
+router.delete("/:matchId", unmatch);
 
 export default router;

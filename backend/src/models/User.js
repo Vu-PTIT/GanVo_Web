@@ -1,16 +1,41 @@
+// models/User.js - CẬP NHẬT
 import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
   {
     // --- AUTH & ACCOUNT ---
-    username: { type: String, required: true, unique: true, trim: true, lowercase: true },
-    hashedPassword: { type: String, required: true },
-    email: { type: String, required: true, unique: true, lowercase: true, trim: true },
-    displayName: { type: String, required: true, trim: true },
+    username: { 
+      type: String, 
+      required: true, 
+      unique: true, 
+      trim: true, 
+      lowercase: true 
+    },
+    hashedPassword: { 
+      type: String, 
+      required: true 
+    },
+    email: { 
+      type: String, 
+      required: true, 
+      unique: true, 
+      lowercase: true, 
+      trim: true 
+    },
+    displayName: { 
+      type: String, 
+      required: true, 
+      trim: true 
+    },
     
     // Avatar & Photos
-    avatarUrl: { type: String, default: "" },
-    avatarId: { type: String }, // ID từ Cloudinary
+    avatarUrl: { 
+      type: String, 
+      default: "" 
+    },
+    avatarId: { 
+      type: String 
+    },
     photos: [
       {
         url: { type: String, required: true },
@@ -19,31 +44,76 @@ const userSchema = new mongoose.Schema(
     ],
 
     // --- THÔNG TIN CÁ NHÂN ---
-    bio: { type: String, maxlength: 500, default: "" }, // Giới thiệu bản thân
-    gender: { type: String, enum: ["male", "female", "other"] },
-    dateOfBirth: { type: Date },
-    location: { type: String, default: "Việt Nam" },
+    bio: { 
+      type: String, 
+      maxlength: 500, 
+      default: "" 
+    },
+    gender: { 
+      type: String, 
+      enum: ["male", "female", "other"] 
+    },
+    dateOfBirth: { 
+      type: Date 
+    },
+    location: { 
+      type: String, 
+      default: "Việt Nam" 
+    },
     
     // --- SỞ THÍCH & TÌM KIẾM ---
-    interests: [{ type: String }], // Ví dụ: ["Du lịch", "Đọc sách"]
-    lookingFor: { type: String, default: "" }, // Ví dụ: "Hẹn hò nghiêm túc"
+    interests: [{ type: String }],
+    lookingFor: { 
+      type: String, 
+      default: "" 
+    },
 
     // --- TRẠNG THÁI ---
-    isOnline: { type: Boolean, default: false },
-    lastSeen: { type: Date, default: Date.now },
+    isOnline: { 
+      type: Boolean, 
+      default: false 
+    },
+    lastSeen: { 
+      type: Date, 
+      default: Date.now 
+    },
     
     // --- AI FEATURE ---
-    // Vector embedding để gợi ý kết bạn thông minh
     embedding: { 
       type: [Number], 
       default: [],
-      select: false // Không select mặc định để nhẹ query
-    }, 
+      select: false  // Không select mặc định
+    },
+    
+    // --- CÀI ĐẶT TÌM KIẾM (MỚI) ---
+    searchPreferences: {
+      minAge: { 
+        type: Number, 
+        default: 18 
+      },
+      maxAge: { 
+        type: Number, 
+        default: 40 
+      },
+      gender: { 
+        type: String, 
+        enum: ["all", "male", "female", "other"], 
+        default: "all" 
+      },
+      maxDistance: { 
+        type: Number, 
+        default: 50  // km
+      }
+    }
   },
-  { timestamps: true }
+  { 
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true }
+  }
 );
 
-// Virtual field tính tuổi từ ngày sinh
+// Virtual field tính tuổi
 userSchema.virtual('age').get(function() {
   if (!this.dateOfBirth) return null;
   const diff_ms = Date.now() - this.dateOfBirth.getTime();
@@ -51,8 +121,9 @@ userSchema.virtual('age').get(function() {
   return Math.abs(age_dt.getUTCFullYear() - 1970);
 });
 
-// Config để khi res.json() sẽ hiện field 'age'
-userSchema.set('toJSON', { virtuals: true });
-userSchema.set('toObject', { virtuals: true });
+// Index để optimize query
+userSchema.index({ location: 1 });
+userSchema.index({ gender: 1 });
+userSchema.index({ dateOfBirth: 1 });
 
 export default mongoose.model("User", userSchema);

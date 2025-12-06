@@ -270,6 +270,88 @@
           }
         }
       }
+    },
+        "/appointments": {
+      "get": {
+        "summary": "Lấy tất cả lịch hẹn của user đang đăng nhập",
+        "tags": ["Appointments"],
+        "responses": {
+          "200": {
+            "description": "Danh sách lịch hẹn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Appointment" }
+                }
+              }
+            }
+          },
+          "500": { "description": "Internal server error" }
+        }
+      },
+      "post": {
+        "summary": "Tạo lịch hẹn mới",
+        "tags": ["Appointments"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/AppointmentInput" }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Tạo lịch hẹn thành công" },
+          "400": { "description": "Dữ liệu không hợp lệ" },
+          "500": { "description": "Internal server error" }
+        }
+      }
+    },
+
+    "/appointments/{id}": {
+      "put": {
+        "summary": "Cập nhật lịch hẹn",
+        "tags": ["Appointments"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/AppointmentInput" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Cập nhật thành công" },
+          "404": { "description": "Không tìm thấy lịch hẹn" },
+          "500": { "description": "Internal server error" }
+        }
+      },
+      "delete": {
+        "summary": "Xoá lịch hẹn",
+        "tags": ["Appointments"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Xoá thành công" },
+          "404": { "description": "Không tìm thấy lịch hẹn" },
+          "500": { "description": "Internal server error" }
+        }
+      }
     }
   },
   "components": {
@@ -279,7 +361,34 @@
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
-    }
+    },
+          "Appointment": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "example": "65ab1d32fc78d9c1f8e3a91f" },
+          "userId": { "type": "string", "example": "65ab1d00bb22aa1198d312a7" },
+          "dateTime": { "type": "string", "example": "2025-10-17T10:00" },
+          "city": { "type": "string", "example": "Hồ Chí Minh" },
+          "type": { "type": "string", "example": "Cà Phê" },
+          "reason": { "type": "string", "example": "Nói chuyện công việc" },
+          "latitude": { "type": "number", "example": 16.047 },
+          "longitude": { "type": "number", "example": 108.206 },
+          "createdAt": { "type": "string" },
+          "updatedAt": { "type": "string" }
+        }
+      },
+      "AppointmentInput": {
+        "type": "object",
+        "properties": {
+          "dateTime": { "type": "string" },
+          "city": { "type": "string" },
+          "type": { "type": "string" },
+          "reason": { "type": "string" },
+          "latitude": { "type": "number" },
+          "longitude": { "type": "number" }
+        },
+        "required": ["dateTime", "city", "type", "latitude", "longitude"]
+      }
   },
   "security": [
     {

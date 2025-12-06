@@ -30,7 +30,14 @@ export function SigninForm({ className, ...props }: React.ComponentProps<"div">)
   const onSubmit = async (data: SignInFormValues) => {
     const { username, password } = data;
     await signIn(username, password);
-    navigate("/");
+
+    // Check role to redirect
+    const user = useAuthStore.getState().user;
+    if (user?.role === "admin") {
+      navigate("/admin/appointments");
+    } else {
+      navigate("/");
+    }
   };
 
   return (

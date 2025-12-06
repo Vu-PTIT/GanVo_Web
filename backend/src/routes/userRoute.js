@@ -1,10 +1,16 @@
 import express from "express";
-import { 
-  authMe, 
-  updateProfile, 
+import { adminMiddleware } from "../middlewares/adminMiddleware.js";
+import {
+  authMe,
+  updateProfile,
   getUsers,
-  getPreferences, 
-  updatePreferences 
+  getPreferences,
+  updatePreferences,
+  getAllUsers,
+  createUser,
+  updateUser,
+  deleteUser,
+  getAdminStats
 } from "../controllers/userController.js";
 
 const router = express.Router();
@@ -23,5 +29,12 @@ router.get("/preferences", getPreferences);
 
 //  Cập nhật cài đặt tìm kiếm
 router.put("/preferences", updatePreferences);
+
+// --- ADMIN ROUTES ---
+router.get("/admin/stats", adminMiddleware, getAdminStats);
+router.get("/admin/users", adminMiddleware, getAllUsers);
+router.post("/admin/users", adminMiddleware, createUser);
+router.put("/admin/users/:id", adminMiddleware, updateUser);
+router.delete("/admin/users/:id", adminMiddleware, deleteUser);
 
 export default router;

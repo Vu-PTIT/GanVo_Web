@@ -1,127 +1,134 @@
-// models/User.js - CẬP NHẬT
 import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
   {
     // --- AUTH & ACCOUNT ---
-    username: { 
-      type: String, 
-      required: true, 
-      unique: true, 
-      trim: true, 
-      lowercase: true 
+    username: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+      lowercase: true,
     },
-    hashedPassword: { 
-      type: String, 
-      required: true 
+
+    hashedPassword: {
+      type: String,
+      required: true,
     },
-    email: { 
-      type: String, 
-      required: true, 
-      unique: true, 
-      lowercase: true, 
-      trim: true 
+
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
     },
-    displayName: { 
-      type: String, 
-      required: true, 
-      trim: true 
+
+    displayName: {
+      type: String,
+      required: true,
+      trim: true,
     },
-    
-    // Avatar & Photos
-    avatarUrl: { 
-      type: String, 
-      default: "" 
+
+    // --- ẢNH & AVATAR ---
+    avatarUrl: {
+      type: String,
+      default: "",
     },
-    avatarId: { 
-      type: String 
-    },
+
+    avatarId: { type: String },
+
     photos: [
       {
         url: { type: String, required: true },
         id: { type: String },
-      }
+      },
     ],
 
     // --- THÔNG TIN CÁ NHÂN ---
-    bio: { 
-      type: String, 
-      maxlength: 500, 
-      default: "" 
+    bio: {
+      type: String,
+      maxlength: 500,
+      default: "",
     },
-    gender: { 
-      type: String, 
-      enum: ["male", "female", "other"] 
+
+    gender: {
+      type: String,
+      enum: ["male", "female", "other"],
     },
-    dateOfBirth: { 
-      type: Date 
+
+    dateOfBirth: { type: Date },
+
+    location: {
+      type: String,
+      default: "Việt Nam",
     },
-    location: { 
-      type: String, 
-      default: "Việt Nam" 
-    },
-    
-    // --- SỞ THÍCH & TÌM KIẾM ---
+
+    // --- SỞ THÍCH ---
     interests: [{ type: String }],
-    lookingFor: { 
-      type: String, 
-      default: "" 
+
+    lookingFor: {
+      type: String,
+      default: "",
     },
 
     // --- TRẠNG THÁI ---
-    isOnline: { 
-      type: Boolean, 
-      default: false 
+    isOnline: {
+      type: Boolean,
+      default: false,
     },
-    lastSeen: { 
-      type: Date, 
-      default: Date.now 
+
+    lastSeen: {
+      type: Date,
+      default: Date.now,
     },
-    
-    // --- AI FEATURE ---
-    embedding: { 
-      type: [Number], 
+
+    role: {
+      type: String,
+      enum: ["user", "admin"],
+      default: "user",
+    },
+
+    // --- AI EMBEDDING ---
+    embedding: {
+      type: [Number],
       default: [],
-      select: false  // Không select mặc định
+      select: false,
     },
-    
-    // --- CÀI ĐẶT TÌM KIẾM (MỚI) ---
+
+    // --- SEARCH PREFERENCES ---
     searchPreferences: {
-      minAge: { 
-        type: Number, 
-        default: 18 
+      minAge: { type: Number, default: 18 },
+      maxAge: { type: Number, default: 40 },
+      gender: {
+        type: String,
+        enum: ["all", "male", "female", "other"],
+        default: "all",
       },
-      maxAge: { 
-        type: Number, 
-        default: 40 
-      },
-      gender: { 
-        type: String, 
-        enum: ["all", "male", "female", "other"], 
-        default: "all" 
-      },
-      maxDistance: { 
-        type: Number, 
-        default: 50  // km
-      }
-    }
+      maxDistance: { type: Number, default: 50 }, // km
+    },
   },
-  { 
+
+  {
     timestamps: true,
     toJSON: { virtuals: true },
-    toObject: { virtuals: true }
+    toObject: { virtuals: true },
   }
 );
 
-// Virtual field tính tuổi
-userSchema.virtual('age').get(function() {
+/* ===========================
+    VIRTUAL FIELD TÍNH TUỔI
+=========================== */
+userSchema.virtual("age").get(function () {
   if (!this.dateOfBirth) return null;
-  const diff_ms = Date.now() - this.dateOfBirth.getTime();
-  const age_dt = new Date(diff_ms); 
-  return Math.abs(age_dt.getUTCFullYear() - 1970);
+  const diff = Date.now() - this.dateOfBirth.getTime();
+  const age = new Date(diff).getUTCFullYear() - 1970;
+  return age;
 });
 
-// Index để optimize query
+/* ===========================
+    INDEXES
+=========================== */
 userSchema.index({ location: 1 });
 userSchema.index({ gender: 1 });
 userSchema.index({ dateOfBirth: 1 });

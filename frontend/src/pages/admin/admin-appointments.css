@@ -1,0 +1,110 @@
+/* admin-appointments.css */
+
+.admin-content-wrapper {
+  padding: 24px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.admin-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 24px;
+  color: var(--foreground);
+}
+
+.admin-layout {
+  display: flex;
+  gap: 20px;
+  height: 100%;
+  overflow: hidden;
+}
+
+.admin-list {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.admin-item {
+  padding: 16px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.admin-item:hover {
+  background: var(--muted);
+}
+
+.admin-item.active {
+  border-color: var(--primary);
+  background: var(--muted);
+}
+
+.admin-item-title {
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--card-foreground);
+}
+
+.admin-item-sub {
+  font-size: 14px;
+  color: var(--muted-foreground);
+  margin-top: 4px;
+}
+
+.admin-item-user {
+  font-size: 14px;
+  color: var(--primary);
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+.btn.delete {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.admin-preview {
+  flex: 1;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  color: var(--card-foreground);
+}
+
+.admin-preview h2 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.preview-info {
+  line-height: 1.6;
+  font-size: 15px;
+}
+
+.preview-info b {
+  color: var(--foreground);
+}

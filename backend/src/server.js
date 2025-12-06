@@ -7,7 +7,6 @@ import http from "http";
 import { Server } from "socket.io";
 
 // Models
-// Models
 import User from "./models/User.js";
 
 // Routes

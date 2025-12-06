@@ -108,8 +108,8 @@ export const generateIceBreaker = (currentUser, targetUser) => {
     
     if (common.length > 0) {
       suggestions.push(
-        `Mình thấy bạn cũng thích ${common[0]}, bạn thường ${common[0]} ở đâu vậy? 😊`,
-        `Chào ${targetUser.displayName}! Mình cũng là fan của ${common[0]} đây 🎉`
+        `Mình thấy bạn cũng thích ${common[0]}, bạn thường ${common[0]} ở đâu vậy? `,
+        `Chào ${targetUser.displayName}! Mình cũng là fan của ${common[0]} đây `
       );
     }
   }
@@ -117,8 +117,8 @@ export const generateIceBreaker = (currentUser, targetUser) => {
   // 2. Same Location
   if (currentUser.location === targetUser.location) {
     suggestions.push(
-      `Hey! Mình cũng ở ${currentUser.location}, thật trùng hợp! 🌍`,
-      `Chào người ${currentUser.location}! Có địa điểm nào hay ho bạn muốn giới thiệu không? 😄`
+      `Hey! Mình cũng ở ${currentUser.location}, thật trùng hợp! `,
+      `Chào người ${currentUser.location}! Có địa điểm nào hay ho bạn muốn giới thiệu không? `
     );
   }
 
@@ -126,7 +126,7 @@ export const generateIceBreaker = (currentUser, targetUser) => {
   if (targetUser.bio && targetUser.bio.length > 20) {
     const preview = targetUser.bio.substring(0, 40);
     suggestions.push(
-      `"${preview}..." - Profile bạn thú vị đấy! Kể thêm đi 😊`,
+      `"${preview}..." - Profile bạn thú vị đấy! Kể thêm đi `,
       `Mình thấy bạn có vẻ là người ${targetUser.bio.split(' ')[0]}, mình cũng thế!`
     );
   }
@@ -134,8 +134,8 @@ export const generateIceBreaker = (currentUser, targetUser) => {
   // 4. Fallback
   if (suggestions.length === 0) {
     suggestions.push(
-      `Chào ${targetUser.displayName}! Rất vui được match với bạn 😊`,
-      `Hi! Profile bạn thu hút mình đấy, hẹn được trò chuyện nhé 🌟`,
+      `Chào ${targetUser.displayName}! Rất vui được match với bạn `,
+      `Hi! Profile bạn thu hút mình đấy, hẹn được trò chuyện nhé `,
       `Hey ${targetUser.displayName}! Có vẻ chúng ta có nhiều điểm chung, mình có thể biết thêm về bạn không?`
     );
   }

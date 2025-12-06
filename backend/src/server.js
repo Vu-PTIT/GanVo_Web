@@ -69,7 +69,7 @@ app.use("/api/match", protectedRoute, matchRoute);
 app.use("/api/people", protectedRoute, personRoute);
 app.use("/api/messages", protectedRoute, messageRoute);
 app.use("/api/conversations", protectedRoute, conversationRoute);
-app.use("/api/notifications", protectedRoute, notificationRoute); //  THÊM MỚI
+app.use("/api/notifications", protectedRoute, notificationRoute); 
 
 // ERROR HANDLING 
 app.use((err, req, res, next) => {

@@ -19,11 +19,7 @@ import messageRoute from "./routes/messageRoute.js";
 import conversationRoute from "./routes/conversationRoute.js";
 import appointmentRoute from "./routes/appointmentRoute.js";
 import notificationRoute from "./routes/notificationRoute.js"; 
-<<<<<<< HEAD
-
-=======
 import dashboardRoute from "./routes/dashboardRoute.js";
->>>>>>> 7393567d44bec27aece8873448e52f578881dbbe
 // Middlewares
 import { protectedRoute } from "./middlewares/authMiddleware.js";
 import { socketAuthMiddleware } from "./middlewares/socketAuthMiddleware.js";

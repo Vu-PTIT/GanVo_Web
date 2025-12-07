@@ -1,112 +1,313 @@
-.profile-form{
-    height: calc(100vh - 200px);
+.profile-form {
+    /* height: auto; let flex container handle it */
+    overflow-y: auto;
+    height: calc(100% - 151px);
 }
-.cont-title-profile{
+
+/* Header Section */
+.profile-header-text {
+    text-align: center;
     margin-bottom: 30px;
+    padding-top: 20px;
 }
-.cont-content-profile{
-    min-width: 700px;
-    background-color: #FFFFFF;
-    border-radius: 16px;
-    box-shadow: 0px 0px 1px #171a1f12, 0px 0px 2px #171a1f1F;
-    padding: 30px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-.info-01-profile{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    border-bottom: 1px solid #DEE1E6;
-}
-.info-01-profile, .info-profile{
-    width: 100%;
-    padding-bottom: 15px;
-    border-color: #DEE1E6;
-}
-.info-profile{
-    padding-top: 25px;
-    padding-left: 30px;
-    padding-right: 30px;
-    border-bottom: 1px solid #DEE1E6;
-}
-.cont-content-profile .info-profile:last-of-type {
-  border-bottom: none;
-}
-.avatar-user img{
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    margin-bottom: 20px;
-}
-.name-user{
-    font-size: 30px; 
-    line-height: 36px; 
-    font-weight: 700; 
+
+.profile-title {
+    font-size: 28px;
+    font-weight: 800;
     color: #171A1F;
-    margin-bottom: 5px;
+    margin-bottom: 8px;
 }
-.born-user{
-    font-size: 18px; 
-    line-height: 28px; 
-    font-weight: 400; 
+
+.profile-subtitle {
+    font-size: 14px;
+    color: #9095A1;
+    font-weight: 400;
+}
+
+/* Main Card */
+.cont-content-profile {
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: #FFFFFF;
+    border-radius: 12px;
+    /* Clean shadow for card look */
+    /* box-shadow: 0px 4px 12px rgba(23, 26, 31, 0.04); */
+    /* Or keep it flat/minimal if preferred */
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Content Padding */
+.content-profile {
+    width: 100%;
+}
+
+/* Top Section: Avatar + Name */
+.profile-main-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 20px 20px;
+    border-bottom: 1px solid #F3F4F6;
+}
+
+.avatar-container {
+    margin-bottom: 16px;
+    position: relative;
+}
+
+.avatar-img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    /* box-shadow: 0 4px 10px rgba(0,0,0,0.1); */
+}
+
+.profile-name-age {
+    font-size: 22px;
+    font-weight: 700;
+    color: #171A1F;
+    margin-bottom: 4px;
+}
+
+.profile-location {
+    font-size: 13px;
+    color: #9095A1;
+    font-weight: 400;
+}
+
+/* Sections */
+.profile-section {
+    padding: 20px 0;
+    margin: 0 30px;
+    border-bottom: 1px solid #F3F4F6;
+}
+
+.profile-section:last-child {
+    border-bottom: none;
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    color: #171A1F;
+}
+
+.section-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #171A1F;
+}
+
+.section-content {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #565D6D;
+    /* Lighter text for content */
+    padding-left: 2px;
+}
+
+.section-content-bold {
+    font-weight: 500;
+    color: #171A1F;
+}
+
+/* Icons styling */
+.section-icon {
+    color: #3B82F6;
+    /* Blue icon color */
+    width: 18px;
+    height: 18px;
+}
+
+/* Hobbies */
+.hobbies-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.hobby-tag {
+    background-color: #22C55E;
+    /* Green color match */
+    color: white;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 6px 14px;
+    border-radius: 20px;
+}
+
+/* Photo Library */
+.photo-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.photo-item {
+    width: 100%;
+    aspect-ratio: 1;
+    /* Square */
+    border-radius: 8px;
+    object-fit: cover;
+    background-color: #F3F4F6;
+}
+
+.photo-item-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #F8F9FA;
+    color: #BCC1CA;
+    font-size: 12px;
+}
+
+/* Preference */
+.preference-text {
+    font-size: 14px;
     color: #565D6D;
 }
-.cont-info-user{
+
+/* Footer Buttons */
+.profile-footer {
     display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    gap: 10px;
+    gap: 12px;
+    margin-top: 30px;
+    padding: 0 30px 30px;
 }
-.cont-info-user:not(:last-child){
-    margin-bottom: 15px;
+
+.btn-profile-action {
+    flex: 1;
+    padding: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s;
+    border: none;
 }
-.title-info{
+
+.title-info {
     position: relative;
     display: flex;
     align-items: center;
     gap: 10px;
     flex-direction: row;
-    font-size: 20px; 
-    line-height: 28px; 
-    font-weight: 600; 
+    font-size: 20px;
+    line-height: 28px;
+    font-weight: 600;
     color: #171A1F;
 }
-.detail-info{
-    text-align: justify;
-    font-size: 16px; 
-    line-height: 26px; 
-    font-weight: 400; 
+
+.btn-secondary-white:hover {
+    background-color: #F8F9FA;
+}
+
+.btn-secondary-gray {
+    background-color: #F3F4F6;
     color: #171A1F;
 }
-.hobby-info{
+
+.btn-secondary-gray:hover {
+    background-color: #E5E7EB;
+}
+
+/* Edit Mode Overrides (Minimal support for now) */
+.edit-input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #DEE1E6;
+    border-radius: 6px;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.edit-textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #DEE1E6;
+    border-radius: 6px;
+    font-size: 14px;
+    min-height: 100px;
+    resize: vertical;
+}
+
+/* Utility */
+.cl-blue {
+    color: #3B82F6;
+}
+
+.cl-green {
+    color: #22C55E;
+}
+
+.cl-red {
+    color: #EF4444;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .cont-content-profile {
+        box-shadow: none;
+        padding-top: 0;
+    }
+
+    .photo-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .profile-footer {
+        flex-direction: column;
+    }
+
+    .btn-profile-action {
+        width: 100%;
+    }
+}
+
+/* Page Layout Fix */
+.profile.profile-page-correction {
+    height: calc(100vh - 85px);
+    overflow: hidden;
+    /* Prevent outer scroll */
     display: flex;
-    gap: 5px;
-    flex-wrap: wrap;
 }
-.btn-hobby{
-    font-size: 12px; 
-    line-height: 20px; 
-    font-weight: 400;
-    color: #FFFFFF;
-    background: #2EA857;
-    border-radius: 15px;
-    padding: 5px 10px;
+
+/* Ensure Menu is full height within this container */
+.profile.profile-page-correction>.menu {
+    height: 100%;
+    overflow-y: auto;
 }
-.img-library{
+
+/* Scrollable Content Area - Restored */
+.profile-scroll-container {
+    flex: 1;
+    height: 100%;
+    overflow-y: auto;
+    background-color: #FAFAFB;
+    /* Match page bg */
+}
+
+.img-library {
     display: flex;
     gap: 15px;
     flex-wrap: wrap;
 }
-.img-library img{
+
+.img-library img {
     width: 120px;
     height: 120px;
     border-radius: 10px;
 }
-.cont-btn-action{
+
+.cont-btn-action {
     display: flex;
     justify-content: flex-start;
 }
@@ -134,23 +335,23 @@
     resize: vertical;
 }
 
-.avatar-user input[type="text"]{
+.avatar-user input[type="text"] {
     width: 220px;
     padding: 8px 10px;
     border-radius: 8px;
     border: 1px solid #DEE1E6;
 }
 
-.img-library input{
+.img-library input {
     width: 220px;
 }
 
-.hobby-info input{
+.hobby-info input {
     max-width: 200px;
 }
 
 .hobby-info button,
-.img-library > div > button{
+.img-library>div>button {
     margin-top: 6px;
     padding: 6px 10px;
     border-radius: 6px;
@@ -159,12 +360,12 @@
     cursor: pointer;
 }
 
-.cont-btn-action > .btn-short{
+.cont-btn-action>.btn-short {
     margin-right: 10px;
 }
 
 /* Gender select styles */
-.select-gender{
+.select-gender {
     width: 180px;
     padding: 8px 10px;
     border-radius: 8px;
@@ -176,7 +377,7 @@
 }
 
 /* Container for small edit action buttons (confirm/cancel) */
-.edit-actions{
+.edit-actions {
     display: flex;
     gap: 10px;
     align-items: center;
@@ -184,7 +385,7 @@
 }
 
 /* Small button baseline used in edit contexts */
-.btn-short{
+.btn-short {
     padding: 6px 10px;
     border-radius: 8px;
     border: 1px solid #DEE1E6;
@@ -192,25 +393,26 @@
     cursor: pointer;
 }
 
-.btn-short.cl-blue{
+.btn-short.cl-blue {
     background: #EFF6FF;
     border-color: #9BBBF7;
     color: #0b4da0;
 }
 
 /* Visual distinction for edit inputs */
-.name-user-input{
+.name-user-input {
     font-size: 28px;
     font-weight: 700;
     padding: 6px 10px;
 }
-.born-user-input{
+
+.born-user-input {
     font-size: 16px;
     padding: 6px 10px;
 }
 
 /* small helper for preview images when in read mode */
-.img-library img{
+.img-library img {
     border: 1px solid #e6eaf0;
 }
 
@@ -219,12 +421,13 @@
 .cont-info-user input:focus,
 .cont-info-user textarea:focus,
 .hobby-info input:focus,
-.img-library input:focus{
+.img-library input:focus {
     outline: none;
     border-color: #9bbcf7;
-    box-shadow: 0 0 0 4px rgba(59,130,246,0.08);
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.08);
 }
-.edit-icon{
+
+.edit-icon {
     border: none;
     background-color: white;
     position: absolute;
@@ -248,14 +451,14 @@
 }
 
 /* Make the old .btn-edit-wrap match the layout of .edit-actions */
-.btn-edit-wrap{
+.btn-edit-wrap {
     display: flex;
     gap: 10px;
     align-items: center;
     margin-top: 8px;
 }
 
-.btn-edit-wrap button{
+.btn-edit-wrap button {
     padding: 6px 10px;
     border-radius: 8px;
     border: 1px solid #DEE1E6;
@@ -263,17 +466,19 @@
     cursor: pointer;
 }
 
-.btn-edit-wrap .cl-blue{
+.btn-edit-wrap .cl-blue {
     background: #EFF6FF;
     border-color: #9BBBF7;
     color: #0b4da0;
 }
 
 /* Position hobby edit-block outside the tag list so it doesn't shift layout */
-.hobby-info{
-    position: relative; /* anchor for absolute edit-block */
+.hobby-info {
+    position: relative;
+    /* anchor for absolute edit-block */
 }
-.hobby-info .edit-block{
+
+.hobby-info .edit-block {
     position: absolute;
     left: 0;
     top: calc(100% + 8px);
@@ -282,11 +487,11 @@
     padding: 12px;
     border-radius: 8px;
     border: 1px solid #DEE1E6;
-    box-shadow: 0 6px 20px rgba(23,26,31,0.08);
+    box-shadow: 0 6px 20px rgba(23, 26, 31, 0.08);
     width: min(480px, 100%);
 }
 
 /* Ensure edit-block children keep visual spacing when absolutely positioned */
-.hobby-info .edit-block > div {
+.hobby-info .edit-block>div {
     margin-bottom: 8px;
 }

@@ -1,7 +1,7 @@
 import './menu.css';
-import '../../css/asset.css';
-
+import '../../../assets/css/asset.css';
 import { useEffect, useState } from 'react';
+
 import { Calendar, Users, Box, MessageSquare, NotepadText } from 'lucide-react';
 
 const MENU_ITEMS = [

@@ -1,81 +1,183 @@
 import express from "express";
 import dotenv from "dotenv";
-import connectDB  from "./libs/db.js";
+import connectDB from "./libs/db.js";
+import cookieParser from "cookie-parser";
+import cors from "cors";
+import http from "http";
+import { Server } from "socket.io";
+
+// Models
+// Models
+import User from "./models/User.js";
+
+// Routes
 import authRoute from "./routes/authRoute.js";
 import userRoute from "./routes/userRoute.js";
-
-import friendRoute from "./routes/friendRoute.js";
+import matchRoute from "./routes/matchRoute.js";
+import personRoute from "./routes/personRoute.js";
 import messageRoute from "./routes/messageRoute.js";
 import conversationRoute from "./routes/conversationRoute.js";
-
-import personRoute from "./routes/personRoute.js";
-import matchRoute from "./routes/matchRoute.js"; // <--- THÊM DÒNG NÀY
-
-import personRoute from "./routes/personRoute.js"; // [THÊM MỚI] Import route person
-import cookieParser from "cookie-parser";
+import appointmentRoute from "./routes/appointmentRoute.js";
+import notificationRoute from "./routes/notificationRoute.js"; 
+import dashboardRoute from "./routes/dashboardRoute.js";
+// Middlewares
 import { protectedRoute } from "./middlewares/authMiddleware.js";
-import cors from "cors";
+import { socketAuthMiddleware } from "./middlewares/socketAuthMiddleware.js";
 
-dotenv.config();
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
 const app = express();
+const server = http.createServer(app);
+
+const io = new Server(server, {
+  cors: {
+    origin: process.env.CLIENT_URL || "http://localhost:5173",
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+    credentials: true,
+  },
+});
+
 const PORT = process.env.PORT || 5001;
 
-// middlewares
-app.use(express.json());
+// MIDDLEWARES 
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(cookieParser());
-app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
 
-// swagger
-// const swaggerDocument = JSON.parse(fs.readFileSync("./src/swagger.json", "utf8"));
-// app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL || "http://localhost:5173",
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
-// Make io accessible in routes
+// Make io accessible in all routes
 app.use((req, res, next) => {
   req.io = io;
   next();
 });
 
-// public routes
+// PUBLIC ROUTES 
 app.use("/api/auth", authRoute);
 
-// private routes (Yêu cầu đăng nhập)
-app.use(protectedRoute); 
+// Health check
+app.get("/api/health", (req, res) => {
+  res.status(200).json({
+    status: "OK",
+    message: "Server đang hoạt động",
+    timestamp: new Date().toISOString(),
+  });
+});
+
+//  PROTECTED ROUTES (Yêu cầu đăng nhập) 
+app.use("/api/users", protectedRoute, userRoute);
+app.use("/api/match", protectedRoute, matchRoute);
+app.use("/api/people", protectedRoute, personRoute);
+app.use("/api/messages", protectedRoute, messageRoute);
+app.use("/api/conversations", protectedRoute, conversationRoute);
+app.use("/api/notifications", protectedRoute, notificationRoute); 
+app.use("/api/dashboard", protectedRoute, dashboardRoute);
+app.use("/api/appointments", protectedRoute, appointmentRoute);
+
+// ERROR HANDLING 
+app.use((err, req, res, next) => {
+  console.error(" Global Error:", err);
+  res.status(err.status || 500).json({
+    message: err.message || "Lỗi hệ thống",
+    ...(process.env.NODE_ENV === "development" && { stack: err.stack })
+  });
+});
+
+// 404 Handler
+app.use((req, res) => {
+  res.status(404).json({ message: "API endpoint không tồn tại" });
+});
+// ================== PROTECTED ROUTES ==================
+app.use(protectedRoute);
 
 app.use("/api/users", userRoute);
-app.use("/api/friends", friendRoute);
 app.use("/api/messages", messageRoute);
 app.use("/api/conversations", conversationRoute);
+app.use("/api/appointments", appointmentRoute);
+app.use("/api/people", personRoute);
+app.use("/api/match", matchRoute);
 
-// Match & Person Routes
-app.use("/api/people", personRoute); 
-app.use("/api/match", matchRoute); // Bây giờ dòng này mới chạy được vì đã import ở trên
-
+//  SOCKET.IO
+io.use(socketAuthMiddleware);
 
 io.on("connection", (socket) => {
-  console.log("A user connected:", socket.id);
+  console.log(" User connected:", socket.id);
   const userId = socket.user._id.toString();
 
+  // Join personal room (để nhận thông báo realtime)
   socket.join(userId);
-  console.log(`User ${userId} joined their personal room`);
+  console.log(` User ${userId} joined personal room`);
 
+  // Online status
+  User.findByIdAndUpdate(userId, {
+    isOnline: true,
+    lastSeen: new Date(),
+  }).catch(console.error);
+
+  // Join conversation room
   socket.on("join_conversation", (conversationId) => {
     socket.join(conversationId);
-    console.log(`User ${userId} joined conversation ${conversationId}`);
+    console.log(` User ${userId} joined conversation ${conversationId}`);
   });
 
+  // Leave conversation
+  socket.on("leave_conversation", (conversationId) => {
+    socket.leave(conversationId);
+    console.log(` User ${userId} left conversation ${conversationId}`);
+  });
+
+  // Typing indicator
+  socket.on("typing", ({ conversationId, isTyping }) => {
+    socket.to(conversationId).emit("user_typing", {
+      userId,
+      isTyping,
+    });
+  });
+
+  // Disconnect
   socket.on("disconnect", () => {
-    console.log("User disconnected:", socket.id);
+    console.log("🔌 User disconnected:", socket.id);
+    User.findByIdAndUpdate(userId, {
+      isOnline: false,
+      lastSeen: new Date(),
+    }).catch(console.error);
   });
 });
 
-app.use(protectedRoute); // Middleware bảo vệ các route bên dưới
-app.use("/api/users", userRoute);
-app.use("/api/people", personRoute); // Đăng ký route /api/people
-app.use("/api/match", matchRoute);
+//  START SERVER
 connectDB().then(() => {
-  app.listen(PORT, () => {
-    console.log(`server bắt đầu trên cổng ${PORT}`);
+  server.listen(PORT, () => {
+    console.log(` Server đang chạy trên cổng ${PORT}`);
+    console.log(` API: http://localhost:${PORT}/api`);
+    console.log(` Socket.IO: ws://localhost:${PORT}`);
+    console.log(` Environment: ${process.env.NODE_ENV || "development"}`);
+  });
+}).catch(error => {
+  console.error(" Không thể khởi động server:", error);
+  process.exit(1);
+});
+
+// ================== GRACEFUL SHUTDOWN ==================
+process.on("SIGINT", async () => {
+  console.log("\n Đang tắt server...");
+  await User.updateMany({}, { isOnline: false });
+  server.close(() => {
+    console.log(" Server đã tắt");  
+    process.exit(0);
   });
 });
 
+global.io = io;

@@ -26,7 +26,6 @@
   transition: background-color 0.12s ease, color 0.12s ease;
 }
 
-/* hover and focus */
 .main-menu ul li a.menu-link:hover,
 .main-menu ul li a.menu-link:focus{
   background: #f3f4f6;
@@ -34,14 +33,12 @@
   text-decoration: none;
 }
 
-/* active state */
 .main-menu ul li a.menu-link.active{
   background: #eef2ff;
   color: #3730a3;
   font-weight: 600;
 }
 
-/* reset generic anchor styles locally to avoid interfering globally */
 a {
   all: unset;
   cursor: pointer;

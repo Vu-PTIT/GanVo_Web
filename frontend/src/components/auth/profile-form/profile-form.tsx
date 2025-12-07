@@ -1,8 +1,10 @@
+
 import './profile-form.css';
-import '../../css/asset.css';
-import '../../css/index.css';
-import { Calendar, Users, Sparkles, Edit } from "lucide-react";
-import { useState } from 'react';
+import '../../../assets/css/asset.css';
+import '../../../assets/css/index.css';
+import { Calendar, Users, Sparkles, Heart, Image as ImageIcon, Search } from "lucide-react";
+import { useState, useEffect } from 'react';
+import axiosInstance from '../../../lib/axios';
 
 type Profile = {
     avatar: string;
@@ -11,280 +13,351 @@ type Profile = {
     birthDate: string;
     gender: string;
     about: string;
-    hobbies: string[];
+    hobbies: string | string[]; // Allow string for editing comma-separated
     images: string[];
     preference: string;
 }
 
-const initialProfile: Profile = {
-    avatar: '../../../../public/z7162069739961_81cab8e64cc2813944f4900ca14b7c0b.jpg',
-    name: 'Nguyễn Lâm Anh',
-    location: 'Hà Nội, VIệt Nam',
-    birthDate: '2006-05-15',
-    gender: 'Nam',
-    about: `Chào mọi người! Mình là Thảo, một người yêu thích du lịch và khám phá những điều mới mẻ. Mình làm việc trong lĩnh vực Marketing và rất đam mê với công việc sáng tạo. Khi không làm việc, mình thường dành thời gian để đọc sách, nghe nhạc acoustic, hoặc thử các công thức nấu ăn mới. Mình thích những cuộc trò chuyện sâu sắc, có ý nghĩa và luôn sẵn lòng kết bạn với những người có cùng sở thích. Hy vọng tìm được những người bạn chân thành hoặc một mối quan hệ nghiêm túc tại đây.`,
-    hobbies: ['Du lịch', 'Âm nhạc', 'Nấu ăn', 'Đọc sách', 'Chơi thể thao'],
-    images: [
-        '../../../../public/z7162069739961_81cab8e64cc2813944f4900ca14b7c0b.jpg',
-        '../../../../public/z7162069739961_81cab8e64cc2813944f4900ca14b7c0b.jpg'
-    ],
-    preference: 'Tìm kiếm mối quan hệ nghiêm túc, bạn bè, hoặc người có cùng sở thích để trò chuyện.'
+const emptyProfile: Profile = {
+    avatar: '',
+    name: '',
+    location: '',
+    birthDate: '',
+    gender: '',
+    about: '',
+    hobbies: [],
+    images: [],
+    preference: ''
 }
 
 export function ProfileForm() {
-    const [profile, setProfile] = useState<Profile>(initialProfile);
-    const [editingSection, setEditingSection] = useState<string | null>(null); // null = not editing; 'all' = global edit
-    const [draft, setDraft] = useState<Profile>(initialProfile);
-    const [hobbyInputs, setHobbyInputs] = useState<string[]>([]);
+    const [profile, setProfile] = useState<Profile>(emptyProfile);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const [isEditing, setIsEditing] = useState(false);
+    const [editData, setEditData] = useState<Profile>(emptyProfile);
 
-    // Start editing a specific section, or omit to edit all ('all')
-    const startEdit = (section?: string) => {
-        setDraft(profile);
-        if (section === 'hobbies') setHobbyInputs([]);
-        setEditingSection(section ?? 'all');
-    };
+    // Fetch profile data on component mount
+    const fetchProfile = async () => {
+        setError(null);
+        try {
+            const response = await axiosInstance.get('/users/me');
+            console.log('[ProfileForm] /users/me status:', response?.status);
+            console.log('[ProfileForm] /users/me data:', response?.data);
 
-    const addHobbyInput = () => setHobbyInputs((prev) => [...prev, '']);
-    const updateHobbyInput = (idx: number, value: string) => setHobbyInputs((prev) => prev.map((v, i) => (i === idx ? value : v)));
-    const removeHobbyInput = (idx: number) => setHobbyInputs((prev) => prev.filter((_, i) => i !== idx));
-    const confirmHobbies = () => {
-        const toAdd = hobbyInputs.map((h) => h.trim()).filter((h) => h.length > 0);
-        if (toAdd.length > 0) {
-            setProfile((prev) => ({ ...prev, hobbies: [...prev.hobbies, ...toAdd] }));
-            setDraft((prev) => ({ ...prev, hobbies: [...prev.hobbies, ...toAdd] }));
+            const data = response?.data?.user ?? response?.data ?? null;
+
+            if (!data) {
+                console.warn('[ProfileForm] No profile data returned from API');
+                setProfile(emptyProfile);
+                setError('Không tìm thấy dữ liệu hồ sơ.');
+                return;
+            }
+
+            // Ensure hobbies is an array for display
+            const hobbies = Array.isArray(data.interests) ? data.interests : [];
+
+            // Helper to format date for input (YYYY-MM-DD)
+            const formatDateForInput = (isoDate: string) => {
+                if (!isoDate) return '';
+                const d = new Date(isoDate);
+                return d.toISOString().split('T')[0];
+            };
+
+            const mapped = {
+                avatar: data.avatarUrl || '',
+                name: data.displayName || '',
+                location: data.location || '',
+                // Store mapped display string for view
+                birthDate: data.dateOfBirth ? new Date(data.dateOfBirth).toLocaleDateString('vi-VN') : 'Chưa cập nhật',
+                gender: data.gender || 'other',
+                about: data.bio || '',
+                hobbies: hobbies,
+                images: Array.isArray(data.photos) ? data.photos.map((p: any) => p.url || p) : [],
+                preference: data.lookingFor || ''
+            } as Profile;
+
+            setProfile(mapped);
+
+            // Set edit data with raw values suitable for inputs
+            setEditData({
+                ...mapped,
+                birthDate: data.dateOfBirth ? formatDateForInput(data.dateOfBirth) : '',
+                hobbies: hobbies.join(', ') // Join for comma-separated edit
+            });
+
+        } catch (err: any) {
+            console.error('[ProfileForm] fetchProfile error:', err);
+            setProfile(emptyProfile);
+            setError('Không thể tải hồ sơ. Vui lòng thử lại.');
+        } finally {
+            setLoading(false);
         }
-        setHobbyInputs([]);
-        setEditingSection(null);
     };
 
-    const cancelEdit = () => {
-        setDraft(profile);
-        setEditingSection(null);
+    useEffect(() => {
+        fetchProfile();
+    }, []);
+
+    const handleEditToggle = () => {
+        if (!isEditing) {
+            // Enter edit mode: Reset editData to current profile (but formatted for inputs)
+            // Re-fetching or re-syncing might be safer but for now assume profile state is ok.
+            // Actually, we set editData on fetch. If user edits then cancels, we might want to reset.
+            // Let's just use the current profile state to re-populate editData just in case.
+            // Note: profile.birthDate is strictly for display (DD/MM/YYYY), so we rely on what we had or clears it.
+            // Ideally we should keep raw data. For now, let's keep it simple: 
+            // If we entered edit mode, we use the editData we prepared during fetch, 
+            // OR we might need to parse the display date back if we didn't store raw.
+            // DECISION: Let's fetch pure data again or rely on editData being kept in sync?
+            // Simplest: just toggle. If canceling, we revert changes.
+        }
+        setIsEditing(!isEditing);
     };
 
-    const saveEdit = () => {
-        setProfile(draft);
-        setEditingSection(null);
+    const handleCancel = () => {
+        setIsEditing(false);
+        // ideally reset editData to original
+        fetchProfile();
     };
 
-    const updateDraft = (patch: Partial<Profile>) => setDraft(prev => ({ ...prev, ...patch }));
+    const handleSave = async () => {
+        try {
+            setLoading(true);
+            const payload = {
+                displayName: editData.name,
+                location: editData.location,
+                dateOfBirth: editData.birthDate, // YYYY-MM-DD is fine for backend usually
+                gender: editData.gender,
+                bio: editData.about,
+                lookingFor: editData.preference,
+                interests: typeof editData.hobbies === 'string'
+                    ? editData.hobbies.split(',').map(s => s.trim()).filter(s => s)
+                    : editData.hobbies
+            };
+
+            await axiosInstance.put('/users/profile', payload);
+            setIsEditing(false);
+            await fetchProfile(); // Refresh data
+        } catch (err) {
+            console.error('Update failed', err);
+            alert('Cập nhật thất bại. Vui lòng kiểm tra lại thông tin.');
+            setLoading(false);
+        }
+    };
+
+    const handleChange = (field: keyof Profile, value: any) => {
+        setEditData(prev => ({ ...prev, [field]: value }));
+    };
+
+    if (loading) {
+        return (
+            <div className="container container-1000">
+                <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+                    <p>Đang tải thông tin...</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="container container-1000">
             <div className="profile-form">
-            <div className="cont-content-profile">
-                <div className="content-profile">
-                    <div className="info-01-profile">
-                        <div className="avatar-user">
-                            {(editingSection === 'all' || editingSection === 'avatar') ? (
-                                <input type="text" value={draft.avatar} onChange={(e) => updateDraft({ avatar: e.target.value })} />
-                            ) : (
-                                <img src={profile.avatar} alt="avatar" />
-                            )}
+
+                {/* Header Section */}
+                <div className="profile-header-text">
+                    <h1 className="profile-title">Hồ Sơ Của Bạn</h1>
+                    <p className="profile-subtitle">Cập nhật thông tin cá nhân và quản lý sự hiện diện của bạn.</p>
+                </div>
+
+                <div className="cont-content-profile">
+
+                    {/* Top Info: Avatar & Name */}
+                    <div className="profile-main-info">
+                        <div className="avatar-container">
+                            <img
+                                src={profile.avatar || '/img/default-avatar.jpg'}
+                                alt="avatar"
+                                className="avatar-img"
+                                onError={(e: any) => { e.currentTarget.src = '/img/default-avatar.jpg'; }}
+                            />
                         </div>
-                        {(editingSection === 'all' || editingSection === 'name') ? (
-                            <input className="name-user-input" value={draft.name} onChange={(e) => updateDraft({ name: e.target.value })} />
+                        {isEditing ? (
+                            <div style={{ width: '100%', maxWidth: '300px', display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'center' }}>
+                                <input
+                                    className="edit-input"
+                                    value={editData.name}
+                                    onChange={(e) => handleChange('name', e.target.value)}
+                                    placeholder="Tên hiển thị"
+                                />
+                                <input
+                                    className="edit-input"
+                                    value={editData.location}
+                                    onChange={(e) => handleChange('location', e.target.value)}
+                                    placeholder="Vị trí (VD: Hà Nội)"
+                                    style={{ fontSize: '14px', textAlign: 'center' }}
+                                />
+                            </div>
                         ) : (
-                            <div className="name-user">{profile.name}</div>
-                        )}
-                        {(editingSection === 'all' || editingSection === 'location') ? (
-                            <input className="born-user-input" value={draft.location} onChange={(e) => updateDraft({ location: e.target.value })} />
-                        ) : (
-                            <div className="born-user">{profile.location}</div>
+                            <>
+                                <h2 className="profile-name-age">{profile.name || 'Người dùng'}</h2>
+                                <p className="profile-location">{profile.location || 'Chưa cập nhật'}</p>
+                            </>
                         )}
                     </div>
-                    <div className="info-profile">
-                        <div className="cont-info-user">
-                            <div className="title-info">
-                                <Calendar className='style-icon cl-blue' />
-                                <span>Ngày sinh</span>
-                                <button className="edit-icon" onClick={(e) => { e.stopPropagation(); startEdit('birthDate'); }}>
-                                    <Edit size={16} />
-                                </button>
+
+                    <div className="content-profile">
+                        {/* Birthday Section */}
+                        <div className="profile-section">
+                            <div className="section-header">
+                                <Calendar className="section-icon" strokeWidth={2.5} />
+                                <span className="section-title">Ngày sinh</span>
                             </div>
-                            {(editingSection === 'all' || editingSection === 'birthDate') ? (
-                                <div className="edit-block">
+                            <div className="section-content text-sm">
+                                {isEditing ? (
                                     <input
                                         type="date"
-                                        value={draft.birthDate}
-                                        onChange={(e) => updateDraft({ birthDate: e.target.value })}
+                                        className="edit-input"
+                                        value={editData.birthDate}
+                                        onChange={(e) => handleChange('birthDate', e.target.value)}
                                     />
-
-                                    <div className="edit-actions">
-                                        <button className="btn-short cl-blue" onClick={saveEdit}>
-                                            Xác nhận
-                                        </button>
-                                        <button className="btn-short" onClick={cancelEdit}>
-                                            Hủy
-                                        </button>
-                                    </div>
-                                </div>
-                            ) : (
-                                <div className="detail-info">{profile.birthDate}</div>
-                            )}
-
-                        </div>
-                        <div className="cont-info-user">
-                            <div className="title-info">
-                                <Users className='style-icon cl-blue' />
-                                <span>Giới tính</span>
-                                <button className="edit-icon" onClick={(e) => { e.stopPropagation(); startEdit('gender'); }}>
-                                    <Edit size={16} />
-                                </button>
+                                ) : profile.birthDate}
                             </div>
-                            {(editingSection === 'all' || editingSection === 'gender') ? (
-                                <div className="edit-block">
+                        </div>
 
-                                    {/* SELECT GIỚI TÍNH */}
+                        {/* Gender Section */}
+                        <div className="profile-section">
+                            <div className="section-header">
+                                <Users className="section-icon" strokeWidth={2.5} />
+                                <span className="section-title">Giới tính</span>
+                            </div>
+                            <div className="section-content text-sm">
+                                {isEditing ? (
                                     <select
-                                        value={draft.gender}
-                                        onChange={(e) => updateDraft({ gender: e.target.value })}
-                                        className="select-gender"
+                                        className="edit-input"
+                                        value={editData.gender}
+                                        onChange={(e) => handleChange('gender', e.target.value)}
                                     >
-                                        <option value="Nam">Nam</option>
-                                        <option value="Nữ">Nữ</option>
+                                        <option value="male">Nam</option>
+                                        <option value="female">Nữ</option>
+                                        <option value="other">Khác</option>
                                     </select>
-
-                                    {/* 2 NÚT */}
-                                    <div className="edit-actions">
-                                        <button className="btn-short cl-blue" onClick={saveEdit}>
-                                            Xác nhận
-                                        </button>
-                                        <button className="btn-short" onClick={cancelEdit}>
-                                            Hủy
-                                        </button>
-                                    </div>
-
-                                </div>
-                            ) : (
-                                <div className="detail-info">{profile.gender}</div>
-                            )}
-
-                        </div>
-                    </div>
-                    <div className="info-profile">
-                        <div className="cont-info-user">
-                            <div className="title-info">
-                                <Sparkles className='style-icon cl-blue' />
-                                <span>Về tôi</span>
-                                <button
-                                    className="edit-icon"
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        startEdit('about');
-                                    }}
-                                >
-                                    <Edit size={16} />
-                                </button>
+                                ) : (profile.gender === 'male' ? 'Nam' : profile.gender === 'female' ? 'Nữ' : 'Khác')}
                             </div>
+                        </div>
 
-                            {(editingSection === 'all' || editingSection === 'about') ? (
-                                <>
+                        {/* About Section */}
+                        <div className="profile-section">
+                            <div className="section-header">
+                                <Sparkles className="section-icon" strokeWidth={2.5} />
+                                <span className="section-title">Về tôi</span>
+                            </div>
+                            <div className="section-content">
+                                {isEditing ? (
                                     <textarea
-                                        value={draft.about}
-                                        onChange={(e) => updateDraft({ about: e.target.value })}
-                                        rows={6}
+                                        className="edit-textarea"
+                                        value={editData.about}
+                                        onChange={(e) => handleChange('about', e.target.value)}
+                                        placeholder="Giới thiệu bản thân..."
+                                        maxLength={500}
                                     />
-
-                                    <div className="edit-actions">
-                                        <button className="btn-short cl-blue" onClick={saveEdit}>
-                                            Xác nhận
-                                        </button>
-                                        <button className="btn-short" onClick={cancelEdit}>
-                                            Hủy
-                                        </button>
-                                    </div>
-                                </>
-                            ) : (
-                                <div className="detail-info">{profile.about}</div>
-                            )}
-                        </div>
-                    </div>
-
-                    <div className="info-profile">
-                        <div className="cont-info-user">
-                            <div className="title-info">
-                                <span>Sở thích</span>
-
-                                {/* Nút Edit */}
-                                <button
-                                    className="edit-icon"
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        startEdit("hobbies");
-                                    }}
-                                >
-                                    <Edit size={16} />
-                                </button>
+                                ) : (profile.about || 'Chưa có giới thiệu bản thân...')}
                             </div>
+                        </div>
 
-                            <div className="detail-info hobby-info">
-                                {/* always show existing hobby tags unchanged */}
-                                {profile.hobbies.map((h, idx) => (
-                                    <span key={idx} className="btn-hobby">
-                                        {h}
-                                    </span>
-                                ))}
-
-                                {/* when editing hobbies, show inputs + add/confirm/cancel controls (do not replace tags) */}
-                                {editingSection === 'hobbies' && (
-                                    <div className="edit-block">
-                                        {hobbyInputs.map((val, i) => (
-                                            <div key={i} style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 8 }}>
-                                                <input value={val} onChange={(e) => updateHobbyInput(i, e.target.value)} />
-                                                <button className="btn-short" onClick={() => removeHobbyInput(i)} aria-label={`Xóa mục ${i}`}>
-                                                    ×
-                                                </button>
-                                            </div>
-                                        ))}
-
-                                        <div style={{ display: 'flex', gap: 8 }}>
-                                            <button className="btn-short" onClick={addHobbyInput}>
-                                                + Thêm
-                                            </button>
-                                            <button className="btn-short cl-blue" onClick={confirmHobbies}>
-                                                Xác nhận
-                                            </button>
-                                            <button
-                                                className="btn-short"
-                                                onClick={() => {
-                                                    setHobbyInputs([]);
-                                                    cancelEdit();
-                                                }}
-                                            >
-                                                Hủy
-                                            </button>
-                                        </div>
-                                    </div>
+                        {/* Hobbies Section */}
+                        <div className="profile-section">
+                            <div className="section-header">
+                                <Heart className="section-icon" strokeWidth={2.5} />
+                                <span className="section-title">Sở thích</span>
+                            </div>
+                            <div className="hobbies-list">
+                                {isEditing ? (
+                                    <input
+                                        className="edit-input"
+                                        value={editData.hobbies as string}
+                                        onChange={(e) => handleChange('hobbies', e.target.value)}
+                                        placeholder="Nhập sở thích, cách nhau bởi dấu phẩy (VD: Đọc sách, Du lịch)"
+                                    />
+                                ) : (
+                                    (Array.isArray(profile.hobbies) && profile.hobbies.length > 0) ? (
+                                        profile.hobbies.map((hobby, index) => (
+                                            <span key={index} className="hobby-tag">
+                                                {hobby}
+                                            </span>
+                                        ))
+                                    ) : (
+                                        <span className="section-content">Chưa thêm sở thích</span>
+                                    )
                                 )}
                             </div>
                         </div>
+
+                        {/* Photos Section */}
+                        <div className="profile-section">
+                            <div className="section-header">
+                                <ImageIcon className="section-icon" strokeWidth={2.5} />
+                                <span className="section-title">Thư viện ảnh</span>
+                            </div>
+                            {isEditing ? (
+                                <p className="text-sm text-gray-500 italic">Tính năng quản lý ảnh đang được cập nhật.</p>
+                            ) : (
+                                <div className="photo-grid">
+                                    {profile.images.map((img, idx) => (
+                                        <img key={idx} src={img} alt={`Gallery ${idx}`} className="photo-item" />
+                                    ))}
+                                    {Array.from({ length: Math.max(0, 4 - profile.images.length) }).map((_, i) => (
+                                        <div key={i} className="photo-item photo-item-placeholder">
+                                            Ảnh trống
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Looking For Section */}
+                        <div className="profile-section">
+                            <div className="section-header">
+                                <Search className="section-icon" strokeWidth={2.5} />
+                                <span className="section-title">Ưu tiên tìm kiếm</span>
+                            </div>
+                            <div className="preference-text">
+                                {isEditing ? (
+                                    <input
+                                        className="edit-input"
+                                        value={editData.preference}
+                                        onChange={(e) => handleChange('preference', e.target.value)}
+                                        placeholder="Bạn đang tìm kiếm điều gì?"
+                                    />
+                                ) : (profile.preference || 'Chưa thiết lập')}
+                            </div>
+                        </div>
+
                     </div>
 
-                    <div className="info-profile">
-                        <div className="cont-info-user">
-                            <div className="title-info">
-                                <span>Ưu tiên tìm kiếm</span>
-                                <button
-                                    className="edit-icon"
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        // Immediately remove the preference while keeping the same styling
-                                        setProfile((prev) => ({ ...prev, preference: '' }));
-                                        setDraft((prev) => ({ ...prev, preference: '' }));
-                                    }}
-                                    aria-label="Xóa ưu tiên tìm kiếm"
-                                >
-                                    <Edit size={16} />
+                    {/* Footer Buttons */}
+                    <div className="profile-footer">
+                        {isEditing ? (
+                            <>
+                                <button onClick={handleSave} className="btn-profile-action btn-primary-blue">
+                                    Lưu Thay Đổi
                                 </button>
-                            </div>
-                            <div className="detail-info">{profile.preference}</div>
-                        </div>
+                                <button onClick={handleCancel} className="btn-profile-action btn-secondary-gray">
+                                    Hủy
+                                </button>
+                            </>
+                        ) : (
+                            <button onClick={handleEditToggle} className="btn-profile-action btn-primary-blue">
+                                Chỉnh Sửa Hồ Sơ
+                            </button>
+                        )}
+                        {/* Removed: Xem Kết Nối, Bắt Đầu Trò Chuyện */}
                     </div>
+
                 </div>
             </div>
         </div>
-        </div>
+        
     )
-
 }

@@ -4,6 +4,7 @@ import { useAuthStore } from "@/stores/useAuthStore";
 =======
 import '../assets/css/index.css';
 import '../assets/css/asset.css';
+import './ChatAppPage.css';
 import { useEffect } from "react";
 import { useChatStore } from "@/stores/useChatStore";
 import ConversationList from "@/components/chat/ConversationList";
@@ -26,12 +27,10 @@ const ChatAppPage = () => {
       <main id="chat">
         <div className="chat-layout scoll-auto">
           <Menu />
-          <div className="flex-1 bg-base-100 rounded-lg shadow-xl overflow-hidden flex border border-base-300 h-full">
-            <div className="flex w-80 flex-col border-r border-base-300 h-full">
+          <div className="chat-app-wrapper">
+            <div className="chat-sidebar-container">
               <ConversationList />
             </div>
-
-            {/* Right Side - Chat Window */}
             <ChatWindow />
           </div>
         </div>

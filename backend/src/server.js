@@ -19,7 +19,11 @@ import messageRoute from "./routes/messageRoute.js";
 import conversationRoute from "./routes/conversationRoute.js";
 import appointmentRoute from "./routes/appointmentRoute.js";
 import notificationRoute from "./routes/notificationRoute.js"; 
+<<<<<<< HEAD
 
+=======
+import dashboardRoute from "./routes/dashboardRoute.js";
+>>>>>>> 7393567d44bec27aece8873448e52f578881dbbe
 // Middlewares
 import { protectedRoute } from "./middlewares/authMiddleware.js";
 import { socketAuthMiddleware } from "./middlewares/socketAuthMiddleware.js";
@@ -84,6 +88,8 @@ app.use("/api/people", protectedRoute, personRoute);
 app.use("/api/messages", protectedRoute, messageRoute);
 app.use("/api/conversations", protectedRoute, conversationRoute);
 app.use("/api/notifications", protectedRoute, notificationRoute); 
+app.use("/api/dashboard", protectedRoute, dashboardRoute);
+app.use("/api/appointments", protectedRoute, appointmentRoute);
 
 // ERROR HANDLING 
 app.use((err, req, res, next) => {

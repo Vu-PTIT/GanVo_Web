@@ -65,7 +65,7 @@
   flex-direction: column;
   gap: 12px;
   background: #FFFFFF;
-  height: calc(100% - 72px);
+  height: 100%
 }
 
 .messages-container::-webkit-scrollbar {

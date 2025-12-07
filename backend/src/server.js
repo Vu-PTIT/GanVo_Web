@@ -175,7 +175,7 @@ process.on("SIGINT", async () => {
   console.log("\n Đang tắt server...");
   await User.updateMany({}, { isOnline: false });
   server.close(() => {
-    console.log(" Server đã tắt");  
+    console.log(" Server đã tắt");
     process.exit(0);
   });
 });

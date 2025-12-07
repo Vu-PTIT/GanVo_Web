@@ -88,7 +88,7 @@ export function DashboardForm() {
     }, []);
 
     return (
-        <div className="container container-1000">
+        <div className="dashboard-cont">
             <div className="dashboard-form">
                 <div className="cont-title-dashboard">
                     <h1>Tổng quan Dashboard</h1>

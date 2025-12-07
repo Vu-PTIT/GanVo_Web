@@ -1,5 +1,13 @@
 /* Dashboard Form Component Styles */
 
+.dashboard-cont {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
 .dashboard-form {
   padding-left: 10px;
   padding-right: 10px;
@@ -7,6 +15,7 @@
   flex-direction: column;
   height: 100%;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 

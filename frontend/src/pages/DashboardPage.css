@@ -3,9 +3,10 @@
 /* Main dashboard layout container */
 .dashboard-layout {
     display: flex;
-    height: calc(100vh - 60px);
+    height: 100%;
     overflow: hidden;
     width: 100vw;
+    overflow-x: hidden;
 }
 
 /* Dashboard app wrapper - main content area */

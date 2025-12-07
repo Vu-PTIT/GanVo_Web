@@ -4,7 +4,7 @@ import { useAuthStore } from "@/stores/useAuthStore";
 import { useConversationStore } from "@/stores/useConversationStore";
 import { useChatStore } from "@/stores/useChatStore";
 import { UserPlus, LogOut, MessageSquare } from "lucide-react";
-import AddFriendModal from "./AddFriendModal";
+import "./Sidebar.css";
 
 const Sidebar = () => {
     const {
@@ -34,64 +34,64 @@ const Sidebar = () => {
     };
 
     return (
-        <div className="flex flex-col h-full bg-base-200 w-full">
+        <div className="sidebar">
             {/* User Header */}
-            <div className="p-4 border-b border-base-300 flex items-center justify-between">
-                <div className="flex items-center gap-2">
+            <div className="sidebar-header">
+                <div className="user-profile">
                     <img
                         src={currentUser?.avatarUrl || "/avatar.png"}
                         alt="Avatar"
-                        className="size-8 rounded-full object-cover border border-base-300"
+                        className="user-avatar"
                     />
-                    <span className="font-bold text-sm truncate max-w-[120px]">{currentUser?.displayName}</span>
+                    <span className="user-name">{currentUser?.displayName}</span>
                 </div>
-                <div className="flex gap-1">
+                <div className="sidebar-actions">
                     <button
                         onClick={() => setShowAddFriend(true)}
-                        className="btn btn-ghost btn-sm btn-circle"
+                        className="sidebar-button add-friend-button"
                         title="Add Friend"
                     >
-                        <UserPlus className="size-5" />
+                        <UserPlus className="button-icon" />
                     </button>
                     <button
                         onClick={signOut}
-                        className="btn btn-ghost btn-sm btn-circle text-error"
+                        className="sidebar-button logout-button"
                         title="Logout"
                     >
-                        <LogOut className="size-5" />
+                        <LogOut className="button-icon" />
                     </button>
                 </div>
             </div>
 
-            {/* Content */}
-            <div className="flex-1 overflow-y-auto custom-scrollbar p-2">
+            {/* Friends List */}
+            <div className="sidebar-content">
                 {friends.length === 0 ? (
-                    <div className="text-center py-8 text-base-content/50 text-sm">
+                    <div className="empty-friends">
                         No friends yet.
                         <br />
-                        Click <UserPlus className="inline size-4" /> to add someone!
+                        Click <UserPlus className="inline-icon" /> to add someone!
                     </div>
                 ) : (
-                    <div className="space-y-1">
+                    <div className="friends-list">
                         {friends.map(friend => (
-                            <div key={friend._id} className="flex items-center justify-between p-2 hover:bg-base-300 rounded-lg group">
-                                <div className="flex items-center gap-3">
+                            <div key={friend._id} className="friend-item">
+                                <div className="friend-info">
                                     <img
                                         src={friend.avatarUrl || "/avatar.png"}
                                         alt={friend.username}
-                                        className="size-10 rounded-full object-cover border border-base-300"
+                                        className="friend-avatar"
                                     />
-                                    <div className="flex flex-col">
-                                        <span className="font-medium text-sm">{friend.displayName}</span>
-                                        <span className="text-xs text-base-content/50">@{friend.username}</span>
+                                    <div className="friend-details">
+                                        <span className="friend-name">{friend.displayName}</span>
+                                        <span className="friend-username">@{friend.username}</span>
                                     </div>
                                 </div>
                                 <button
                                     onClick={() => handleStartChat(friend._id)}
-                                    className="btn btn-ghost btn-sm btn-circle opacity-0 group-hover:opacity-100 transition-opacity"
+                                    className="friend-action-button"
                                     title="Message"
                                 >
-                                    <MessageSquare className="size-4" />
+                                    <MessageSquare className="button-icon" />
                                 </button>
                             </div>
                         ))}
@@ -99,7 +99,6 @@ const Sidebar = () => {
                 )}
             </div>
 
-            <AddFriendModal isOpen={showAddFriend} onClose={() => setShowAddFriend(false)} />
         </div>
     );
 };

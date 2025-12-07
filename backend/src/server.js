@@ -7,7 +7,6 @@ import http from "http";
 import { Server } from "socket.io";
 
 // Models
-// Models
 import User from "./models/User.js";
 
 // Routes
@@ -19,7 +18,7 @@ import messageRoute from "./routes/messageRoute.js";
 import conversationRoute from "./routes/conversationRoute.js";
 import appointmentRoute from "./routes/appointmentRoute.js";
 import notificationRoute from "./routes/notificationRoute.js"; 
-
+import dashboardRoute from "./routes/dashboardRoute.js";
 // Middlewares
 import { protectedRoute } from "./middlewares/authMiddleware.js";
 import { socketAuthMiddleware } from "./middlewares/socketAuthMiddleware.js";
@@ -84,6 +83,7 @@ app.use("/api/people", protectedRoute, personRoute);
 app.use("/api/messages", protectedRoute, messageRoute);
 app.use("/api/conversations", protectedRoute, conversationRoute);
 app.use("/api/notifications", protectedRoute, notificationRoute); 
+app.use("/api/dashboard", protectedRoute, dashboardRoute);
 
 // ERROR HANDLING 
 app.use((err, req, res, next) => {

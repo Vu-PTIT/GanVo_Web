@@ -31,11 +31,16 @@ export function SigninForm({ className, ...props }: React.ComponentProps<"div">)
     const { username, password } = data;
     await signIn(username, password);
 
-    // Check role to redirect
+    // Check role to redirect. Default to 'user' when role is missing.
     const user = useAuthStore.getState().user;
-    if (user?.role === "admin") {
+    const role = user?.role || 'user';
+
+    if (role === "admin") {
       navigate("/admin/appointments");
+    } else if (role === 'user') {
+      navigate("/appointment");
     } else {
+      // Unknown role — fallback to home
       navigate("/");
     }
   };
@@ -140,10 +145,6 @@ export function SigninForm({ className, ...props }: React.ComponentProps<"div">)
           </div>
         </CardContent>
       </Card>
-      <div className=" text-xs text-balance px-6 text-center *:[a]:hover:text-primary text-muted-foreground *:[a]:underline *:[a]:underline-offetset-4">
-        Bằng cách tiếp tục, bạn đồng ý với <a href="#">Điều khoản dịch vụ</a> và{" "}
-        <a href="#">Chính sách bảo mật</a> của chúng tôi.
-      </div>
     </div>
   );
 }

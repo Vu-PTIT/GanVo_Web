@@ -8,7 +8,7 @@ export const createAppointment = async (req, res) => {
 
     // ⚠ FIX: Bypass TEST MODE nếu không có user
     const userId =
-      req.user?.userId ||
+      req.user?._id ||
       "67abcde00000000000000001"; // userId giả để test
 
     const appointment = await Appointment.create({
@@ -29,7 +29,7 @@ export const createAppointment = async (req, res) => {
 
 export const getMyAppointments = async (req, res) => {
   const userId =
-    req.user?.userId ||
+    req.user?._id ||
     "67abcde00000000000000001"; // fallback
 
   const data = await Appointment.find({ userId }).sort({

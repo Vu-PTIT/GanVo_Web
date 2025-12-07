@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
   {
-    // --- AUTH & ACCOUNT ---
+    // AUTH & ACCOUNT
     username: {
       type: String,
       required: true,
@@ -30,7 +30,7 @@ const userSchema = new mongoose.Schema(
       trim: true,
     },
 
-    // --- ẢNH & AVATAR ---
+    // ẢNH & AVATAR
     avatarUrl: {
       type: String,
       default: "",
@@ -45,7 +45,7 @@ const userSchema = new mongoose.Schema(
       },
     ],
 
-    // --- THÔNG TIN CÁ NHÂN ---
+    // THÔNG TIN CÁ NHÂN
     bio: {
       type: String,
       maxlength: 500,
@@ -64,7 +64,7 @@ const userSchema = new mongoose.Schema(
       default: "Việt Nam",
     },
 
-    // --- SỞ THÍCH ---
+    // SỞ THÍCH
     interests: [{ type: String }],
 
     lookingFor: {
@@ -72,7 +72,7 @@ const userSchema = new mongoose.Schema(
       default: "",
     },
 
-    // --- TRẠNG THÁI ---
+    // TRẠNG THÁI
     isOnline: {
       type: Boolean,
       default: false,
@@ -89,14 +89,14 @@ const userSchema = new mongoose.Schema(
       default: "user",
     },
 
-    // --- AI EMBEDDING ---
+    // AI EMBEDDING
     embedding: {
       type: [Number],
       default: [],
       select: false,
     },
 
-    // --- SEARCH PREFERENCES ---
+    // SEARCH PREFERENCES 
     searchPreferences: {
       minAge: { type: Number, default: 18 },
       maxAge: { type: Number, default: 40 },
@@ -116,9 +116,7 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-/* ===========================
-    VIRTUAL FIELD TÍNH TUỔI
-=========================== */
+// VIRTUAL FIELD TÍNH TUỔI
 userSchema.virtual("age").get(function () {
   if (!this.dateOfBirth) return null;
   const diff = Date.now() - this.dateOfBirth.getTime();
@@ -126,9 +124,7 @@ userSchema.virtual("age").get(function () {
   return age;
 });
 
-/* ===========================
-    INDEXES
-=========================== */
+// INDEXES 
 userSchema.index({ location: 1 });
 userSchema.index({ gender: 1 });
 userSchema.index({ dateOfBirth: 1 });

@@ -31,11 +31,16 @@ export function SigninForm({ className, ...props }: React.ComponentProps<"div">)
     const { username, password } = data;
     await signIn(username, password);
 
-    // Check role to redirect
+    // Check role to redirect. Default to 'user' when role is missing.
     const user = useAuthStore.getState().user;
-    if (user?.role === "admin") {
+    const role = user?.role || 'user';
+
+    if (role === "admin") {
       navigate("/admin/appointments");
+    } else if (role === 'user') {
+      navigate("/appointment");
     } else {
+      // Unknown role — fallback to home
       navigate("/");
     }
   };

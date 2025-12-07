@@ -11,6 +11,7 @@ export type FriendItem = {
 
 
 export interface ItemConnectPersonProps {
+    id?: string;
 	avatar?: string;
 	name: string;
 	age?: number | string;
@@ -22,13 +23,13 @@ export interface ItemConnectPersonProps {
 	active?: boolean;
 }
 
-export default function ItemConnectPerson({ avatar, name, age, location, about, onClick, onWatchProfile, onAdd, active = false }: ItemConnectPersonProps) {
+export default function ItemConnectPerson({ id, avatar, name, age, location, about, onClick, onWatchProfile, onAdd, active = false }: ItemConnectPersonProps) {
 	const avatarSrc = avatar || '/z7162069739961_81cab8e64cc2813944f4900ca14b7c0b.jpg'
 
 	return (
 		<div className="large-3 col-6">
 			<div className="col-inner">
-				<div className={`item-friend-connect ${active ? 'active' : ''}`} onClick={onClick} role="button" tabIndex={0} data-age={age ?? ''} data-location={location ?? ''} data-about={about ?? ''} aria-label={`${name} ${age ? `${age} tuổi` : ''} ${location ?? ''}`}>
+				<div id={id} className={`item-friend-connect ${active ? 'active' : ''}`} onClick={onClick} role="button" tabIndex={0} data-id={id ?? ''} data-age={age ?? ''} data-location={location ?? ''} data-about={about ?? ''} aria-label={`${name} ${age ? `${age} tuổi` : ''} ${location ?? ''}`}>
 					<div className="item-friend-connect-left">
 						<div className="avatar-small">
 							<img src={avatarSrc} alt={`${name} avatar`} />

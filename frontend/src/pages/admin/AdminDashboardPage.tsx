@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axiosInstance from "../../lib/axios";
+import { adminService, AdminStats } from "../../services/adminService";
 import { Header } from "../../components/auth/header";
 import { AdminSidebar } from "../../components/admin/AdminSidebar";
 import "./admin-dashboard.css";
@@ -14,44 +14,34 @@ import {
     Legend
 } from "recharts";
 
-interface MonthlyStat {
-    name: string;
-    month: number;
-    year: number;
-    count: number;
-}
-
-interface AdminStats {
-    totalUsers: number;
-    totalAppointments: number;
-    usersByMonth: MonthlyStat[];
-    appointmentsByMonth: MonthlyStat[];
-}
-
 const AdminDashboardPage: React.FC = () => {
     const [stats, setStats] = useState<AdminStats | null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
         const fetchStats = async () => {
             try {
-                const res = await axiosInstance.get("/users/admin/stats");
-                setStats(res.data);
+                // Use the service instead of direct axios call
+                const data = await adminService.getStats();
+                setStats(data);
             } catch (error) {
                 console.error("Failed to fetch stats", error);
+            } finally {
+                setLoading(false);
             }
         };
         fetchStats();
     }, []);
 
-    if (!stats) {
+    if (loading || !stats) {
         return (
             <div className="layout">
                 <Header />
                 <main id="admin-dashboard">
                     <div className="chat-layout scoll-auto">
                         <AdminSidebar />
-                        <div className="flex-1 flex items-center justify-center">
-                            Loading...
+                        <div className="flex-1 flex items-center justify-center h-full">
+                            <div className="loading loading-spinner loading-lg"></div>
                         </div>
                     </div>
                 </main>
@@ -66,24 +56,24 @@ const AdminDashboardPage: React.FC = () => {
                 <div className="chat-layout scoll-auto">
                     <AdminSidebar />
 
-                    <div className="flex-1 bg-base-100 rounded-lg shadow-xl overflow-hidden flex flex-col border border-base-300 h-full">
-                        <div className="admin-content-wrapper">
-                            <h1 className="admin-title">Dashboard Thống Kê</h1>
+                    <div className="flex-1 bg-base-100 rounded-lg shadow-xl overflow-hidden flex flex-col border border-base-300 h-full p-6">
+                        <div className="admin-content-wrapper w-full h-full overflow-y-auto">
+                            <h1 className="text-2xl font-bold mb-6 text-base-content">Dashboard Thống Kê</h1>
 
-                            <div className="dashboard-stats-grid">
-                                <div className="stat-card">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                                <div className="stat bg-base-200 rounded-box shadow">
                                     <div className="stat-title">Tổng số User</div>
-                                    <div className="stat-value">{stats.totalUsers}</div>
+                                    <div className="stat-value text-primary">{stats.totalUsers}</div>
                                 </div>
-                                <div className="stat-card">
+                                <div className="stat bg-base-200 rounded-box shadow">
                                     <div className="stat-title">Tổng số Lịch Hẹn</div>
-                                    <div className="stat-value">{stats.totalAppointments}</div>
+                                    <div className="stat-value text-secondary">{stats.totalAppointments}</div>
                                 </div>
                             </div>
 
-                            <div className="charts-grid">
-                                <div className="chart-container">
-                                    <h3 className="chart-title">Người dùng mới (12 tháng qua)</h3>
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                <div className="bg-base-100 p-4 rounded-box shadow border border-base-200">
+                                    <h3 className="text-lg font-semibold mb-4 text-center">Người dùng mới (12 tháng qua)</h3>
                                     <div style={{ width: "100%", height: 300 }}>
                                         <ResponsiveContainer>
                                             <BarChart data={stats.usersByMonth}>
@@ -98,8 +88,8 @@ const AdminDashboardPage: React.FC = () => {
                                     </div>
                                 </div>
 
-                                <div className="chart-container">
-                                    <h3 className="chart-title">Lịch hẹn mới (12 tháng qua)</h3>
+                                <div className="bg-base-100 p-4 rounded-box shadow border border-base-200">
+                                    <h3 className="text-lg font-semibold mb-4 text-center">Lịch hẹn mới (12 tháng qua)</h3>
                                     <div style={{ width: "100%", height: 300 }}>
                                         <ResponsiveContainer>
                                             <BarChart data={stats.appointmentsByMonth}>

@@ -26,18 +26,27 @@ export function SigninForm({ className, ...props }: React.ComponentProps<"div">)
   });
 
   const onSubmit = async (data: SignInFormValues) => {
-    const { username, password } = data;
-    await signIn(username, password);
+    try {
+      const { username, password } = data;
+      await signIn(username, password);
 
-    const user = useAuthStore.getState().user;
-    const role = user?.role || "user";
+      const user = useAuthStore.getState().user;
 
-    if (role === "admin") {
-      navigate("/admin/appointments");
-    } else if (role === "user") {
-      navigate("/appointment");
-    } else {
-      navigate("/");
+      // Only navigate if we have a valid user (login was successful)
+      if (user) {
+        const role = user.role || "user";
+
+        if (role === "admin") {
+          navigate("/admin/appointments");
+        } else if (role === "user") {
+          navigate("/appointment");
+        } else {
+          navigate("/");
+        }
+      }
+    } catch (error) {
+      console.error("Login failed:", error);
+      // Error toast is already shown in the signIn function
     }
   };
 

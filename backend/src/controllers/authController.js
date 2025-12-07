@@ -116,8 +116,12 @@ export const signOut = async (req, res) => {
       // xoá refresh token trong Session
       await Session.deleteOne({ refreshToken: token });
 
-      // xoá cookie
-      res.clearCookie("refreshToken");
+      // xoá cookie với cùng options như khi set cookie
+      res.clearCookie("refreshToken", {
+        httpOnly: true,
+        secure: true,
+        sameSite: "none",
+      });
     }
 
     return res.sendStatus(204);

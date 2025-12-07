@@ -1,6 +1,12 @@
+/* Dashboard Form Component Styles */
+
 .dashboard-form {
   padding-left: 10px;
   padding-right: 10px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
 }
 
 
@@ -31,17 +37,17 @@
 }
 
 .dashboard-content-01 .title {
-  font-size: 14px; 
-  line-height: 20px; 
-  font-weight: 500; 
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 500;
   color: #565D6DFF;
   margin-bottom: 15px;
 }
 
 .dashboard-content-01 .number {
-  font-size: 30px; 
-  line-height: 36px; 
-  font-weight: 700; 
+  font-size: 30px;
+  line-height: 36px;
+  font-weight: 700;
   color: #171A1FFF;
 }
 
@@ -86,15 +92,16 @@
   color: #9ca3af;
   padding: 16px 0;
 }
-  
+
 .dashboard-content-02 .title {
-  font-size: 20px; 
-  line-height: 28px; 
-  font-weight: 600; 
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 600;
   color: #171A1FFF;
   margin-bottom: 15px;
 }
-.dashboard-content-02 .history-cont{
+
+.dashboard-content-02 .history-cont {
   display: flex;
   flex-direction: column;
   gap: 7px;
@@ -104,25 +111,29 @@
   color: #9ca3af;
   font-size: 16px;
 }
-.dashboard-content-02 .history-cont .history-item{
+
+.dashboard-content-02 .history-cont .history-item {
   display: flex;
   flex-direction: row;
   gap: 15px;
 }
-.dashboard-content-02 .history-cont .content{
-  font-size: 14px; 
-  line-height: 20px; 
-  font-weight: 400; 
+
+.dashboard-content-02 .history-cont .content {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
   color: #565D6DFF;
   width: 80%;
 }
-.dashboard-content-02 .history-cont .time{
-  font-size: 12px; 
-  line-height: 16px; 
-  font-weight: 400; 
+
+.dashboard-content-02 .history-cont .time {
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 400;
   color: #565D6DFF;
   width: 20%;
 }
+
 .recharts-surface:focus {
   outline: none !important;
 }

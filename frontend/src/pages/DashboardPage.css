@@ -1,0 +1,61 @@
+/* Dashboard Page Styles */
+
+/* Main dashboard layout container */
+.dashboard-layout {
+    display: flex;
+    height: calc(100vh - 60px);
+    overflow: hidden;
+    width: 100vw;
+}
+
+/* Dashboard app wrapper - main content area */
+.dashboard-app-wrapper {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    background: #FFFFFF;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(23, 26, 31, 0.08), 0 2px 4px rgba(23, 26, 31, 0.04);
+    overflow: hidden;
+    border: 1px solid #DEE1E6;
+    padding: 30px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+    .dashboard-layout {
+        gap: 15px;
+        padding: 15px;
+    }
+
+    .dashboard-app-wrapper {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-layout {
+        flex-direction: column;
+        gap: 10px;
+        padding: 10px;
+    }
+
+    .dashboard-app-wrapper {
+        border-radius: 4px;
+        height: 100%;
+        padding: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .dashboard-layout {
+        padding: 5px;
+    }
+
+    .dashboard-app-wrapper {
+        border-radius: 0;
+        border: none;
+        box-shadow: none;
+        padding: 10px;
+    }
+}

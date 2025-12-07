@@ -1,7 +1,8 @@
 import './dashboard-form.css';
-import '../../css/asset.css';
-import '../../css/index.css';
+import '../../../assets/css/asset.css';
+import '../../../assets/css/index.css';
 import { useEffect, useState } from 'react';
+import { dashboardService, type DashboardOverviewResponse } from '../../../services/dashboardService';
 
 // === BIỂU ĐỒ ===
 import {
@@ -23,53 +24,58 @@ type DashboardData = {
 };
 
 
-const SAMPLE_DATA: DashboardData = {
-    stats: [
-        { key: 'monthly_matches', title: 'Lượt match tháng này', value: '1,873' },
-        { key: 'yearly_matches', title: 'Lượt match năm nay', value: '12,430' },
-        { key: 'appointments', title: 'Lịch hẹn đã tạo', value: 398 },
-        { key: 'messages_sent', title: 'Tin nhắn đã gửi', value: 8432 },
-    ],
-    history: [
-        { id: 1, content: 'Người dùng mới An Bình đã match với Khải Hoàn.', time: '2 phút trước' },
-        { id: 2, content: 'Lâm Anh đã tạo một lịch hẹn vào 10/12.', time: '1 giờ trước' },
-        { id: 3, content: 'Thu Hồng đã gửi 3 tin nhắn mới.', time: '3 giờ trước' },
-        { id: 3, content: 'Thu Hồng đã gửi 3 tin nhắn mới.', time: '3 giờ trước' },
-        { id: 3, content: 'Thu Hồng đã gửi 3 tin nhắn mới.', time: '3 giờ trước' },
-        { id: 3, content: 'Thu Hồng đã gửi 3 tin nhắn mới.', time: '3 giờ trước' },
-    ],
-};
-
-
-const chartData = [
-    { name: "Th1", value: 1400 },
-    { name: "Th2", value: 1800 },
-    { name: "Th3", value: 2400 },
-    { name: "Th4", value: 3100 },
-    { name: "Th5", value: 2800 },
-    { name: "Th6", value: 3500 },
-    { name: "Th7", value: 3900 },
-    { name: "Th8", value: 4200 },
-    { name: "Th9", value: 4600 },
-    { name: "Th10", value: 5000 },
-];
 
 export function DashboardForm() {
-    const [data, setData] = useState<DashboardData>(SAMPLE_DATA);
+    const [data, setData] = useState<DashboardData>({ stats: [], history: [] });
+    const [chartDataState, setChartDataState] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         let mounted = true;
+
         async function fetchData() {
             try {
-                const res = await fetch('/api/dashboard');
-                if (!res.ok) throw new Error('Network response not ok');
-                const json = await res.json();
-                if (mounted && json && (json.stats || json.history)) {
-                    setData(json as DashboardData);
+                setLoading(true);
+                setError(null);
+
+                // Gọi API để lấy dữ liệu
+                const res: DashboardOverviewResponse = await dashboardService.getOverview();
+
+                if (mounted) {
+                    // Map stats từ API response
+                    const newStats: StatItem[] = [
+                        { key: 'monthly_matches', title: 'Lượt match tháng này', value: res.stats.matchesThisMonth },
+                        { key: 'yearly_matches', title: 'Lượt match năm nay', value: res.stats.matchesThisYear },
+                        { key: 'appointments', title: 'Lịch hẹn đã tạo', value: res.stats.appointmentsCreated },
+                        { key: 'messages_sent', title: 'Tin nhắn đã gửi', value: res.stats.messagesSent },
+                    ];
+
+                    // Map history (activities) từ API response
+                    const newHistory: HistoryItem[] = res.activities.map((act, index) => ({
+                        id: act.id || index,
+                        content: `${act.user} ${act.action}`,
+                        time: act.time
+                    }));
+
+                    setData({
+                        stats: newStats,
+                        history: newHistory
+                    });
+
+                    // Map chart data - hiển thị số lượng matches
+                    const newChartData = res.chartData.map(c => ({
+                        name: c.name,
+                        value: c.matches,
+                        appointments: c.appointments
+                    }));
+                    setChartDataState(newChartData);
                 }
             } catch (err) {
-                // fallback sample
+                console.error("Failed to fetch dashboard data:", err);
+                if (mounted) {
+                    setError("Không thể tải dữ liệu dashboard");
+                }
             } finally {
                 if (mounted) setLoading(false);
             }
@@ -87,6 +93,19 @@ export function DashboardForm() {
                 <div className="cont-title-dashboard">
                     <h1>Tổng quan Dashboard</h1>
                 </div>
+
+                {error && (
+                    <div style={{
+                        padding: '12px 20px',
+                        background: '#fee',
+                        color: '#c33',
+                        borderRadius: '8px',
+                        marginBottom: '20px',
+                        textAlign: 'center'
+                    }}>
+                        {error}
+                    </div>
+                )}
 
                 <div className="cont-content-dashboard">
                     <div className="dashboard-content-01">
@@ -110,7 +129,7 @@ export function DashboardForm() {
 
                                     <div style={{ width: "100%", height: 280 }}>
                                         <ResponsiveContainer width="100%" height="100%">
-                                            <AreaChart data={chartData}>
+                                            <AreaChart data={chartDataState}>
                                                 <defs>
                                                     <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
                                                         <stop offset="30%" stopColor="#4A90E2" stopOpacity={0.5} />
@@ -128,6 +147,7 @@ export function DashboardForm() {
                                                     dataKey="value"
                                                     stroke="#4A90E2"
                                                     fill="url(#colorValue)"
+                                                    name="Lượt match"
                                                 />
                                             </AreaChart>
                                         </ResponsiveContainer>

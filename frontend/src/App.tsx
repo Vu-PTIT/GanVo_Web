@@ -18,6 +18,7 @@ import MyAppointmentsPage from "./pages/my-appointments";
 import AdminAppointmentsPage from "./pages/admin/AdminAppointmentsPage";
 import AdminUsersPage from "./pages/admin/AdminUsersPage";
 import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
+import DashboardPage from "./pages/DashboardPage";
 import DebugRolePage from "./pages/DebugRolePage";
 
 export function App() {
@@ -62,6 +63,9 @@ export function App() {
           {/* Public routes */}
           <Route path="/signin" element={<SignInPage />} />
           <Route path="/signup" element={<SignUpPage />} />
+
+          {/* User Dashboard */}
+          <Route path="/dashboard" element={<DashboardPage />} />
 
           {/* Appointment routes (public hoặc protected tùy bạn) */}
           <Route path="/appointment" element={<AppointmentPage />} />

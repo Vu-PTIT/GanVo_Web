@@ -4,6 +4,7 @@ import { useAuthStore } from "@/stores/useAuthStore";
 import { useConversationStore } from "@/stores/useConversationStore";
 import MessageInput from "./MessageInput";
 import { Loader2, MessageSquare } from "lucide-react";
+import "./ChatWindow.css";
 
 const ChatWindow = () => {
     const {
@@ -40,44 +41,45 @@ const ChatWindow = () => {
 
     if (!selectedConversationId) {
         return (
-            <div className="flex-1 flex flex-col items-center justify-center bg-base-100 text-base-content/50 p-8">
-                <div className="size-24 rounded-full bg-base-200 flex items-center justify-center mb-4">
-                    <MessageSquare className="size-12 text-primary" />
+            <div className="chat-empty-state">
+                <div className="empty-icon">
+                    <MessageSquare size={48} />
                 </div>
-                <h2 className="text-2xl font-bold mb-2">Welcome to GanVo Chat</h2>
-                <p>Select a conversation from the sidebar to start chatting</p>
+                <h3 className="empty-title">Welcome to GanVo Chat</h3>
+                <p className="empty-text">Select a conversation from the sidebar to start chatting</p>
             </div>
         );
     }
 
     return (
-        <div className="flex-1 flex flex-col h-full bg-base-100">
+        <div className="chat-window">
             {/* Header */}
-            <div className="p-4 border-b border-base-300 flex items-center gap-3 shadow-sm z-10">
+            <div className="chat-header">
                 {otherParticipant && (
-                    <>
-                        <img
-                            src={otherParticipant.avatarUrl || "/avatar.png"}
-                            alt={otherParticipant.username}
-                            className="size-10 rounded-full object-cover border border-base-300"
-                        />
-                        <div>
-                            <h3 className="font-bold">{otherParticipant.displayName}</h3>
-                            <span className="text-xs text-base-content/60">@{otherParticipant.username}</span>
+                    <div className="chat-header-left">
+                        <div className="friend-avatar-small">
+                            <img
+                                src={otherParticipant.avatarUrl || "/avatar.png"}
+                                alt={otherParticipant.username}
+                            />
                         </div>
-                    </>
+                        <div className="friend-info">
+                            <div className="friend-name">{otherParticipant.displayName}</div>
+                            <span className="friend-status">@{otherParticipant.username}</span>
+                        </div>
+                    </div>
                 )}
             </div>
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar bg-base-100">
+            <div className="messages-container">
                 {isMessagesLoading ? (
-                    <div className="flex justify-center py-8">
-                        <Loader2 className="size-8 animate-spin text-primary" />
+                    <div className="loading-spinner">
+                        <Loader2 className="spinner-icon" />
                     </div>
                 ) : messages.length === 0 ? (
-                    <div className="text-center py-8 text-base-content/50">
-                        No messages yet. Say hello! 👋
+                    <div className="no-messages">
+                        <p>No messages yet. Say hello! 👋</p>
                     </div>
                 ) : (
                     messages.map((message) => {
@@ -86,34 +88,31 @@ const ChatWindow = () => {
                         return (
                             <div
                                 key={message._id}
-                                className={`chat ${isMyMessage ? "chat-end" : "chat-start"}`}
+                                className={`message ${isMyMessage ? "user" : "friend"}`}
                             >
-                                <div className="chat-image avatar">
-                                    <div className="w-10 rounded-full border border-base-300">
-                                        <img
-                                            src={message.senderId.avatarUrl || "/avatar.png"}
-                                            alt={message.senderId.username}
-                                        />
+                                <div className="message-avatar">
+                                    <img
+                                        src={message.senderId.avatarUrl || "/avatar.png"}
+                                        alt={message.senderId.username}
+                                    />
+                                </div>
+                                <div className="message-content">
+                                    <div className="message-header">
+                                        <span className="message-sender">{message.senderId.displayName}</span>
+                                        <time className="message-time">
+                                            {new Date(message.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                        </time>
                                     </div>
-                                </div>
-                                <div className="chat-header mb-1">
-                                    <span className="text-xs opacity-50 mr-1">{message.senderId.displayName}</span>
-                                    <time className="text-xs opacity-50">
-                                        {new Date(message.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                    </time>
-                                </div>
-                                <div
-                                    className={`chat-bubble ${isMyMessage ? "chat-bubble-primary" : "chat-bubble-secondary"
-                                        }`}
-                                >
-                                    {message.imgUrl && (
-                                        <img
-                                            src={message.imgUrl}
-                                            alt="Attachment"
-                                            className="max-w-[200px] rounded-md mb-2"
-                                        />
-                                    )}
-                                    {message.content}
+                                    <div className="message-bubble">
+                                        {message.imgUrl && (
+                                            <img
+                                                src={message.imgUrl}
+                                                alt="Attachment"
+                                                className="message-image"
+                                            />
+                                        )}
+                                        {message.content}
+                                    </div>
                                 </div>
                             </div>
                         );

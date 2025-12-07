@@ -3,6 +3,7 @@ import { useConversationStore } from "@/stores/useConversationStore";
 import { useChatStore } from "@/stores/useChatStore";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { Loader2 } from "lucide-react";
+import "./ConversationList.css";
 
 const ConversationList = () => {
     const { conversations, fetchConversations, isLoading } = useConversationStore();
@@ -15,21 +16,21 @@ const ConversationList = () => {
 
     if (isLoading) {
         return (
-            <div className="flex items-center justify-center h-full">
-                <Loader2 className="size-8 animate-spin text-primary" />
+            <div className="conversation-list-loading">
+                <Loader2 className="loading-spinner" />
             </div>
         );
     }
 
     return (
-        <div className="flex flex-col h-full bg-base-200 border-r border-base-300 w-80">
-            <div className="p-4 border-b border-base-300">
-                <h2 className="font-bold text-lg">Messages</h2>
+        <div className="conversation-list">
+            <div className="conversation-list-header">
+                <h2 className="list-title">Messages</h2>
             </div>
 
-            <div className="overflow-y-auto flex-1 custom-scrollbar">
+            <div className="conversation-items">
                 {conversations.length === 0 ? (
-                    <div className="p-4 text-center text-base-content/50">
+                    <div className="empty-conversations">
                         No conversations yet. Start chatting with your friends!
                     </div>
                 ) : (
@@ -47,30 +48,27 @@ const ConversationList = () => {
                             <div
                                 key={conversation._id}
                                 onClick={() => setSelectedConversationId(conversation._id)}
-                                className={`flex items-center gap-3 p-4 cursor-pointer transition-colors hover:bg-base-300 ${isSelected ? "bg-base-300 border-l-4 border-primary" : ""
-                                    }`}
+                                className={`conversation-item ${isSelected ? "active" : ""}`}
                             >
-                                <div className="relative">
+                                <div className="conversation-avatar">
                                     <img
                                         src={otherParticipant.avatarUrl || "/avatar.png"}
                                         alt={otherParticipant.username}
-                                        className="size-12 rounded-full object-cover border border-base-300"
                                     />
-                                    {/* Online status indicator could go here */}
                                 </div>
 
-                                <div className="flex-1 min-w-0">
-                                    <div className="flex justify-between items-baseline">
-                                        <h3 className="font-semibold truncate">
+                                <div className="conversation-content">
+                                    <div className="conversation-header">
+                                        <h3 className="conversation-name">
                                             {otherParticipant.displayName || otherParticipant.username}
                                         </h3>
                                         {conversation.lastMessageAt && (
-                                            <span className="text-xs text-base-content/50">
+                                            <span className="conversation-time">
                                                 {new Date(conversation.lastMessageAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                             </span>
                                         )}
                                     </div>
-                                    <p className="text-sm text-base-content/60 truncate">
+                                    <p className="conversation-message">
                                         {conversation.lastMessage?.senderId === currentUser?._id ? "You: " : ""}
                                         {conversation.lastMessage?.content || "Started a conversation"}
                                     </p>

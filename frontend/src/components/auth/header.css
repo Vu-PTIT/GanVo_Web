@@ -1,69 +1,166 @@
-.user-menu-container {
-    position: relative;
+/* --- Header Layout Fixes --- */
+
+/* 1. Căn giữa trục dọc cho toàn bộ icon bên phải */
+.header-right-site {
+    display: flex;
+    align-items: center; /* Quan trọng: Căn giữa theo chiều dọc */
+    gap: 20px; /* Khoảng cách giữa các icon */
+    margin: 0;
+    padding: 0;
+    list-style: none;
 }
 
-.user-menu-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 0;
+.header-right-site li {
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative; /* Để neo dropdown vào đúng vị trí của icon */
 }
 
-.user-menu-btn:hover {
-    opacity: 0.8;
+/* 2. Sửa lỗi nút chuông bị lệch */
+.bell-button {
+    background: transparent;
+    border: none;
+    padding: 5px; /* Giảm padding để icon không bị to quá khổ */
+    cursor: pointer;
+    display: flex; /* Flex giúp icon nằm chính giữa nút */
+    align-items: center;
+    justify-content: center;
+    line-height: 0; /* Loại bỏ chiều cao dòng thừa thãi */
+    border-radius: 50%;
+    transition: background 0.2s;
 }
 
+.bell-button:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Chấm đỏ thông báo */
+.bell-dot {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    background-color: #ef4444;
+    color: white;
+    font-size: 10px;
+    font-weight: bold;
+    min-width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid white;
+    z-index: 2;
+}
+
+/* --- Dropdown Styles (Sửa lỗi bị che) --- */
+
+.notifications-dropdown,
 .user-menu-dropdown {
     position: absolute;
-    top: 100%;
-    right: 0;
+    top: 140%; /* Đẩy xuống một chút so với icon */
+    right: -10px; /* Căn lề phải khớp với icon */
     background: white;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    min-width: 180px;
-    margin-top: 8px;
-    z-index: 1000;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    z-index: 9999; /* Z-index cực cao để đè lên mọi thứ */
     overflow: hidden;
+    transform-origin: top right;
+    animation: scaleIn 0.2s ease-out;
 }
 
+/* Hiệu ứng mở menu mượt mà */
+@keyframes scaleIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+/* User Menu Specific */
+.user-menu-dropdown {
+    min-width: 220px;
+    padding: 8px 0;
+}
+
+/* Notification Menu Specific */
 .notifications-dropdown {
-    top: 56px;
-    position: absolute;
-    min-width: 280px;
-    max-height: 360px;
-    overflow: auto;
-    padding: 8px;
+    width: 360px;
+    display: flex;
+    flex-direction: column;
 }
 
+/* Header của dropdown thông báo */
 .notifications-header {
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:4px 8px;
-    border-bottom:1px solid #eee;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-bottom: 1px solid #f3f4f6;
+    background-color: #fff;
 }
 
-.notifications-list { padding: 8px; display:flex; flex-direction:column; gap:8px; }
+.notifications-list {
+    max-height: 400px;
+    overflow-y: auto; /* Chỉ cuộn danh sách, không cuộn cả dropdown */
+    background-color: white;
+}
 
-.notification-item { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; padding:8px; border-radius:6px; background: #fff; }
-.notification-item.unread { background: #fff8f8; border-left: 4px solid #e53935; }
-.notification-item.read { opacity:0.7; }
-.notification-body { flex:1; }
-.notification-text { font-size:14px; margin-bottom:6px; }
-.notification-meta { font-size:11px; color:#666; }
-.notification-actions { margin-left:8px; }
+/* --- Item Styles --- */
+.notification-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 12px 16px;
+    border-bottom: 1px solid #f3f4f6;
+    cursor: pointer;
+    transition: background 0.2s;
+    position: relative;
+    gap: 12px;
+}
 
-.bell-button { background:none; border:none; padding:0; position:relative; cursor:pointer; }
-.bell-dot { position:absolute; top:4px; right:4px; width:10px; height:10px; background:#e53935; border-radius:50%; box-shadow:0 0 0 2px rgba(229,57,53,0.12); }
-.notif-empty { padding:12px; text-align:center; color:#666; }
+.notification-item:hover {
+    background-color: #f9fafb;
+}
 
+.notification-item.unread {
+    background-color: #eff6ff;
+}
+
+.notif-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0; /* Không bị bóp méo ảnh */
+}
+
+.notification-body {
+    flex: 1;
+}
+
+.notification-text strong {
+    display: block;
+    color: #111827;
+    margin-bottom: 2px;
+}
+
+.notification-text span {
+    color: #374151;
+    font-size: 13px;
+    line-height: 1.4;
+    display: block;
+}
+
+.notification-meta {
+    font-size: 11px;
+    color: #9ca3af;
+    margin-top: 4px;
+}
+
+/* User Menu Items */
 .menu-item {
     width: 100%;
-    padding: 12px 16px;
+    padding: 10px 16px;
     background: none;
     border: none;
     text-align: left;
@@ -72,23 +169,52 @@
     align-items: center;
     gap: 12px;
     font-size: 14px;
-    color: #333;
-    transition: all 0.2s ease;
+    color: #374151;
+    transition: background 0.2s;
 }
 
 .menu-item:hover {
-    background-color: #f5f5f5;
+    background-color: #f3f4f6;
 }
 
-.menu-item span {
-    flex: 1;
+.user-info {
+    padding: 12px 16px;
+}
+.user-name { font-weight: 600; font-size: 14px; margin: 0 0 4px 0; }
+.user-email { color: #6b7280; font-size: 12px; margin: 0; }
+.header-avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover;}
+
+/* --- Nút hành động nhỏ (Xóa/Đã đọc) --- */
+.notification-actions-hover {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    opacity: 0;
+    transition: opacity 0.2s;
 }
 
-.logout-btn {
-    color: #d32f2f;
-    border-top: 1px solid #e0e0e0;
+.notification-item:hover .notification-actions-hover {
+    opacity: 1;
 }
 
-.logout-btn:hover {
-    background-color: #ffebee;
+.icon-btn {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 1px solid #e5e7eb;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #6b7280;
 }
+
+.icon-btn:hover { background-color: #f9fafb; color: #111827; }
+.icon-btn.blue { color: #2563eb; }
+.icon-btn.red:hover { color: #dc2626; border-color: #fee2e2; background-color: #fef2f2; }
+.dot-unread-indicator { width: 6px; height: 6px; background: #2563eb; border-radius: 50%; }
+
+
+.notifications-list::-webkit-scrollbar { width: 6px; }
+.notifications-list::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }

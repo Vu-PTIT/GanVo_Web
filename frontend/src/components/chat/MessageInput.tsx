@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useChatStore } from "@/stores/useChatStore";
 import { Send, Image as ImageIcon, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import "./MessageInput.css";
 
 const MessageInput = () => {
     const [text, setText] = useState("");
@@ -25,20 +26,20 @@ const MessageInput = () => {
     };
 
     return (
-        <div className="p-4 border-t border-base-300 bg-base-100">
-            <form onSubmit={handleSend} className="flex items-center gap-2">
-                {/* Image upload button (placeholder for now) */}
+        <div className="message-input-container">
+            <form onSubmit={handleSend} className="message-input-form">
                 <button
                     type="button"
-                    className="btn btn-circle btn-ghost btn-sm text-base-content/60"
+                    className="message-input-button image-button"
                     onClick={() => toast.info("Image upload coming soon!")}
+                    title="Attach image"
                 >
-                    <ImageIcon className="size-5" />
+                    <ImageIcon className="button-icon" />
                 </button>
 
                 <input
                     type="text"
-                    className="input input-bordered flex-1 bg-base-200 focus:outline-none"
+                    className="message-input-field"
                     placeholder="Type a message..."
                     value={text}
                     onChange={(e) => setText(e.target.value)}
@@ -47,13 +48,14 @@ const MessageInput = () => {
 
                 <button
                     type="submit"
-                    className="btn btn-primary btn-circle btn-sm"
+                    className="message-input-button send-button"
                     disabled={!text.trim() || isSending}
+                    title="Send message"
                 >
                     {isSending ? (
-                        <Loader2 className="size-4 animate-spin" />
+                        <Loader2 className="button-icon loading" />
                     ) : (
-                        <Send className="size-4" />
+                        <Send className="button-icon" />
                     )}
                 </button>
             </form>

@@ -1,0 +1,25 @@
+.btn-basic {
+  background: #0076D1FF;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: opacity 0.2s ease-in-out;
+}
+
+/* Hover giảm opacity */
+.btn-basic:hover {
+  opacity: 0.85;
+}
+
+/* Disabled */
+.btn-basic:disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}

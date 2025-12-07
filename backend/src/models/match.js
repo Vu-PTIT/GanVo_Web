@@ -25,20 +25,20 @@ const matchSchema = new mongoose.Schema(
       default: "pending",
     },
     
-    // NEW: Tin nhắn kèm lời mời kết bạn
+    // N Tin nhắn kèm lời mời kết bạn
     requestMessage: {
       type: String,
       maxlength: 300,
       default: ""
     },
     
-    // NEW: Người bắt đầu cuộc trò chuyện
+    //  Người bắt đầu cuộc trò chuyện
     conversationInitiator: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User"
     },
     
-    // NEW: ID của conversation (nếu đã match và chat)
+    //  ID của conversation (nếu đã match và chat)
     conversationId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Conversation"

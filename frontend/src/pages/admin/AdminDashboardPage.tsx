@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { adminService, AdminStats } from "../../services/adminService";
+import { adminService } from "../../services/adminService";
+import type { AdminStats } from "../../services/adminService";
 import { Header } from "../../components/auth/header";
 import { AdminSidebar } from "../../components/admin/AdminSidebar";
 import "./admin-dashboard.css";
@@ -21,7 +22,6 @@ const AdminDashboardPage: React.FC = () => {
     useEffect(() => {
         const fetchStats = async () => {
             try {
-                // Use the service instead of direct axios call
                 const data = await adminService.getStats();
                 setStats(data);
             } catch (error) {
@@ -40,8 +40,22 @@ const AdminDashboardPage: React.FC = () => {
                 <main id="admin-dashboard">
                     <div className="chat-layout scoll-auto">
                         <AdminSidebar />
-                        <div className="flex-1 flex items-center justify-center h-full">
-                            <div className="loading loading-spinner loading-lg"></div>
+                        <div style={{ 
+                            flex: 1, 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            justifyContent: 'center',
+                            height: '100%',
+                            background: 'white',
+                            borderRadius: '12px'
+                        }}>
+                            <div style={{ 
+                                fontSize: '18px', 
+                                color: '#666',
+                                animation: 'pulse 1.5s ease-in-out infinite'
+                            }}>
+                                Đang tải dữ liệu...
+                            </div>
                         </div>
                     </div>
                 </main>
@@ -56,24 +70,111 @@ const AdminDashboardPage: React.FC = () => {
                 <div className="chat-layout scoll-auto">
                     <AdminSidebar />
 
-                    <div className="flex-1 bg-base-100 rounded-lg shadow-xl overflow-hidden flex flex-col border border-base-300 h-full p-6">
-                        <div className="admin-content-wrapper w-full h-full overflow-y-auto">
-                            <h1 className="text-2xl font-bold mb-6 text-base-content">Dashboard Thống Kê</h1>
+                    <div style={{
+                        flex: 1,
+                        background: 'white',
+                        borderRadius: '12px',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+                        overflow: 'hidden',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        border: '1px solid #DEE1E6',
+                        height: '100%',
+                        padding: '24px'
+                    }}>
+                        <div style={{
+                            width: '100%',
+                            height: '100%',
+                            overflowY: 'auto'
+                        }}>
+                            <h1 style={{
+                                fontSize: '24px',
+                                fontWeight: 'bold',
+                                marginBottom: '24px',
+                                color: '#171A1F'
+                            }}>
+                                Dashboard Thống Kê
+                            </h1>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                                <div className="stat bg-base-200 rounded-box shadow">
-                                    <div className="stat-title">Tổng số User</div>
-                                    <div className="stat-value text-primary">{stats.totalUsers}</div>
+                            {/* Stats Cards */}
+                            <div style={{
+                                display: 'grid',
+                                gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                                gap: '20px',
+                                marginBottom: '32px'
+                            }}>
+                                <div style={{
+                                    background: '#f8fafc',
+                                    padding: '24px',
+                                    borderRadius: '12px',
+                                    boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                                    border: '1px solid #e2e8f0'
+                                }}>
+                                    <div style={{
+                                        fontSize: '14px',
+                                        color: '#64748b',
+                                        fontWeight: '500',
+                                        marginBottom: '8px'
+                                    }}>
+                                        Tổng số User
+                                    </div>
+                                    <div style={{
+                                        fontSize: '32px',
+                                        fontWeight: '700',
+                                        color: '#0ea5e9'
+                                    }}>
+                                        {stats.totalUsers}
+                                    </div>
                                 </div>
-                                <div className="stat bg-base-200 rounded-box shadow">
-                                    <div className="stat-title">Tổng số Lịch Hẹn</div>
-                                    <div className="stat-value text-secondary">{stats.totalAppointments}</div>
+
+                                <div style={{
+                                    background: '#f8fafc',
+                                    padding: '24px',
+                                    borderRadius: '12px',
+                                    boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                                    border: '1px solid #e2e8f0'
+                                }}>
+                                    <div style={{
+                                        fontSize: '14px',
+                                        color: '#64748b',
+                                        fontWeight: '500',
+                                        marginBottom: '8px'
+                                    }}>
+                                        Tổng số Lịch Hẹn
+                                    </div>
+                                    <div style={{
+                                        fontSize: '32px',
+                                        fontWeight: '700',
+                                        color: '#10b981'
+                                    }}>
+                                        {stats.totalAppointments}
+                                    </div>
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                                <div className="bg-base-100 p-4 rounded-box shadow border border-base-200">
-                                    <h3 className="text-lg font-semibold mb-4 text-center">Người dùng mới (12 tháng qua)</h3>
+                            {/* Charts */}
+                            <div style={{
+                                display: 'grid',
+                                gridTemplateColumns: 'repeat(auto-fit, minmax(500px, 1fr))',
+                                gap: '24px'
+                            }}>
+                                {/* User Chart */}
+                                <div style={{
+                                    background: 'white',
+                                    padding: '24px',
+                                    borderRadius: '12px',
+                                    boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                                    border: '1px solid #e2e8f0'
+                                }}>
+                                    <h3 style={{
+                                        fontSize: '18px',
+                                        fontWeight: '600',
+                                        marginBottom: '24px',
+                                        textAlign: 'center',
+                                        color: '#171A1F'
+                                    }}>
+                                        Người dùng mới (12 tháng qua)
+                                    </h3>
                                     <div style={{ width: "100%", height: 300 }}>
                                         <ResponsiveContainer>
                                             <BarChart data={stats.usersByMonth}>
@@ -82,14 +183,29 @@ const AdminDashboardPage: React.FC = () => {
                                                 <YAxis allowDecimals={false} />
                                                 <Tooltip />
                                                 <Legend />
-                                                <Bar dataKey="count" name="User mới" fill="#8884d8" />
+                                                <Bar dataKey="count" name="User mới" fill="#0ea5e9" />
                                             </BarChart>
                                         </ResponsiveContainer>
                                     </div>
                                 </div>
 
-                                <div className="bg-base-100 p-4 rounded-box shadow border border-base-200">
-                                    <h3 className="text-lg font-semibold mb-4 text-center">Lịch hẹn mới (12 tháng qua)</h3>
+                                {/* Appointment Chart */}
+                                <div style={{
+                                    background: 'white',
+                                    padding: '24px',
+                                    borderRadius: '12px',
+                                    boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                                    border: '1px solid #e2e8f0'
+                                }}>
+                                    <h3 style={{
+                                        fontSize: '18px',
+                                        fontWeight: '600',
+                                        marginBottom: '24px',
+                                        textAlign: 'center',
+                                        color: '#171A1F'
+                                    }}>
+                                        Lịch hẹn mới (12 tháng qua)
+                                    </h3>
                                     <div style={{ width: "100%", height: 300 }}>
                                         <ResponsiveContainer>
                                             <BarChart data={stats.appointmentsByMonth}>
@@ -98,7 +214,7 @@ const AdminDashboardPage: React.FC = () => {
                                                 <YAxis allowDecimals={false} />
                                                 <Tooltip />
                                                 <Legend />
-                                                <Bar dataKey="count" name="Lịch hẹn" fill="#82ca9d" />
+                                                <Bar dataKey="count" name="Lịch hẹn" fill="#10b981" />
                                             </BarChart>
                                         </ResponsiveContainer>
                                     </div>

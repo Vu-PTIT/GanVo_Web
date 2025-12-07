@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-=======
-// --- START OF FILE controllers/userController.js ---
-
->>>>>>> parent of 5408caf (Merge branch 'main' of https://github.com/Vu-PTIT/GanVo_Web into ducdev)
 import User from "../models/User.js";
 import { buildProfileText, getEmbedding } from "../utils/gemini.js";
 import bcrypt from "bcrypt";

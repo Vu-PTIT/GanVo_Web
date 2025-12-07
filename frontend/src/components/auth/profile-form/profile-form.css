@@ -1,8 +1,6 @@
 .profile-form {
-    min-height: calc(100vh - 80px);
-    /* Adjust based on header height */
-    padding-bottom: 40px;
-    font-family: 'Inter', sans-serif;
+    /* height: auto; let flex container handle it */
+    height: 100%;
 }
 
 /* Header Section */
@@ -195,18 +193,15 @@
     border: none;
 }
 
-.btn-primary-blue {
-    background-color: #0076D1;
-    color: white;
-}
-
-.btn-primary-blue:hover {
-    background-color: #0060aa;
-}
-
-.btn-secondary-white {
-    background-color: white;
-    border: 1px solid #DEE1E6;
+.title-info {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-direction: row;
+    font-size: 20px;
+    line-height: 28px;
+    font-weight: 600;
     color: #171A1F;
 }
 
@@ -290,11 +285,212 @@
     overflow-y: auto;
 }
 
-/* Scrollable Content Area */
+/* Scrollable Content Area - Restored */
 .profile-scroll-container {
     flex: 1;
     height: 100%;
     overflow-y: auto;
     background-color: #FAFAFB;
-    /* Match page bg if needed */
+    /* Match page bg */
+}
+
+.img-library {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.img-library img {
+    width: 120px;
+    height: 120px;
+    border-radius: 10px;
+}
+
+.cont-btn-action {
+    display: flex;
+    justify-content: flex-start;
+}
+
+/* Edit mode styles */
+.name-user-input,
+.born-user-input,
+.detail-info input,
+.hobby-info input,
+.img-library input,
+.cont-info-user input,
+.cont-info-user textarea {
+    width: 100%;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid #DEE1E6;
+    font-size: 16px;
+    line-height: 22px;
+    color: #111827;
+    box-sizing: border-box;
+}
+
+.cont-info-user textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+.avatar-user input[type="text"] {
+    width: 220px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid #DEE1E6;
+}
+
+.img-library input {
+    width: 220px;
+}
+
+.hobby-info input {
+    max-width: 200px;
+}
+
+.hobby-info button,
+.img-library>div>button {
+    margin-top: 6px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid #DEE1E6;
+    background: #ffffff;
+    cursor: pointer;
+}
+
+.cont-btn-action>.btn-short {
+    margin-right: 10px;
+}
+
+/* Gender select styles */
+.select-gender {
+    width: 180px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid #DEE1E6;
+    background: #ffffff;
+    font-size: 16px;
+    color: #171A1F;
+    box-sizing: border-box;
+}
+
+/* Container for small edit action buttons (confirm/cancel) */
+.edit-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-top: 8px;
+}
+
+/* Small button baseline used in edit contexts */
+.btn-short {
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: 1px solid #DEE1E6;
+    background: #ffffff;
+    cursor: pointer;
+}
+
+.btn-short.cl-blue {
+    background: #EFF6FF;
+    border-color: #9BBBF7;
+    color: #0b4da0;
+}
+
+/* Visual distinction for edit inputs */
+.name-user-input {
+    font-size: 28px;
+    font-weight: 700;
+    padding: 6px 10px;
+}
+
+.born-user-input {
+    font-size: 16px;
+    padding: 6px 10px;
+}
+
+/* small helper for preview images when in read mode */
+.img-library img {
+    border: 1px solid #e6eaf0;
+}
+
+/* focus states */
+.name-user-input:focus,
+.cont-info-user input:focus,
+.cont-info-user textarea:focus,
+.hobby-info input:focus,
+.img-library input:focus {
+    outline: none;
+    border-color: #9bbcf7;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.08);
+}
+
+.edit-icon {
+    border: none;
+    background-color: white;
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
+/* Tweak: make textarea inside .cont-info-user more spacious for 'Về tôi' */
+.cont-info-user textarea {
+    min-height: 140px;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #DEE1E6;
+    font-size: 16px;
+    line-height: 22px;
+    color: #111827;
+    box-sizing: border-box;
+    resize: vertical;
+}
+
+/* Make the old .btn-edit-wrap match the layout of .edit-actions */
+.btn-edit-wrap {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-top: 8px;
+}
+
+.btn-edit-wrap button {
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: 1px solid #DEE1E6;
+    background: #ffffff;
+    cursor: pointer;
+}
+
+.btn-edit-wrap .cl-blue {
+    background: #EFF6FF;
+    border-color: #9BBBF7;
+    color: #0b4da0;
+}
+
+/* Position hobby edit-block outside the tag list so it doesn't shift layout */
+.hobby-info {
+    position: relative;
+    /* anchor for absolute edit-block */
+}
+
+.hobby-info .edit-block {
+    position: absolute;
+    left: 0;
+    top: calc(100% + 8px);
+    z-index: 20;
+    background: #ffffff;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #DEE1E6;
+    box-shadow: 0 6px 20px rgba(23, 26, 31, 0.08);
+    width: min(480px, 100%);
+}
+
+/* Ensure edit-block children keep visual spacing when absolutely positioned */
+.hobby-info .edit-block>div {
+    margin-bottom: 8px;
 }

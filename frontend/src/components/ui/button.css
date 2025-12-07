@@ -1,118 +1,25 @@
-/* 👇 reset base */
-.btn {
+.btn-basic {
+  background: #0076D1FF;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: .5rem;
-  white-space: nowrap;
-  border-radius: .375rem;
-  font-size: .875rem;
-  font-weight: 500;
-  transition: all .2s;
   cursor: pointer;
-  outline: none;
-  border: none;
-  user-select: none;
-
+  transition: opacity 0.2s ease-in-out;
 }
 
-/* disabled */
-.btn:disabled {
-  opacity: .5;
+
+.btn-basic:hover {
+  opacity: 0.85;
+}
+
+/* Disabled */
+.btn-basic:disabled {
+  opacity: 0.5;
   pointer-events: none;
-}
-
-/* ===========================
-   VARIANTS
-   =========================== */
-
-/* default (primary) */
-.btn-default {
-  background: var(--primary, #7c3aed);
-  color: white;
-}
-.btn-default:hover {
-  background: rgba(124, 58, 237, .9);
-}
-
-/* destructive */
-.btn-destructive {
-  background: #dc2626;
-  color: white;
-}
-.btn-destructive:hover {
-  background: #b91c1c;
-}
-
-/* outline */
-.btn-outline {
-  background: transparent;
-  border: 1px solid #d4d4d8;
-  color: #333;
-}
-.btn-outline:hover {
-  background: #f3f3f3;
-}
-
-/* secondary */
-.btn-secondary {
-  background: #e4e4e7;
-  color: #111;
-}
-.btn-secondary:hover {
-  background: #d4d4d8;
-}
-
-/* ghost */
-.btn-ghost {
-  background: transparent;
-}
-.btn-ghost:hover {
-  background: #f4f4f5;
-}
-
-/* link */
-.btn-link {
-  background: transparent;
-  color: #7c3aed;
-  text-decoration: underline;
-  padding: 0;
-}
-
-
-/* ===========================
-   SIZE
-   =========================== */
-
-.btn-default {
-  height: 36px;
-  padding: 0 1rem;
-}
-
-.btn-sm {
-  height: 32px;
-  padding: 0 .75rem;
-}
-
-.btn-lg {
-  height: 42px;
-  padding: 0 1.25rem;
-}
-
-.btn-icon {
-  width: 36px;
-  height: 36px;
-  padding: 0;
-}
-
-.btn-icon-sm {
-  width: 32px;
-  height: 32px;
-  padding: 0;
-}
-
-.btn-icon-lg {
-  width: 42px;
-  height: 42px;
-  padding: 0;
 }

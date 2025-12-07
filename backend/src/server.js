@@ -84,6 +84,7 @@ app.use("/api/messages", protectedRoute, messageRoute);
 app.use("/api/conversations", protectedRoute, conversationRoute);
 app.use("/api/notifications", protectedRoute, notificationRoute); 
 app.use("/api/dashboard", protectedRoute, dashboardRoute);
+app.use("/api/appointments", protectedRoute, appointmentRoute);
 
 // ERROR HANDLING 
 app.use((err, req, res, next) => {

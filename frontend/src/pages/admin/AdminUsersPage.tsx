@@ -36,6 +36,7 @@ const AdminUsersPage: React.FC = () => {
         }
     };
 
+    // Gọi API khi component được mount
     useEffect(() => {
         fetchUsers();
     }, []);
@@ -45,6 +46,7 @@ const AdminUsersPage: React.FC = () => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
+    // Mở modal thêm mới
     const openAddModal = () => {
         setEditingUser(null);
         setFormData({ username: "", email: "", displayName: "", password: "" });
@@ -52,6 +54,7 @@ const AdminUsersPage: React.FC = () => {
         setIsModalOpen(true);
     };
 
+    // Mở modal sửa
     const openEditModal = (user: User) => {
         setEditingUser(user);
         setFormData({
@@ -64,6 +67,7 @@ const AdminUsersPage: React.FC = () => {
         setIsModalOpen(true);
     };
 
+    // Xử lý Submit Form (Tạo hoặc Cập nhật)
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError("");
@@ -73,6 +77,7 @@ const AdminUsersPage: React.FC = () => {
             } else {
                 await adminService.createUser(formData);
             }
+            // Thành công thì đóng modal và load lại danh sách
             setIsModalOpen(false);
             fetchUsers();
         } catch (err: any) {
@@ -81,6 +86,7 @@ const AdminUsersPage: React.FC = () => {
         }
     };
 
+    // Xử lý Xóa User
     const handleDelete = async (id: string) => {
         if (!window.confirm("Bạn có chắc chắn muốn xóa user này?")) return;
         try {
@@ -236,6 +242,8 @@ const AdminUsersPage: React.FC = () => {
                             </div>
                         </form>
                     </div>
+                    {/* Click ra ngoài để đóng modal */}
+                    <div className="modal-backdrop" onClick={() => setIsModalOpen(false)}></div>
                 </div>
             )}
         </div>

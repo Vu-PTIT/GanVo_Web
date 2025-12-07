@@ -11,6 +11,9 @@ interface UserProfileCardProps {
 export default function UserProfileCard({ user, onLike, onDislike, onMessage }: UserProfileCardProps) {
     const avatarSrc = user.avatarUrl || '/z7162069739961_81cab8e64cc2813944f4900ca14b7c0b.jpg';
 
+    console.log('🎴 Rendering UserProfileCard for:', user.displayName, user);
+
+
     return (
         <div className="user-profile-card">
             <div className="profile-card-inner">

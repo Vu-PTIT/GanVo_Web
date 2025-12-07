@@ -21,8 +21,16 @@ export default function ExploreGrid({ filters }: ExploreGridProps) {
         if (filters) {
             setFilters(filters);
         }
+        console.log('🔍 Fetching explorations with filters:', filters);
         fetchExplorations();
     }, [filters]);
+
+    // Debug: Log explorations data
+    useEffect(() => {
+        console.log('👥 Explorations data:', explorations);
+        console.log('📊 Total users:', explorations.length);
+    }, [explorations]);
+
 
     const handleLike = async (userId: string) => {
         const result = await swipe(userId, 'like');

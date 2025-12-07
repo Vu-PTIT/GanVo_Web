@@ -52,15 +52,25 @@ export const useMatchStore = create<MatchState>((set, get) => ({
         try {
             set({ loadingExplorations: true });
             const { filters } = get();
+            console.log('🔄 Fetching with filters:', filters);
+
             const data = await matchService.getExplorations(filters);
-            set({ explorations: data.users, currentCardIndex: 0 });
+            console.log('📦 Raw API response:', data);
+
+            // Handle both response formats: { users: [...] } or direct array
+            const users = Array.isArray(data) ? data : (data.users || []);
+            console.log('✅ Processed users:', users);
+
+            set({ explorations: users, currentCardIndex: 0 });
         } catch (error) {
-            console.error('Error fetching explorations:', error);
+            console.error('❌ Error fetching explorations:', error);
             toast.error('Không thể tải danh sách người dùng');
+            set({ explorations: [] });
         } finally {
             set({ loadingExplorations: false });
         }
     },
+
 
     // Swipe action
     swipe: async (targetUserId: string, action: 'like' | 'dislike') => {

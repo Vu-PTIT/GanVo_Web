@@ -42,6 +42,23 @@ export const getMyAppointments = async (req, res) => {
 };
 
 
+
+export const getOtherAppointments = async (req, res) => {
+  const userId = req.user ? req.user._id : null;
+
+  if (!userId) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  const data = await Appointment.find({ userId: { $ne: userId } })
+    .populate("userId", "username displayName email") // Show who created it
+    .sort({
+      dateTime: 1,
+    });
+  res.json(data);
+};
+
+
 export const getAllAppointments = async (req, res) => {
   const data = await Appointment.find()
     .populate("userId", "username displayName email")

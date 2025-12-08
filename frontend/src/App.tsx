@@ -15,6 +15,7 @@ import { useAuthStore } from './stores/useAuthStore';
 
 import AppointmentPage from "./pages/appointment";
 import MyAppointmentsPage from "./pages/my-appointments";
+import OtherAppointmentsPage from "./pages/other-appointments";
 import AdminAppointmentsPage from "./pages/admin/AdminAppointmentsPage";
 import AdminUsersPage from "./pages/admin/AdminUsersPage";
 import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
@@ -94,6 +95,7 @@ export function App() {
             }
           />
           <Route path="/my-appointments" element={<MyAppointmentsPage />} />
+          <Route path="/other-appointments" element={<OtherAppointmentsPage />} />
           <Route path="/chat" element={<ChatAppPage />} />
           <Route path="/connect" element={<Connect />} />
           <Route path="/profile" element={<Profile />} />

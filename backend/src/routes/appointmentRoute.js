@@ -2,6 +2,7 @@ import express from "express";
 import {
   createAppointment,
   getMyAppointments,
+  getOtherAppointments,
   getAllAppointments,
   updateAppointment,
   deleteAppointment,
@@ -13,6 +14,7 @@ const router = express.Router();
 
 router.post("/", authMiddleware, createAppointment);
 router.get("/me", authMiddleware, getMyAppointments);
+router.get("/others", authMiddleware, getOtherAppointments);
 
 router.get("/", authMiddleware, adminMiddleware, getAllAppointments);
 router.put("/:id", authMiddleware, adminMiddleware, updateAppointment);

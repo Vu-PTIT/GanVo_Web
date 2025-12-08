@@ -1,0 +1,32 @@
+/* Layout styles for Other Appointments page */
+.layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+#other-appointments {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.other-appointments {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+    height: 100%;
+}
+
+.scoll-auto {
+    overflow-y: auto;
+}
+
+.other-appointments-right-site {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(23, 26, 31, 0.08), 0 2px 4px rgba(23, 26, 31, 0.04);
+}

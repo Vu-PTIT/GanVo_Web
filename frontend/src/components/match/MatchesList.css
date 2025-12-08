@@ -1,5 +1,8 @@
 .matches-list {
-    padding: 20px 0;
+    padding-bottom: 20px;
+    overflow-y: auto;
+    height: calc(100% - 75px);
+    align-items: stretch;
 }
 
 .matches-grid {

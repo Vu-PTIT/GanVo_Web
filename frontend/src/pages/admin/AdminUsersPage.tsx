@@ -181,7 +181,7 @@ const AdminUsersPage: React.FC = () => {
                         </h2>
                         {error && <p style={{ color: "red", marginBottom: "10px" }}>{error}</p>}
                         <form onSubmit={handleSubmit}>
-                            <div className="form-group mb-3">
+                            <div className="form-group adpage mb-3">
                                 <label className="block mb-1 font-medium">Username</label>
                                 <input
                                     type="text"
@@ -193,7 +193,7 @@ const AdminUsersPage: React.FC = () => {
                                     required
                                 />
                             </div>
-                            <div className="form-group mb-3">
+                            <div className="form-group adpage mb-3">
                                 <label className="block mb-1 font-medium">Email</label>
                                 <input
                                     type="email"
@@ -204,7 +204,7 @@ const AdminUsersPage: React.FC = () => {
                                     required
                                 />
                             </div>
-                            <div className="form-group mb-3">
+                            <div className="form-group adpage mb-3">
                                 <label className="block mb-1 font-medium">Tên hiển thị</label>
                                 <input
                                     type="text"
@@ -215,7 +215,7 @@ const AdminUsersPage: React.FC = () => {
                                     required
                                 />
                             </div>
-                            <div className="form-group mb-4">
+                            <div className="form-group adpage mb-4">
                                 <label className="block mb-1 font-medium">
                                     Password {editingUser && <span className="text-sm text-gray-500">(Để trống nếu không đổi)</span>}
                                 </label>

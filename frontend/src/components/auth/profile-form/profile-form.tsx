@@ -341,7 +341,7 @@ export function ProfileForm() {
                                 <button onClick={handleSave} className="btn-profile-action btn-primary-blue">
                                     Lưu Thay Đổi
                                 </button>
-                                <button onClick={handleCancel} className="btn-profile-action btn-secondary-gray">
+                                <button onClick={handleCancel} className="btn-profile-action btn-secondary-gray box-sha-none">
                                     Hủy
                                 </button>
                             </>

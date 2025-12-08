@@ -1,13 +1,14 @@
 /* Connect form container */
 .connect-form {
-    padding: 20px 0;
+    padding: 20px;
     height: 100%;
+    background-color: #f8fafc;
+    border-radius: 12px;
 }
 
 .connect-scroll-container {
     flex: 1;
     height: calc(100vh - 60px);
-    background-color: #FAFAFB;
     padding: 20px;
     box-shadow: 0 4px 12px rgba(23, 26, 31, 0.08), 0 2px 4px rgba(23, 26, 31, 0.04);
 }

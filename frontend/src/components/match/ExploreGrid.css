@@ -2,7 +2,7 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     gap: 20px;
-    padding: 20px 0;
+    padding-bottom: 20px;
     overflow-y: auto;
     height: calc(100% - 140px);
     align-items: stretch; 

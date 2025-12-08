@@ -6,6 +6,8 @@
   height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
+  background-color: #f8fafc;
+  padding: 20px;
 }
 
 .dashboard-form {

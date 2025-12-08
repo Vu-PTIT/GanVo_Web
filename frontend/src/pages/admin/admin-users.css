@@ -153,11 +153,11 @@
     text-align: center;
 }
 
-.form-group {
+.form-group.adpage {
     margin-bottom: 16px;
 }
 
-.form-group label {
+.form-group.adpage label {
     display: block;
     margin-bottom: 8px;
     font-weight: 500;
@@ -165,7 +165,7 @@
     font-size: 14px;
 }
 
-.form-group input {
+.form-group.adpage input {
     width: 100%;
     padding: 10px 12px;
     border: 1px solid #cbd5e1;
@@ -175,7 +175,7 @@
     outline: none;
 }
 
-.form-group input:focus {
+.form-group.adpage input:focus {
     border-color: #3b82f6; /* Viền xanh khi nhập */
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }

@@ -2,7 +2,7 @@
 import './profile-form.css';
 import '../../../assets/css/asset.css';
 import '../../../assets/css/index.css';
-import { Calendar, Users, Sparkles, Heart, Image as ImageIcon, Search } from "lucide-react";
+import { Calendar, Users, Sparkles, Heart, Image as ImageIcon, Search, Plus, X } from "lucide-react";
 import { useState, useEffect } from 'react';
 import axiosInstance from '../../../lib/axios';
 
@@ -35,6 +35,7 @@ export function ProfileForm() {
     const [loading, setLoading] = useState(true);
     const [isEditing, setIsEditing] = useState(false);
     const [editData, setEditData] = useState<Profile>(emptyProfile);
+    const [uploadingImage, setUploadingImage] = useState(false);
 
     // Fetch profile data on component mount
     const fetchProfile = async () => {
@@ -132,7 +133,8 @@ export function ProfileForm() {
                 lookingFor: editData.preference,
                 interests: typeof editData.hobbies === 'string'
                     ? editData.hobbies.split(',').map(s => s.trim()).filter(s => s)
-                    : editData.hobbies
+                    : editData.hobbies,
+                photos: editData.images.map(img => ({ url: img }))
             };
 
             await axiosInstance.put('/users/profile', payload);
@@ -147,6 +149,49 @@ export function ProfileForm() {
 
     const handleChange = (field: keyof Profile, value: any) => {
         setEditData(prev => ({ ...prev, [field]: value }));
+    };
+
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        // Basic validation
+        if (!file.type.startsWith('image/')) {
+            alert('Vui lòng chọn file ảnh!');
+            return;
+        }
+        if (file.size > 5 * 1024 * 1024) { // 5MB
+            alert('File quá lớn (tối đa 5MB)');
+            return;
+        }
+
+        try {
+            // Convert to Base64
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                const base64String = reader.result as string;
+                setEditData(prev => ({
+                    ...prev,
+                    images: [...prev.images, base64String]
+                }));
+                // Reset input
+                e.target.value = '';
+                setUploadingImage(false);
+            };
+            reader.readAsDataURL(file);
+
+        } catch (error) {
+            console.error('Error reading file:', error);
+            alert('Lỗi đọc file ảnh');
+            setUploadingImage(false);
+        }
+    };
+
+    const handleRemoveImage = (indexToRemove: number) => {
+        setEditData(prev => ({
+            ...prev,
+            images: prev.images.filter((_, idx) => idx !== indexToRemove)
+        }));
     };
 
     if (loading) {
@@ -299,7 +344,43 @@ export function ProfileForm() {
                                 <span className="section-title">Thư viện ảnh</span>
                             </div>
                             {isEditing ? (
-                                <p className="text-sm text-gray-500 italic">Tính năng quản lý ảnh đang được cập nhật.</p>
+                                <div>
+                                    <div className="photo-grid">
+                                        {editData.images.map((img, idx) => (
+                                            <div key={idx} className="photo-item relative group">
+                                                <img src={img} alt={`Gallery ${idx}`} className="w-full h-full object-cover" />
+                                                <button
+                                                    onClick={() => handleRemoveImage(idx)}
+                                                    className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-90 hover:opacity-100 transition-opacity"
+                                                    title="Xóa ảnh"
+                                                    style={{ position: 'absolute', top: '5px', right: '5px', background: 'rgba(255,0,0,0.8)', color: 'white', borderRadius: '50%', border: 'none', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                                                >
+                                                    <X size={14} />
+                                                </button>
+                                            </div>
+                                        ))}
+
+                                        <label className="photo-item photo-add-btn cursor-pointer hover:bg-gray-100 transition-colors" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', border: '2px dashed #ccc', borderRadius: '8px', minHeight: '150px' }}>
+                                            {uploadingImage ? (
+                                                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+                                            ) : (
+                                                <>
+                                                    <Plus size={32} className="text-gray-400" />
+                                                    <span className="text-sm text-gray-400 mt-2">Thêm ảnh</span>
+                                                </>
+                                            )}
+                                            <input
+                                                type="file"
+                                                accept="image/*"
+                                                className="hidden"
+                                                style={{ display: 'none' }}
+                                                onChange={handleImageUpload}
+                                                disabled={uploadingImage}
+                                            />
+                                        </label>
+                                    </div>
+                                    <p className="text-xs text-gray-500 mt-2 italic">* Tải lên ảnh từ thiết bị của bạn.</p>
+                                </div>
                             ) : (
                                 <div className="photo-grid">
                                     {profile.images.map((img, idx) => (

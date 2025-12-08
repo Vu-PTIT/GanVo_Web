@@ -105,46 +105,61 @@ export const updateProfile = async (req, res) => {
     if (lookingFor !== undefined) updateData.lookingFor = lookingFor.trim();
 
     //  TỰ ĐỘNG TẠO EMBEDDING 
-    const shouldUpdateEmbedding = bio !== undefined ||
-      interests !== undefined ||
-      lookingFor !== undefined ||
-      location !== undefined;
+    // Chỉ tạo lại nếu các trường quan trọng thực sự thay đổi
+    try {
+      const currentData = await User.findById(currentUserId).select("bio location interests lookingFor gender");
 
-    if (shouldUpdateEmbedding) {
-      try {
-        // Lấy data mới nhất để tạo embedding
-        const currentData = await User.findById(currentUserId)
-          .select("bio location interests lookingFor gender");
+      if (currentData) {
+        const isBioChanged = bio !== undefined && bio !== currentData.bio;
+        const isLocationChanged = location !== undefined && location !== currentData.location;
+        const isLookingForChanged = lookingFor !== undefined && lookingFor !== currentData.lookingFor;
 
-        if (!currentData) {
-          return res.status(404).json({ message: "Không tìm thấy người dùng" });
-        }
-
-        const profileForEmbedding = {
-          bio: bio !== undefined ? bio : currentData.bio,
-          location: location !== undefined ? location : currentData.location,
-          interests: interests !== undefined ? interests : currentData.interests,
-          lookingFor: lookingFor !== undefined ? lookingFor : currentData.lookingFor,
-          gender: gender !== undefined ? gender : currentData.gender
-        };
-
-        const profileText = buildProfileText(profileForEmbedding);
-
-        if (profileText.length >= 10) {
-          console.log(" Đang tạo embedding cho profile...");
-          const vector = await getEmbedding(profileText);
-
-          if (vector && vector.length > 0) {
-            updateData.embedding = vector;
-            console.log(" Embedding đã được tạo thành công!");
+        // So sánh mảng interests
+        let isInterestsChanged = false;
+        if (interests !== undefined) {
+          const currentInterests = currentData.interests || [];
+          if (interests.length !== currentInterests.length) {
+            isInterestsChanged = true;
           } else {
-            console.warn(" Không thể tạo embedding, tiếp tục cập nhật profile");
+            // So sánh từng phần tử (giả sử thứ tự quan trọng hoặc sort trước)
+            const sortedNew = [...interests].sort();
+            const sortedOld = [...currentInterests].sort();
+            if (JSON.stringify(sortedNew) !== JSON.stringify(sortedOld)) {
+              isInterestsChanged = true;
+            }
           }
         }
-      } catch (embeddingError) {
-        console.error(" Lỗi khi tạo embedding:", embeddingError.message);
-        // Vẫn tiếp tục cập nhật profile dù embedding thất bại
+
+        const shouldUpdateEmbedding = isBioChanged || isLocationChanged || isLookingForChanged || isInterestsChanged;
+
+        if (shouldUpdateEmbedding) {
+          console.log("Phát hiện thay đổi thông tin, đang tạo embedding mới...");
+
+          const profileForEmbedding = {
+            bio: bio !== undefined ? bio : currentData.bio,
+            location: location !== undefined ? location : currentData.location,
+            interests: interests !== undefined ? interests : currentData.interests,
+            lookingFor: lookingFor !== undefined ? lookingFor : currentData.lookingFor,
+            gender: gender !== undefined ? gender : currentData.gender
+          };
+
+          const profileText = buildProfileText(profileForEmbedding);
+
+          if (profileText.length >= 10) {
+            const vector = await getEmbedding(profileText);
+
+            if (vector && vector.length > 0) {
+              updateData.embedding = vector;
+              console.log(" Embedding đã được tạo thành công!");
+            }
+          }
+        } else {
+          console.log("Thông tin text không thay đổi, bỏ qua tạo embedding.");
+        }
       }
+    } catch (embeddingError) {
+      console.error(" Lỗi khi kiểm tra/tạo embedding:", embeddingError.message);
+      // Vẫn tiếp tục update profile
     }
 
     //  Tìm và update user

@@ -18,8 +18,9 @@ import personRoute from "./routes/personRoute.js";
 import messageRoute from "./routes/messageRoute.js";
 import conversationRoute from "./routes/conversationRoute.js";
 import appointmentRoute from "./routes/appointmentRoute.js";
-import notificationRoute from "./routes/notificationRoute.js"; 
+import notificationRoute from "./routes/notificationRoute.js";
 import dashboardRoute from "./routes/dashboardRoute.js";
+
 // Middlewares
 import { protectedRoute } from "./middlewares/authMiddleware.js";
 import { socketAuthMiddleware } from "./middlewares/socketAuthMiddleware.js";
@@ -46,8 +47,8 @@ const io = new Server(server, {
 const PORT = process.env.PORT || 5001;
 
 // MIDDLEWARES 
-app.use(express.json({ limit: "10mb" }));
-app.use(express.urlencoded({ extended: true, limit: "10mb" }));
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 app.use(cookieParser());
 
 app.use(
@@ -58,6 +59,7 @@ app.use(
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+
 
 // Make io accessible in all routes
 app.use((req, res, next) => {
@@ -83,9 +85,10 @@ app.use("/api/match", protectedRoute, matchRoute);
 app.use("/api/people", protectedRoute, personRoute);
 app.use("/api/messages", protectedRoute, messageRoute);
 app.use("/api/conversations", protectedRoute, conversationRoute);
-app.use("/api/notifications", protectedRoute, notificationRoute); 
+app.use("/api/notifications", protectedRoute, notificationRoute);
 app.use("/api/dashboard", protectedRoute, dashboardRoute);
 app.use("/api/appointments", protectedRoute, appointmentRoute);
+
 
 // ERROR HANDLING 
 app.use((err, req, res, next) => {

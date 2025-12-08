@@ -31,10 +31,10 @@ export function Header() {
     const [notifications, setNotifications] = useState<NotificationItem[]>([]);
     const [unreadCount, setUnreadCount] = useState(0);
     const [loadingNotifs, setLoadingNotifs] = useState(false);
-    
+
     const navigate = useNavigate();
     const { socket } = useChatStore();
-    
+
     // FIX: Đổi kiểu ref thành HTMLLIElement vì gắn vào thẻ <li>
     const notifMenuRef = useRef<HTMLLIElement>(null);
     const userMenuRef = useRef<HTMLLIElement>(null);
@@ -91,15 +91,15 @@ export function Header() {
     };
 
     const markAsRead = async (id: string, e?: React.MouseEvent) => {
-        e?.stopPropagation(); 
+        e?.stopPropagation();
         try {
             await axiosInstance.put(`/notifications/${id}/read`);
-            setNotifications((prev) => 
+            setNotifications((prev) =>
                 prev.map((n) => (n._id === id ? { ...n, isRead: true } : n))
             );
             setUnreadCount((prev) => {
-                 const isCurrentlyUnread = notifications.find(n => n._id === id)?.isRead === false;
-                 return isCurrentlyUnread ? Math.max(0, prev - 1) : prev;
+                const isCurrentlyUnread = notifications.find(n => n._id === id)?.isRead === false;
+                return isCurrentlyUnread ? Math.max(0, prev - 1) : prev;
             });
         } catch (error) {
             console.error("Lỗi markAsRead", error);
@@ -131,7 +131,7 @@ export function Header() {
     };
 
     const deleteAllNotifications = async () => {
-        if(!window.confirm("Bạn có chắc chắn muốn xóa tất cả thông báo?")) return;
+        if (!window.confirm("Bạn có chắc chắn muốn xóa tất cả thông báo?")) return;
         try {
             await axiosInstance.delete('/notifications');
             setNotifications([]);
@@ -148,26 +148,30 @@ export function Header() {
         setShowNotifications(false);
         // Logic điều hướng
         if (notif.type === 'message' && notif.relatedId) {
-             // navigate(`/messages/${notif.relatedId}`);
+            // navigate(`/messages/${notif.relatedId}`);
+        } else if (notif.type === 'like') {
+            navigate('/connect', { state: { tab: 'likes' } });
+        } else if (notif.type === 'match') {
+            navigate('/connect', { state: { tab: 'matches' } });
         }
     };
 
     return (
         <header>
             <div className="header">
-                <div className="header-left-site" onClick={() => navigate('/')} style={{cursor: 'pointer'}}>
+                <div className="header-left-site" onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>
                     <div className="logo"></div>
                     <p className="name-web">Kết nối vui vẻ</p>
                 </div>
                 <ul className="header-right-site">
                     {/* Notification Bell */}
                     <li className="notifications-container" ref={notifMenuRef}>
-                        <button 
-                            className="bell-button" 
+                        <button
+                            className="bell-button"
                             onClick={() => {
-                                setShowNotifications(!showNotifications); 
+                                setShowNotifications(!showNotifications);
                                 setShowMenu(false);
-                            }} 
+                            }}
                             aria-label="Thông báo"
                         >
                             <Bell className='style-icon' />
@@ -179,18 +183,18 @@ export function Header() {
                         {showNotifications && (
                             <div className="user-menu-dropdown notifications-dropdown">
                                 <div className="notifications-header">
-                                    <h3 style={{margin: 0, fontSize: '16px'}}>Thông báo</h3>
-                                    <div style={{display: 'flex', gap: '10px'}}>
-                                        <button 
-                                            className="action-btn text-blue" 
-                                            onClick={markAllRead} 
+                                    <h3 style={{ margin: 0, fontSize: '16px' }}>Thông báo</h3>
+                                    <div style={{ display: 'flex', gap: '10px' }}>
+                                        <button
+                                            className="action-btn text-blue"
+                                            onClick={markAllRead}
                                             title="Đánh dấu tất cả đã đọc"
                                             disabled={notifications.length === 0}
                                         >
                                             <Check size={16} />
                                         </button>
-                                        <button 
-                                            className="action-btn text-red" 
+                                        <button
+                                            className="action-btn text-red"
                                             onClick={deleteAllNotifications}
                                             title="Xóa tất cả"
                                             disabled={notifications.length === 0}
@@ -199,32 +203,32 @@ export function Header() {
                                         </button>
                                     </div>
                                 </div>
-                                
+
                                 <div className="notifications-list">
                                     {loadingNotifs && <div className="notif-empty">Đang tải...</div>}
-                                    
+
                                     {!loadingNotifs && notifications.length === 0 && (
                                         <div className="notif-empty">
-                                            <p style={{textAlign: 'center', color: '#888', padding: '20px'}}>Không có thông báo nào</p>
+                                            <p style={{ textAlign: 'center', color: '#888', padding: '20px' }}>Không có thông báo nào</p>
                                         </div>
                                     )}
 
                                     {!loadingNotifs && notifications.map((n) => (
-                                        <div 
-                                            key={n._id} 
+                                        <div
+                                            key={n._id}
                                             className={`notification-item ${n.isRead ? 'read' : 'unread'}`}
                                             onClick={() => handleNotificationClick(n)}
                                         >
                                             {/* FIX: Thêm ? vào senderId để tránh lỗi type null */}
-                                            <img 
-                                                src={n.senderId?.avatarUrl || "/placeholder.png"} 
-                                                alt="Avatar" 
-                                                className="notif-avatar" 
+                                            <img
+                                                src={n.senderId?.avatarUrl || "/placeholder.png"}
+                                                alt="Avatar"
+                                                className="notif-avatar"
                                             />
                                             <div className="notification-body">
                                                 <div className="notification-text">
                                                     <strong>{n.title}</strong>
-                                                    <span style={{fontSize: '13px'}}>{n.senderId?.displayName} {n.message}</span>
+                                                    <span style={{ fontSize: '13px' }}>{n.senderId?.displayName} {n.message}</span>
                                                 </div>
                                                 <div className="notification-meta">
                                                     {new Date(n.createdAt).toLocaleString('vi-VN', {
@@ -232,19 +236,19 @@ export function Header() {
                                                     })}
                                                 </div>
                                             </div>
-                                            
+
                                             <div className="notification-actions-hover">
                                                 {!n.isRead && (
-                                                    <button 
-                                                        className="icon-btn blue" 
+                                                    <button
+                                                        className="icon-btn blue"
                                                         title="Đánh dấu đã đọc"
                                                         onClick={(e) => markAsRead(n._id, e)}
                                                     >
                                                         <div className="dot-unread-indicator"></div>
                                                     </button>
                                                 )}
-                                                <button 
-                                                    className="icon-btn red" 
+                                                <button
+                                                    className="icon-btn red"
                                                     title="Xóa"
                                                     onClick={(e) => deleteNotification(n._id, e)}
                                                 >
@@ -260,10 +264,10 @@ export function Header() {
 
                     {/* User Menu */}
                     <li className="user-menu-container" ref={userMenuRef}>
-                        <button className="user-menu-btn" onClick={() => {setShowMenu(!showMenu); setShowNotifications(false);}}>
-                             {/* FIX: Thêm ? vào user để tránh lỗi type null */}
-                             {user?.avatarUrl ? (
-                                <img src={user.avatarUrl} alt="User" className="header-avatar"/>
+                        <button className="user-menu-btn" onClick={() => { setShowMenu(!showMenu); setShowNotifications(false); }}>
+                            {/* FIX: Thêm ? vào user để tránh lỗi type null */}
+                            {user?.avatarUrl ? (
+                                <img src={user.avatarUrl} alt="User" className="header-avatar" />
                             ) : (
                                 <UserCircle className='style-icon' />
                             )}
@@ -274,7 +278,7 @@ export function Header() {
                                     <p className="user-name">{user?.displayName || user?.username || "Người dùng"}</p>
                                     <p className="user-email">{user?.email || "Chưa có email"}</p>
                                 </div>
-                                <div className="menu-divider" style={{height: '1px', background: '#eee', margin: '5px 0'}}></div>
+                                <div className="menu-divider" style={{ height: '1px', background: '#eee', margin: '5px 0' }}></div>
                                 <button className="menu-item logout-btn" onClick={handleLogout}>
                                     <LogOut size={18} />
                                     <span>Đăng xuất</span>

@@ -1,6 +1,7 @@
 import './connect-form.css';
 import '../../../assets/css/asset.css';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import ExploreGrid from '../../match/ExploreGrid';
 import MatchesList from '../../match/MatchesList';
 import LikesList from '../../match/LikesList';
@@ -9,7 +10,17 @@ import MyLikesList from '../../match/MyLikesList';
 type TabType = 'explore' | 'matches' | 'likes' | 'my-likes';
 
 export function ConnectForm() {
+    const location = useLocation();
     const [activeTab, setActiveTab] = useState<TabType>('explore');
+
+    useEffect(() => {
+        if (location.state?.tab) {
+            setActiveTab(location.state.tab);
+            // Clear state to avoid persistent tab on refresh (optional, but good UX)
+            // window.history.replaceState({}, document.title); 
+        }
+    }, [location.state]);
+
     const [filters, setFilters] = useState<{
         minAge?: number;
         maxAge?: number;

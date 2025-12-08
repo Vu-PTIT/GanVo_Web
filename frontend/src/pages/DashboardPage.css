@@ -24,10 +24,6 @@
 
 /* Responsive adjustments */
 @media (max-width: 1024px) {
-    .dashboard-layout {
-        gap: 15px;
-        padding: 15px;
-    }
 
     .dashboard-app-wrapper {
         padding: 20px;

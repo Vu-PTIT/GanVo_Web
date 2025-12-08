@@ -1,4 +1,4 @@
-import path from 'path';
+
 
 export const uploadImage = (req, res) => {
     try {

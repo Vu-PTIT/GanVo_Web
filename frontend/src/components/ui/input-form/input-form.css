@@ -4,25 +4,15 @@
 	flex-direction: column;
 	gap: 6px;
 	width: 100%;
-    margin-bottom: 10px;
+	margin-bottom: 10px;
 }
 
 .input-label {
-	font-size: 14px; 
-    line-height: 22px; 
-    font-weight: 500; 
+	font-size: 14px;
+	line-height: 22px;
+	font-weight: 500;
 	color: #333;
 	margin-left: 2px;
-}
-
-.input-inner {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	background: #fff;
-	border: 1px solid #dcdcdc;
-	border-radius: 8px;
-	padding: 8px 10px;
 }
 
 .input-icon {
@@ -30,35 +20,35 @@
 	align-items: center;
 	justify-content: center;
 	color: #666;
+	margin-bottom: 6px;
 }
 
 .input {
-	border: none;
-	outline: none;
-	flex: 1 1 auto;
-	font-size: 0.95rem;
-	background: transparent;
+	width: 100%;
+	padding: 8px 10px;
+	border: 1px solid #DEE1E6;
+	border-radius: 8px;
+	font-size: 16px;
+	line-height: 22px;
+	color: #111827;
+	box-sizing: border-box;
+	background: #fff;
 }
 
 .input::placeholder {
 	color: #bfbfbf;
 }
 
-/* Make select/textarea use same input styles when placed inside .input-inner */
-.input-inner select,
-.input-inner textarea {
-	border: none;
+.input:focus {
 	outline: none;
-	flex: 1 1 auto;
-	font-size: 0.95rem;
-	background: transparent;
-	width: 100%;
+	border-color: #9bbcf7;
+	box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.08);
 }
 
-.input-inner textarea {
-	min-height: 90px;
+/* Textarea specific styles */
+.input-form-box textarea.input {
+	min-height: 100px;
 	resize: vertical;
-	padding-top: 4px; /* small padding so text isn't glued to top */
 }
 
 .input-error {
@@ -67,18 +57,18 @@
 	margin-left: 2px;
 }
 
-.has-error .input-inner {
+.has-error .input {
 	border-color: #c0392b;
 }
 
 /* Small device tweaks */
 @media (max-width: 480px) {
-	.input-inner {
+	.input {
 		padding: 6px 8px;
 		border-radius: 6px;
 	}
+
 	.input-label {
 		font-size: 0.75rem;
 	}
 }
-

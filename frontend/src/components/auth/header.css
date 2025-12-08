@@ -17,7 +17,9 @@
     align-items: center;
     justify-content: center;
     position: relative;
-    /* Để neo dropdown vào đúng vị trí của icon */
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
 }
 
 /* 2. Sửa lỗi nút chuông bị lệch */
@@ -216,6 +218,11 @@
     height: 24px;
     border-radius: 50%;
     object-fit: cover;
+}
+.header-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* ép vừa khung */
 }
 
 /* --- Nút hành động nhỏ (Xóa/Đã đọc) --- */

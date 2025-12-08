@@ -1,11 +1,6 @@
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Label } from "../ui/label";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useNavigate } from "react-router";
 import "./signup-form.css";
@@ -35,9 +30,21 @@ export function SignupForm() {
   const onSubmit = async (data: SignUpFormValues) => {
     const { firstname, lastname, username, email, password } = data;
 
-    await signUp(username, password, email, firstname, lastname);
+    try {
+      await signUp(username, password, email, firstname, lastname);
 
-    navigate("/signin");
+      // Check if user is logged in (auto-login succeeded)
+      const { accessToken } = useAuthStore.getState();
+      if (accessToken) {
+        navigate("/complete-profile");
+      } else {
+        // Auto-login failed, redirect to signin
+        navigate("/signin");
+      }
+    } catch (error) {
+      // Signup failed, stay on page
+      console.error("Signup failed:", error);
+    }
   };
 
   return (

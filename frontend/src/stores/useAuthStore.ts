@@ -19,13 +19,25 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     try {
       set({ loading: true });
 
-      //  gọi api
+      // Call signup API
       await authService.signUp(username, password, email, firstName, lastName);
 
-      toast.success("Đăng ký thành công! Bạn sẽ được chuyển sang trang đăng nhập.");
+      toast.success("Đăng ký thành công!");
+
+      // Try to auto sign in after successful signup
+      try {
+        const { accessToken } = await authService.signIn(username, password);
+        get().setAccessToken(accessToken);
+        await get().fetchMe();
+      } catch (loginError) {
+        console.error("Auto-login failed after signup:", loginError);
+        // Don't throw - signup was successful, just auto-login failed
+      }
+
     } catch (error) {
       console.error(error);
       toast.error("Đăng ký không thành công");
+      throw error; // Re-throw to let caller handle
     } finally {
       set({ loading: false });
     }

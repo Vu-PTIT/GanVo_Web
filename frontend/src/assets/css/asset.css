@@ -26,15 +26,7 @@ table {
     font-size: 100%;
 }
 
-fieldset,
-img {
-    border: 0;
-}
 
-img {
-    vertical-align: top;
-    max-width: 100%;
-}
 
 address,
 caption,
@@ -3355,17 +3347,7 @@ select {
     padding-top: 50%;
 }
 
-.image-cover>img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 100%;
-    width: 100%;
-    -o-object-fit: cover;
-    object-fit: cover;
-}
+
 
 .z-1 {
     z-index: 1;
@@ -3962,11 +3944,7 @@ select {
     width: 50%;
 }
 
-.icon-box .icon-box-img {
-    margin-bottom: 1em;
-    max-width: 100%;
-    position: relative;
-}
+
 
 .icon-box-left,
 .icon-box-right {
@@ -3976,34 +3954,11 @@ select {
     width: 100%;
 }
 
-.icon-box-left .icon-box-img {
-    flex: 0 0 auto;
-    margin-bottom: 0;
-    max-width: 200px;
-}
 
-.icon-box-right .icon-box-img {
-    flex: 0 0 auto;
-    margin-bottom: 0;
-    max-width: 200px;
-}
 
-.icon-box-right .icon-box-img+.icon-box-text {
-    padding-right: 15px;
-    order: -1;
-}
 
-.icon-box-center .icon-box-img {
-    margin: 0 auto 1em;
-}
 
-.icon-box-right .icon-box-img+.icon-box-text {
-    padding-right: 15px;
-}
 
-.icon-box-left .icon-box-img+.icon-box-text {
-    padding-left: 15px;
-}
 
 .icon-box-left .icon-box-text,
 .icon-box-right .icon-box-text {

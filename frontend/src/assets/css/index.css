@@ -212,10 +212,6 @@ main {
     gap: 20px;
 }
 
-.header-right-site li {
-    width: 16px;
-    height: 16px;
-}
 
 .footer {
     background: #FFFFFF;
@@ -418,15 +414,7 @@ textarea {
   box-shadow: 0px 0px 1px #171a1f12, 0px 0px 2px #171a1f1F;
 }
 
-.header {
-  background: #FFFFFF;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 30px;
-  flex-shrink: 0;
-  box-shadow: 0px 0px 1px #171a1f12, 0px 0px 2px #171a1f1F;
-}
+
 
 .name-web {
   font-size: 20px;
@@ -439,11 +427,6 @@ textarea {
   display: flex;
   flex-direction: row;
   gap: 20px;
-}
-
-.header-right-site li {
-  width: 16px;
-  height: 16px;
 }
 
 .footer {

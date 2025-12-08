@@ -68,10 +68,10 @@ export default function AvatarUploader({
       </div>
 
       <div className="avatar-controls">
-        <button type="button" className="btn-small" onClick={handlePick}>
+        <button type="button" className="avatar-btn-change" onClick={handlePick}>
           Thay ảnh
         </button>
-        <button type="button" className="btn-small btn-outline" onClick={onRemove}>
+        <button type="button" className="avatar-btn-remove" onClick={onRemove}>
           Xóa
         </button>
       </div>

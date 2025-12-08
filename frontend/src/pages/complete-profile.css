@@ -1,0 +1,112 @@
+#complete-profile {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 20px;
+}
+
+.cont-complete-profile {
+    background: white;
+    border-radius: 16px;
+    padding: 40px;
+    max-width: 600px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.title-text {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1e293b;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.mb-30 {
+    margin-bottom: 30px;
+}
+
+.mb-35 {
+    margin-bottom: 35px;
+}
+
+.mb-50 {
+    margin-bottom: 50px;
+}
+
+.input-form-box {
+    margin-bottom: 20px;
+}
+
+.input-form-box label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 8px;
+}
+
+.input-form-box input,
+.input-form-box select,
+.input-form-box textarea {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #DEE1E6;
+    border-radius: 8px;
+    font-size: 16px;
+    line-height: 22px;
+    color: #111827;
+    box-sizing: border-box;
+    transition: all 0.2s;
+}
+
+.input-form-box input:focus,
+.input-form-box select:focus,
+.input-form-box textarea:focus {
+    outline: none;
+    border-color: #9bbcf7;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.08);
+}
+
+.input-form-box textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+
+/* Custom button styling for complete profile */
+.complete-profile-btn {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s;
+    border: none;
+    background-color: #0ea5e9;
+    color: #ffffff;
+    font-weight: 500;
+    box-shadow: 0 8px 18px rgba(14, 165, 233, 0.35);
+}
+.complete-profile-btn:hover{
+    background-color: #0284d0;
+}
+.complete-profile-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .cont-complete-profile {
+        padding: 30px 20px;
+    }
+
+    .title-text {
+        font-size: 24px;
+    }
+}

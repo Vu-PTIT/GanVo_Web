@@ -17,7 +17,7 @@ export const sendMessage = async (req, res) => {
       imgUrl,
     });
 
-    // Update conversation last message
+    // Update conversation last message and resurface for everyone (clear deletedBy)
     await Conversation.findByIdAndUpdate(conversationId, {
       lastMessageAt: new Date(),
       lastMessage: {
@@ -26,6 +26,7 @@ export const sendMessage = async (req, res) => {
         senderId,
         createdAt: newMessage.createdAt,
       },
+      deletedBy: [], // Resurface conversation if hidden
     });
 
     // Populate sender info for realtime update

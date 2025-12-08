@@ -70,7 +70,7 @@ const conversationSchema = new mongoose.Schema(
       enum: ["direct", "group"],
       required: true,
     },
-    
+
     // Danh sách người tham gia
     participants: {
       type: [participantSchema],
@@ -108,6 +108,13 @@ const conversationSchema = new mongoose.Schema(
       of: Number,
       default: {},
     },
+    // Danh sách user đã xóa hội thoại này (Soft delete)
+    deletedBy: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
   },
   {
     timestamps: true,

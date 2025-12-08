@@ -3,7 +3,7 @@ import { useChatStore } from "@/stores/useChatStore";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useConversationStore } from "@/stores/useConversationStore";
 import MessageInput from "./MessageInput";
-import { Loader2, MessageSquare } from "lucide-react";
+import { Loader2, MessageSquare, Trash2 } from "lucide-react";
 import "./ChatWindow.css";
 
 const ChatWindow = () => {
@@ -15,7 +15,7 @@ const ChatWindow = () => {
         joinConversation,
     } = useChatStore();
     const { user: currentUser } = useAuthStore();
-    const { conversations } = useConversationStore();
+    const { conversations, deleteConversation } = useConversationStore();
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     const selectedConversation = conversations.find(
@@ -54,6 +54,7 @@ const ChatWindow = () => {
     return (
         <div className="chat-window">
             {/* Header */}
+            {/* Header */}
             <div className="chat-header">
                 {otherParticipant && (
                     <div className="chat-header-left">
@@ -69,6 +70,23 @@ const ChatWindow = () => {
                         </div>
                     </div>
                 )}
+                <div className="chat-header-right">
+                    <button
+                        className="delete-conversation-btn"
+                        onClick={async () => {
+                            if (window.confirm("Bạn có chắc chắn muốn xóa cuộc hội thoại này? (Chỉ xóa phía bạn)")) {
+                                const success = await deleteConversation(selectedConversationId);
+                                if (success) {
+                                    // Deselect current conversation
+                                    useChatStore.getState().setSelectedConversationId(null);
+                                }
+                            }
+                        }}
+                        title="Xóa cuộc hội thoại"
+                    >
+                        <Trash2 size={20} />
+                    </button>
+                </div>
             </div>
 
             {/* Messages */}

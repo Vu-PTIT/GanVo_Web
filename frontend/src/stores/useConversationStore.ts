@@ -8,6 +8,7 @@ interface ConversationStore {
 
     fetchConversations: () => Promise<void>;
     getOrCreateDirectConversation: (friendId: string) => Promise<string | null>;
+    deleteConversation: (conversationId: string) => Promise<boolean>;
 }
 
 export const useConversationStore = create<ConversationStore>((set, get) => ({
@@ -41,6 +42,19 @@ export const useConversationStore = create<ConversationStore>((set, get) => ({
         } catch (error) {
             console.error("Error getting/creating conversation:", error);
             return null;
+        }
+    },
+
+    deleteConversation: async (conversationId: string) => {
+        try {
+            await axiosInstance.delete(`/conversations/${conversationId}`);
+            set(state => ({
+                conversations: state.conversations.filter(c => c._id !== conversationId)
+            }));
+            return true;
+        } catch (error) {
+            console.error("Error deleting conversation:", error);
+            return false;
         }
     },
 }));

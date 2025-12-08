@@ -1,7 +1,7 @@
 import '../assets/css/index.css';
 import '../assets/css/asset.css';
 import './ChatAppPage.css';
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useChatStore } from "@/stores/useChatStore";
 import { useConversationStore } from '@/stores/useConversationStore';
@@ -22,20 +22,34 @@ const ChatAppPage = () => {
     return () => disconnectSocket();
   }, [connectSocket, disconnectSocket]);
 
+  // Ref to prevent double-invocation in StrictMode
+  const isInitializingRef = useRef(false);
+
   useEffect(() => {
     const userId = searchParams.get("userId");
-    if (userId) {
+
+    // Only proceed if userId exists and we aren't already initializing for this user
+    if (userId && !isInitializingRef.current) {
+      isInitializingRef.current = true;
+
       const initChat = async () => {
-        const conversationId = await getOrCreateDirectConversation(userId);
-        if (conversationId) {
-          setSelectedConversationId(conversationId);
-          // Clear param
-          setSearchParams({});
+        try {
+          const conversationId = await getOrCreateDirectConversation(userId);
+          if (conversationId) {
+            setSelectedConversationId(conversationId);
+            // Clear param
+            setSearchParams({});
+          }
+        } finally {
+          // Optional: reset ref if needed, but since we clear param, we might not want to.
+          // keeping it true prevents re-entry until component unmounts or param changes significantly.
+          setTimeout(() => { isInitializingRef.current = false; }, 1000);
         }
       };
       initChat();
     }
-  }, [searchParams, getOrCreateDirectConversation, setSelectedConversationId, setSearchParams]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams.get("userId")]); // Only re-run when userId changes
 
   return (
     <div className="layout">

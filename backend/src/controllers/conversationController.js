@@ -10,10 +10,15 @@ export const getOrCreateDirectConversation = async (req, res) => {
       return res.status(400).json({ message: "Friend ID is required" });
     }
 
-    // Check if conversation exists
+    // Check if conversation already exists between these 2 users
     let conversation = await Conversation.findOne({
       type: "direct",
-      "participants.userId": { $all: [userId, friendId] },
+      $and: [
+        { "participants.userId": userId },
+        { "participants.userId": friendId }
+      ],
+      // Ensure exactly 2 participants (no group chats)
+      "participants": { $size: 2 }
     });
 
     if (!conversation) {
@@ -38,12 +43,14 @@ export const getOrCreateDirectConversation = async (req, res) => {
   }
 };
 
+// Update getConversations to exclude deleted ones
 export const getConversations = async (req, res) => {
   try {
     const userId = req.user._id;
 
     const conversations = await Conversation.find({
       "participants.userId": userId,
+      deletedBy: { $ne: userId } // Exclude if user is in deletedBy list
     })
       .sort({ lastMessageAt: -1 })
       .populate("participants.userId", "username displayName avatarUrl")
@@ -63,7 +70,8 @@ export const getConversationById = async (req, res) => {
 
     const conversation = await Conversation.findOne({
       _id: id,
-      "participants.userId": userId
+      "participants.userId": userId,
+      deletedBy: { $ne: userId } // Ensure not deleted
     }).populate("participants.userId", "username displayName avatarUrl");
 
     if (!conversation) {
@@ -76,3 +84,19 @@ export const getConversationById = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 }
+
+export const deleteConversation = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user._id;
+
+    await Conversation.findByIdAndUpdate(id, {
+      $addToSet: { deletedBy: userId }
+    });
+
+    res.status(200).json({ message: "Conversation deleted for you" });
+  } catch (error) {
+    console.error("Error in deleteConversation:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};

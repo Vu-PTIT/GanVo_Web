@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { adminService } from "../../services/adminService";
 import type { AdminStats } from "../../services/adminService";
-import { Header } from "../../components/auth/header";
+import { Header } from "../../components/shared/header";
 import { AdminSidebar } from "../../components/admin/AdminSidebar";
 import "./admin-dashboard.css";
 import {
@@ -40,17 +40,17 @@ const AdminDashboardPage: React.FC = () => {
                 <main id="admin-dashboard">
                     <div className="chat-layout scoll-auto">
                         <AdminSidebar />
-                        <div style={{ 
-                            flex: 1, 
-                            display: 'flex', 
-                            alignItems: 'center', 
+                        <div style={{
+                            flex: 1,
+                            display: 'flex',
+                            alignItems: 'center',
                             justifyContent: 'center',
                             height: '100%',
                             background: 'white',
                             borderRadius: '12px'
                         }}>
-                            <div style={{ 
-                                fontSize: '18px', 
+                            <div style={{
+                                fontSize: '18px',
                                 color: '#666',
                                 animation: 'pulse 1.5s ease-in-out infinite'
                             }}>

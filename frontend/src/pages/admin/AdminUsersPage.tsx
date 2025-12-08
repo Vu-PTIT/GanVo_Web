@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { adminService } from "../../services/adminService";
 import type { UserFormData } from "../../services/adminService";
 import type { User } from "../../types/user";
-import { Header } from "../../components/auth/header";
+import { Header } from "../../components/shared/header";
 import { AdminSidebar } from "../../components/admin/AdminSidebar";
 import "./admin-users.css"; // Giữ lại import CSS gốc của bạn
 
@@ -101,7 +101,7 @@ const AdminUsersPage: React.FC = () => {
         // Thêm h-screen flex flex-col để layout chiếm toàn màn hình
         <div className="layout h-screen flex flex-col">
             <Header />
-            
+
             {/* main: overflow-hidden để chặn cuộn toàn trang */}
             <main id="admin-users" className="flex-1 overflow-hidden">
                 <div className="chat-layout flex h-full">
@@ -109,11 +109,11 @@ const AdminUsersPage: React.FC = () => {
 
                     {/* Container chính: Đảm bảo chiều cao full và chặn tràn */}
                     <div className="flex-1 bg-base-100 rounded-lg shadow-xl overflow-hidden flex flex-col border border-base-300 h-full m-2">
-                        
+
                         {/* Wrapper nội dung: ĐÂY LÀ CHỖ SỬA LỖI CUỘN */}
                         {/* Thêm overflow-y-auto để chỉ vùng này cuộn được */}
                         <div className="admin-content-wrapper flex-1 overflow-y-auto p-4">
-                            
+
                             <div className="admin-header flex justify-between items-center mb-4">
                                 <h1 className="admin-page-title text-2xl font-bold">Quản lý User</h1>
                                 <button className="btn-add-user bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" onClick={openAddModal}>

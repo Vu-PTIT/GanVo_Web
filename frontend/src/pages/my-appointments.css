@@ -27,6 +27,7 @@
   flex-direction: column;
   overflow-y: auto;
   padding: 20px;
+  box-shadow: 0 4px 12px rgba(23, 26, 31, 0.08), 0 2px 4px rgba(23, 26, 31, 0.04);
 }
 
 /* Footer styles */

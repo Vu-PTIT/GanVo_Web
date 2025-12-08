@@ -22,7 +22,7 @@ export function ConnectForm() {
     });
 
     return (
-        <div className="container container-1200">
+        <div className="connect-scroll-container">
             <div className="connect-form">
                 {/* Header with title */}
                 <div className="connect-header">

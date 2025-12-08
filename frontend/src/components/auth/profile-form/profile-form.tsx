@@ -33,13 +33,12 @@ const emptyProfile: Profile = {
 export function ProfileForm() {
     const [profile, setProfile] = useState<Profile>(emptyProfile);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
     const [isEditing, setIsEditing] = useState(false);
     const [editData, setEditData] = useState<Profile>(emptyProfile);
 
     // Fetch profile data on component mount
     const fetchProfile = async () => {
-        setError(null);
+
         try {
             const response = await axiosInstance.get('/users/me');
             console.log('[ProfileForm] /users/me status:', response?.status);
@@ -50,7 +49,7 @@ export function ProfileForm() {
             if (!data) {
                 console.warn('[ProfileForm] No profile data returned from API');
                 setProfile(emptyProfile);
-                setError('Không tìm thấy dữ liệu hồ sơ.');
+                console.warn('Không tìm thấy dữ liệu hồ sơ.');
                 return;
             }
 
@@ -89,7 +88,7 @@ export function ProfileForm() {
         } catch (err: any) {
             console.error('[ProfileForm] fetchProfile error:', err);
             setProfile(emptyProfile);
-            setError('Không thể tải hồ sơ. Vui lòng thử lại.');
+            setProfile(emptyProfile);
         } finally {
             setLoading(false);
         }
@@ -168,7 +167,6 @@ export function ProfileForm() {
                 {/* Header Section */}
                 <div className="profile-header-text">
                     <h1 className="profile-title">Hồ Sơ Của Bạn</h1>
-                    <p className="profile-subtitle">Cập nhật thông tin cá nhân và quản lý sự hiện diện của bạn.</p>
                 </div>
 
                 <div className="cont-content-profile">
@@ -358,6 +356,6 @@ export function ProfileForm() {
                 </div>
             </div>
         </div>
-        
+
     )
 }

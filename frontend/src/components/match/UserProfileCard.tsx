@@ -27,6 +27,28 @@ export default function UserProfileCard({ user, onLike, onDislike, onMessage }: 
                     <h3 className="profile-name">
                         {user.displayName} - {user.age || 0} - {user.gender === 'male' ? 'Nam' : 'Nữ'}
                     </h3>
+
+                    {/* Similarity Score Badge */}
+                    {user.matchScore !== undefined && user.matchScore > 0 && (
+                        <div className="profile-match-score" style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                            background: '#ffebee',
+                            color: '#e91e63',
+                            padding: '4px 8px',
+                            borderRadius: '12px',
+                            fontSize: '12px',
+                            fontWeight: '600',
+                            marginBottom: '8px'
+                        }}>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                            </svg>
+                            {user.matchScore}% phù hợp
+                        </div>
+                    )}
+
                     {user.location && (
                         <p className="profile-location">{user.location}</p>
                     )}

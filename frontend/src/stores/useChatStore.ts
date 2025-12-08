@@ -28,12 +28,13 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     isMessagesLoading: false,
 
     connectSocket: () => {
-        const { user, accessToken } = useAuthStore.getState();
+        const { user } = useAuthStore.getState();
         if (!user || get().socket?.connected) return;
 
         const socket = io(BASE_URL, {
-            auth: {
-                token: accessToken,
+            auth: (cb) => {
+                const token = useAuthStore.getState().accessToken;
+                cb({ token });
             },
             withCredentials: true,
         });
@@ -102,3 +103,14 @@ export const useChatStore = create<ChatStore>((set, get) => ({
         set((state) => ({ messages: [...state.messages, message] }));
     },
 }));
+
+// Subscribe to auth changes to handle socket disconnection/reconnection
+useAuthStore.subscribe((state, prevState) => {
+    // If user logs out (accessToken becomes null), disconnect socket
+    if (!state.accessToken && prevState.accessToken) {
+        useChatStore.getState().disconnectSocket();
+    }
+
+    // If user logs in (accessToken changes from null to value), connect socket
+    // (Optional, as pages usually trigger connectSocket, but good for safety)
+});

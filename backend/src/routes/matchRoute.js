@@ -33,7 +33,7 @@ router.get("/likes", getWhoLikesMe);
 // GET /api/match/my-likes - Mình đã like ai (chưa match)
 router.get("/my-likes", getMyLikes);
 
-// DELETE /api/match/:matchId - Xóa match
+// DELETE /api/match/:matchId - Xóa match hoặc Hủy like (Cancel Request)
 router.delete("/:matchId", unmatch);
 
 export default router;

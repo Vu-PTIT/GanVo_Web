@@ -15,7 +15,7 @@ interface ChatStore {
     connectSocket: () => void;
     disconnectSocket: () => void;
     joinConversation: (conversationId: string) => void;
-    sendMessage: (conversationId: string, content: string) => Promise<void>;
+    sendMessage: (conversationId: string, content: string, imgUrl?: string) => Promise<void>;
     fetchMessages: (conversationId: string) => Promise<void>;
     setSelectedConversationId: (id: string | null) => void;
     addMessage: (message: Message) => void;
@@ -69,14 +69,17 @@ export const useChatStore = create<ChatStore>((set, get) => ({
         }
     },
 
-    sendMessage: async (conversationId: string, content: string) => {
+    sendMessage: async (conversationId: string, content: string, imgUrl?: string) => {
         try {
+            if (!content && !imgUrl) return;
+
             await axiosInstance.post(
                 "/messages",
-                { conversationId, content }
+                { conversationId, content, imgUrl }
             );
         } catch (error) {
             console.error("Error sending message:", error);
+            throw error;
         }
     },
 

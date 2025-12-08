@@ -30,26 +30,3 @@
   padding: 20px;
   box-shadow: 0 4px 12px rgba(23, 26, 31, 0.08), 0 2px 4px rgba(23, 26, 31, 0.04);
 }
-
-/* Footer styles */
-.app-footer {
-  margin-top: auto;
-  padding: 20px;
-  display: flex;
-  justify-content: center;
-  gap: 24px;
-  border-top: 1px solid #e5e7eb;
-}
-
-.app-footer__link {
-  background: none;
-  border: none;
-  color: #6b7280;
-  font-size: 14px;
-  cursor: pointer;
-  transition: color 0.2s;
-}
-
-.app-footer__link:hover {
-  color: #3b82f6;
-}

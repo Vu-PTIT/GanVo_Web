@@ -15,13 +15,6 @@ const MyAppointmentsPage: React.FC = () => {
           <Menu />
           <div className="my-appointments-right-site">
             <MyAppointmentForm />
-
-            {/* FOOTER */}
-            <footer className="app-footer">
-              <button className="app-footer__link">Khám Phá</button>
-              <button className="app-footer__link">Hỗ Trợ</button>
-              <button className="app-footer__link">Pháp Lý</button>
-            </footer>
           </div>
         </div>
       </main>

@@ -274,7 +274,7 @@
 
 /* Page Layout Fix */
 .profile.profile-page-correction {
-    height: calc(100vh - 85px);
+    height: calc(100vh - 60px);
     overflow: hidden;
     /* Prevent outer scroll */
     display: flex;

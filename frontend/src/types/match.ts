@@ -34,6 +34,7 @@ export interface Like {
     bio?: string;
     interests?: string[];
     likedAt: Date;
+    matchId?: string;
 }
 
 export interface SwipeAction {

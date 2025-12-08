@@ -33,6 +33,13 @@ export const matchService = {
         return response.data;
     },
 
+
+    // Lấy danh sách mình đã like (chưa match)
+    async getMyLikes(): Promise<{ likes: Like[]; total: number }> {
+        const response = await axiosInstance.get('/match/my-likes');
+        return response.data;
+    },
+
     // Unmatch
     async unmatch(matchId: string): Promise<{ message: string }> {
         const response = await axiosInstance.delete(`/match/${matchId}`);

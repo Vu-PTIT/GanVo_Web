@@ -8,6 +8,7 @@ interface MatchState {
     explorations: UserProfile[];
     matches: Match[];
     likes: Like[];
+    myLikes: Like[]; // Users I liked
     currentCardIndex: number;
 
     // Loading states
@@ -24,6 +25,7 @@ interface MatchState {
     swipe: (targetUserId: string, action: 'like' | 'dislike') => Promise<{ isMatch: boolean; matchData?: any }>;
     fetchMatches: () => Promise<void>;
     fetchLikes: () => Promise<void>;
+    fetchMyLikes: () => Promise<void>;
     unmatch: (matchId: string) => Promise<void>;
     nextCard: () => void;
     resetCardIndex: () => void;
@@ -34,6 +36,7 @@ export const useMatchStore = create<MatchState>((set, get) => ({
     explorations: [],
     matches: [],
     likes: [],
+    myLikes: [],
     currentCardIndex: 0,
     loadingExplorations: false,
     loadingMatches: false,
@@ -77,8 +80,10 @@ export const useMatchStore = create<MatchState>((set, get) => ({
         try {
             const response = await matchService.swipe({ targetUserId, action });
 
-            // Move to next card
-            get().nextCard();
+            // Remove the user from the list
+            set((state) => ({
+                explorations: state.explorations.filter(u => u._id !== targetUserId)
+            }));
 
             // If it's a match, show notification
             if (response.isMatch) {
@@ -123,12 +128,34 @@ export const useMatchStore = create<MatchState>((set, get) => ({
         }
     },
 
+    // Fetch my likes
+    fetchMyLikes: async () => {
+        try {
+            set({ loadingLikes: true }); // Reuse loading state or add new one? Reuse seems fine for now or add loadingMyLikes. 
+            // Better to strictly follow state interface, let's reuse loadingLikes for simplicity or just don't set separate loading for now as it wasn't defined in interface.
+            // Actually I should verify if I added loadingMyLikes to interface. I didn't. I'll just use loadingLikes or nothing.
+            // Let's add loadingMyLikes to be clean.
+            // Wait, I didn't add loadingMyLikes to interface. 
+            // I'll just use loadingLikes since they are on different tabs usually.
+            const data = await matchService.getMyLikes();
+            set({ myLikes: data.likes });
+        } catch (error) {
+            console.error('Error fetching my likes:', error);
+            // toast.error('Không thể tải danh sách đã thích'); // Optional toast
+        } finally {
+            set({ loadingLikes: false });
+        }
+    },
+
     // Unmatch
     unmatch: async (matchId: string) => {
         try {
             await matchService.unmatch(matchId);
-            // Remove from matches list
-            set({ matches: get().matches.filter(m => m.matchId !== matchId) });
+            // Remove from matches list or myLikes list
+            set({
+                matches: get().matches.filter(m => m.matchId !== matchId),
+                myLikes: get().myLikes.filter(l => l.matchId !== matchId)
+            });
             toast.success('Đã hủy kết nối');
         } catch (error) {
             console.error('Error unmatching:', error);

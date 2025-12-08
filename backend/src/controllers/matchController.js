@@ -2,51 +2,51 @@
 import Match from "../models/Match.js";
 import User from "../models/User.js";
 import { calculateSimilarity } from "../utils/gemini.js";
-import { 
-  createLikeNotification, 
-  createMatchNotification 
+import {
+  createLikeNotification,
+  createMatchNotification
 } from "../controllers/notificationController.js";
 // KHÁM PHÁ HỒ SƠ MỚI (Swipe Mode) 
 export const getExplorations = async (req, res) => {
   try {
     const currentUserId = req.user._id;
     const currentUser = req.user;
-    
+
     // Query params để filter
-    const { 
-      minAge, 
-      maxAge, 
-      gender, 
+    const {
+      minAge,
+      maxAge,
+      gender,
       location,
       maxDistance = 50, // km
-      limit = 20 
+      limit = 20
     } = req.query;
 
     // Bước 1: Lấy danh sách đã tương tác
-    const interactedMatches = await Match.find({ 
-      requester: currentUserId 
+    const interactedMatches = await Match.find({
+      requester: currentUserId
     }).select("recipient");
-    
+
     const interactedIds = interactedMatches.map(m => m.recipient.toString());
-    
+
     // Bước 2: Lấy danh sách đã match/friend
-    const connectedMatches = await Match.find({ 
+    const connectedMatches = await Match.find({
       $or: [
         { requester: currentUserId, status: { $in: ["matched", "friends"] } },
         { recipient: currentUserId, status: { $in: ["matched", "friends"] } }
       ]
     }).select("requester recipient");
-    
+
     const connectedIds = connectedMatches.map(m => {
-      const otherId = m.requester.toString() === currentUserId.toString() 
-        ? m.recipient.toString() 
+      const otherId = m.requester.toString() === currentUserId.toString()
+        ? m.recipient.toString()
         : m.requester.toString();
       return otherId;
     });
 
     const excludeIds = [
-      currentUserId.toString(), 
-      ...interactedIds, 
+      currentUserId.toString(),
+      ...interactedIds,
       ...connectedIds
     ];
 
@@ -104,7 +104,7 @@ export const getExplorations = async (req, res) => {
 
         // 3. Common Interests (20%)
         if (currentUser.interests && candidate.interests) {
-          const commonCount = currentUser.interests.filter(i => 
+          const commonCount = currentUser.interests.filter(i =>
             candidate.interests.includes(i)
           ).length;
           const interestScore = Math.min(commonCount / 5, 1); // Max 5 interests
@@ -124,8 +124,8 @@ export const getExplorations = async (req, res) => {
           matchScore: Math.round(score * 100), // 0-100
         };
       })
-      .sort((a, b) => b.matchScore - a.matchScore) // Điểm cao nhất lên đầu
-      .slice(0, parseInt(limit));
+        .sort((a, b) => b.matchScore - a.matchScore) // Điểm cao nhất lên đầu
+        .slice(0, parseInt(limit));
     } else {
       // Nếu user chưa có embedding, trả về random
       candidates = candidates.slice(0, parseInt(limit)).map(c => ({
@@ -142,9 +142,9 @@ export const getExplorations = async (req, res) => {
       }));
     }
 
-    return res.status(200).json({ 
+    return res.status(200).json({
       users: candidates,
-      total: candidates.length 
+      total: candidates.length
     });
 
   } catch (error) {
@@ -181,9 +181,9 @@ export const swipe = async (req, res) => {
         recipient: targetUserId,
         status: "rejected",
       });
-      return res.status(200).json({ 
-        message: "Đã bỏ qua", 
-        isMatch: false 
+      return res.status(200).json({
+        message: "Đã bỏ qua",
+        isMatch: false
       });
     }
 
@@ -197,7 +197,7 @@ export const swipe = async (req, res) => {
 
     if (existingMatch) {
       // IT'S A MATCH!
-      
+
       // Tính similarity score
       let similarityScore = 0;
       if (currentUser.embedding?.length > 0 && targetUser.embedding?.length > 0) {
@@ -210,9 +210,9 @@ export const swipe = async (req, res) => {
 
       // TẠO THÔNG BÁO MATCH CHO CẢ 2 NGƯỜI
       await createMatchNotification(currentUserId, targetUserId, existingMatch._id);
-      
-      return res.status(200).json({ 
-        message: `Bạn và ${targetUser.displayName} đã match! `, 
+
+      return res.status(200).json({
+        message: `Bạn và ${targetUser.displayName} đã match! `,
         isMatch: true,
         matchData: {
           userId: targetUserId,
@@ -232,9 +232,9 @@ export const swipe = async (req, res) => {
     //  TẠO THÔNG BÁO CHO NGƯỜI BỊ LIKE
     await createLikeNotification(currentUserId, targetUserId);
 
-    return res.status(200).json({ 
-      message: "Đã gửi yêu cầu thích", 
-      isMatch: false 
+    return res.status(200).json({
+      message: "Đã gửi yêu cầu thích",
+      isMatch: false
     });
 
   } catch (error) {
@@ -256,14 +256,14 @@ export const getMatches = async (req, res) => {
         { recipient: currentUserId, status: "matched" },
       ],
     })
-    .populate("requester", "displayName avatarUrl location dateOfBirth bio isOnline")
-    .populate("recipient", "displayName avatarUrl location dateOfBirth bio isOnline")
-    .sort({ updatedAt: -1 });
+      .populate("requester", "displayName avatarUrl location dateOfBirth bio isOnline")
+      .populate("recipient", "displayName avatarUrl location dateOfBirth bio isOnline")
+      .sort({ updatedAt: -1 });
 
     const data = matches.map((match) => {
       const isRequester = match.requester._id.toString() === currentUserId.toString();
       const person = isRequester ? match.recipient : match.requester;
-      
+
       return {
         _id: person._id,
         displayName: person.displayName,
@@ -278,9 +278,9 @@ export const getMatches = async (req, res) => {
       };
     });
 
-    return res.status(200).json({ 
+    return res.status(200).json({
       matches: data,
-      total: data.length 
+      total: data.length
     });
   } catch (error) {
     console.error("Lỗi getMatches:", error);
@@ -297,9 +297,9 @@ export const getWhoLikesMe = async (req, res) => {
       recipient: currentUserId,
       status: "pending" // Người ta đã like mình nhưng mình chưa phản hồi
     })
-    .populate("requester", "displayName avatarUrl location dateOfBirth bio interests")
-    .sort({ createdAt: -1 })
-    .limit(50);
+      .populate("requester", "displayName avatarUrl location dateOfBirth bio interests")
+      .sort({ createdAt: -1 })
+      .limit(50);
 
     const data = likes.map(like => ({
       _id: like.requester._id,
@@ -312,12 +312,47 @@ export const getWhoLikesMe = async (req, res) => {
       likedAt: like.createdAt
     }));
 
-    return res.status(200).json({ 
+    return res.status(200).json({
       likes: data,
-      total: data.length 
+      total: data.length
     });
   } catch (error) {
     console.error("Lỗi getWhoLikesMe:", error);
+    return res.status(500).json({ message: "Lỗi hệ thống" });
+  }
+};
+
+// DANH SÁCH MÌNH ĐÃ LIKE (CHƯA MATCH)
+export const getMyLikes = async (req, res) => {
+  try {
+    const currentUserId = req.user._id;
+
+    const likes = await Match.find({
+      requester: currentUserId,
+      status: "pending"
+    })
+      .populate("recipient", "displayName avatarUrl location dateOfBirth bio interests")
+      .sort({ createdAt: -1 })
+      .limit(50);
+
+    const data = likes.map(like => ({
+      _id: like.recipient._id,
+      displayName: like.recipient.displayName,
+      avatarUrl: like.recipient.avatarUrl,
+      location: like.recipient.location,
+      age: like.recipient.age,
+      bio: like.recipient.bio,
+      interests: like.recipient.interests,
+      likedAt: like.createdAt,
+      matchId: like._id // Match document ID needed for unmatch
+    }));
+
+    return res.status(200).json({
+      likes: data,
+      total: data.length
+    });
+  } catch (error) {
+    console.error("Lỗi getMyLikes:", error);
     return res.status(500).json({ message: "Lỗi hệ thống" });
   }
 };
@@ -335,7 +370,7 @@ export const unmatch = async (req, res) => {
     }
 
     // Kiểm tra có phải match của mình không
-    const isMyMatch = 
+    const isMyMatch =
       match.requester.toString() === currentUserId.toString() ||
       match.recipient.toString() === currentUserId.toString();
 

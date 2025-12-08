@@ -4,8 +4,9 @@ import { useState } from 'react';
 import ExploreGrid from '../../match/ExploreGrid';
 import MatchesList from '../../match/MatchesList';
 import LikesList from '../../match/LikesList';
+import MyLikesList from '../../match/MyLikesList';
 
-type TabType = 'explore' | 'matches' | 'likes';
+type TabType = 'explore' | 'matches' | 'likes' | 'my-likes';
 
 export function ConnectForm() {
     const [activeTab, setActiveTab] = useState<TabType>('explore');
@@ -61,6 +62,15 @@ export function ConnectForm() {
                             <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                         </svg>
                         Đã Like Tôi
+                    </button>
+                    <button
+                        className={`tab-btn ${activeTab === 'my-likes' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('my-likes')}
+                    >
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
+                        </svg>
+                        Tôi Đã Like
                     </button>
                 </div>
 
@@ -121,6 +131,7 @@ export function ConnectForm() {
                     )}
                     {activeTab === 'matches' && <MatchesList />}
                     {activeTab === 'likes' && <LikesList />}
+                    {activeTab === 'my-likes' && <MyLikesList />}
                 </div>
             </div>
         </div>

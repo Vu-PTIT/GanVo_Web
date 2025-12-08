@@ -5,7 +5,8 @@ import {
   swipe,
   getMatches,
   getWhoLikesMe,
-  unmatch
+  getMyLikes,
+  unmatch,
 } from "../controllers/matchController.js";
 import { protectedRoute } from "../middlewares/authMiddleware.js";
 
@@ -28,6 +29,9 @@ router.get("/list", getMatches);
 
 // GET /api/match/likes - Ai đã like mình (chưa match)
 router.get("/likes", getWhoLikesMe);
+
+// GET /api/match/my-likes - Mình đã like ai (chưa match)
+router.get("/my-likes", getMyLikes);
 
 // DELETE /api/match/:matchId - Xóa match
 router.delete("/:matchId", unmatch);

@@ -71,13 +71,10 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
     sendMessage: async (conversationId: string, content: string) => {
         try {
-            // Optimistic update (optional, skipping for simplicity first)
-            // Call API
             await axiosInstance.post(
                 "/messages",
                 { conversationId, content }
             );
-            // Socket will handle the receive_message event
         } catch (error) {
             console.error("Error sending message:", error);
         }
@@ -106,11 +103,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
 // Subscribe to auth changes to handle socket disconnection/reconnection
 useAuthStore.subscribe((state, prevState) => {
-    // If user logs out (accessToken becomes null), disconnect socket
     if (!state.accessToken && prevState.accessToken) {
         useChatStore.getState().disconnectSocket();
     }
-
-    // If user logs in (accessToken changes from null to value), connect socket
-    // (Optional, as pages usually trigger connectSocket, but good for safety)
 });

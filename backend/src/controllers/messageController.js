@@ -26,7 +26,6 @@ export const sendMessage = async (req, res) => {
         senderId,
         createdAt: newMessage.createdAt,
       },
-      // Increment unread counts for other participants (logic to be refined)
     });
 
     // Populate sender info for realtime update

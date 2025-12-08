@@ -6,10 +6,11 @@ export const createAppointment = async (req, res) => {
     const { error } = createAppointmentSchema.validate(req.body);
     if (error) return res.status(400).json({ message: error.message });
 
-    // ⚠ FIX: Bypass TEST MODE nếu không có user
-    const userId =
-      req.user?.userId ||
-      "67abcde00000000000000001"; // userId giả để test
+    const userId = req.user ? req.user._id : null;
+
+    if (!userId) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
 
     const appointment = await Appointment.create({
       ...req.body,
@@ -28,9 +29,11 @@ export const createAppointment = async (req, res) => {
 
 
 export const getMyAppointments = async (req, res) => {
-  const userId =
-    req.user?.userId ||
-    "67abcde00000000000000001"; // fallback
+  const userId = req.user ? req.user._id : null;
+
+  if (!userId) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
 
   const data = await Appointment.find({ userId }).sort({
     dateTime: 1,

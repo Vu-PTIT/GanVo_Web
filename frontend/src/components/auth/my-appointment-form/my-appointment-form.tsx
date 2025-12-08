@@ -1,31 +1,14 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axiosInstance from "../../../lib/axios";
 import "./my-appointment-form.css";
 import { toast } from "sonner";
-import { MapContainer, TileLayer, Marker } from "react-leaflet";
-import L from "leaflet";
-
-// icon leaflet fix
-const markerIcon = new L.Icon({
-    iconUrl: "/marker-icon.png",
-    iconRetinaUrl: "/marker-icon-2x.png",
-    iconAnchor: [12, 41],
-});
-
-const ITEMS_PER_PAGE = 5;
+import MapPickerLeaflet from "../../appointment-form/MapPickerLeaflet";
 
 const MyAppointmentForm = () => {
     const [appointments, setAppointments] = useState<any[]>([]);
+    const [selected, setSelected] = useState<any | null>(null);
     const [loading, setLoading] = useState(true);
-
-    // filter
-    const [filterType, setFilterType] = useState("");
-    const [filterDate, setFilterDate] = useState("");
-
-    // pagination
-    const [page, setPage] = useState(1);
-
-    // popup edit
+    const [searchTerm, setSearchTerm] = useState("");
     const [editing, setEditing] = useState<any | null>(null);
 
     const fetchAppointments = async () => {
@@ -33,6 +16,10 @@ const MyAppointmentForm = () => {
             setLoading(true);
             const res = await axiosInstance.get("/appointments/me");
             setAppointments(res.data);
+            // Auto-select first appointment if available
+            if (res.data && res.data.length > 0 && !selected) {
+                setSelected(res.data[0]);
+            }
         } catch (err) {
             toast.error("Không thể tải lịch hẹn!");
         } finally {
@@ -41,31 +28,18 @@ const MyAppointmentForm = () => {
     };
 
     const handleDelete = async (id: string) => {
-        if (!confirm("Bạn chắc chắn muốn hủy lịch hẹn này?")) return;
+        if (!window.confirm("Bạn chắc chắn muốn hủy lịch hẹn này?")) return;
         try {
             await axiosInstance.delete(`/appointments/${id}`);
             toast.success("Đã hủy lịch hẹn!");
-            fetchAppointments();
+            const newList = appointments.filter((a) => a._id !== id);
+            setAppointments(newList);
+            if (selected?._id === id) {
+                setSelected(newList.length > 0 ? newList[0] : null);
+            }
         } catch {
             toast.error("Không thể hủy!");
         }
-    };
-
-    const applyFilter = () => {
-        let filtered = [...appointments];
-
-        if (filterType) {
-            filtered = filtered.filter((a) => a.type === filterType);
-        }
-
-        if (filterDate) {
-            const f = new Date(filterDate).toDateString();
-            filtered = filtered.filter(
-                (a) => new Date(a.dateTime).toDateString() === f
-            );
-        }
-
-        return filtered;
     };
 
     const handleUpdate = async () => {
@@ -88,97 +62,126 @@ const MyAppointmentForm = () => {
         fetchAppointments();
     }, []);
 
-    const filtered = applyFilter();
-    const total = filtered.length;
-    const maxPage = Math.ceil(total / ITEMS_PER_PAGE);
-    const show = filtered.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
+    // Filter appointments based on search term
+    const filteredList = appointments.filter((a) => {
+        const s = searchTerm.toLowerCase();
+        return (
+            (a.type || "").toLowerCase().includes(s) ||
+            (a.city || "").toLowerCase().includes(s) ||
+            (a.reason || "").toLowerCase().includes(s)
+        );
+    });
 
     return (
-        <div className="myapp-shell">
-            <h1 className="myapp-title">Lịch Hẹn Của Tôi</h1>
-
-            {/* FILTER */}
-            <div className="myapp-filter">
-                <input
-                    type="date"
-                    value={filterDate}
-                    onChange={(e) => setFilterDate(e.target.value)}
-                />
-
-                <select
-                    value={filterType}
-                    onChange={(e) => setFilterType(e.target.value)}
-                >
-                    <option value="">Tất cả loại</option>
-                    <option value="Cà Phê">Cà Phê</option>
-                    <option value="Ăn trưa">Ăn trưa</option>
-                    <option value="Ăn tối">Ăn tối</option>
-                    <option value="Đi dạo">Đi dạo</option>
-                </select>
-
-                <button onClick={() => setPage(1)}>Lọc</button>
+        <div className="myapp-content-wrapper">
+            {/* Header + Search */}
+            <div className="myapp-header-row">
+                <h1 className="myapp-title">Lịch Hẹn Của Tôi</h1>
+                <div className="search-box-wrapper">
+                    <input
+                        type="text"
+                        placeholder="Tìm kiếm..."
+                        className="search-input-top"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                    <span className="search-count">{filteredList.length} kết quả</span>
+                </div>
             </div>
 
-            {/* LIST */}
-            {loading ? (
-                <p>Đang tải...</p>
-            ) : show.length === 0 ? (
-                <p>Không có lịch hẹn</p>
-            ) : (
-                <div className="myapp-list">
-                    {show.map((a) => (
-                        <div className="myapp-card" key={a._id}>
-                            <div className="myapp-info">
-                                <div>⏰ {formatDate(a.dateTime)}</div>
-                                <div>📍 {a.city}</div>
-                                <div>📌 {a.type}</div>
-                                <div>💬 {a.reason || "(Không có)"}</div>
-
-                                <button
-                                    className="edit-btn"
-                                    onClick={() => setEditing({ ...a })}
+            <div className="myapp-layout">
+                {/* LEFT COLUMN: LIST */}
+                <div className="left-column">
+                    <div className="myapp-list-scroll">
+                        {loading ? (
+                            <div className="p-4 text-center text-gray-500">Đang tải...</div>
+                        ) : filteredList.length === 0 ? (
+                            <div className="p-4 text-center text-gray-500">
+                                Không tìm thấy kết quả
+                            </div>
+                        ) : (
+                            filteredList.map((a) => (
+                                <div
+                                    key={a._id}
+                                    className={`myapp-item ${selected?._id === a._id ? "active" : ""
+                                        }`}
+                                    onClick={() => setSelected(a)}
                                 >
-                                    Sửa
-                                </button>
+                                    <div className="myapp-item-header">
+                                        <span className="myapp-item-type">{a.type || "Cuộc hẹn"}</span>
+                                        <button
+                                            className="btn-delete-mini"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleDelete(a._id);
+                                            }}
+                                        >
+                                            ✕
+                                        </button>
+                                    </div>
+                                    <div className="myapp-item-row">📍 {a.city || "Chưa có địa điểm"}</div>
+                                    <div className="myapp-item-time">{formatDate(a.dateTime)}</div>
+                                </div>
+                            ))
+                        )}
+                    </div>
+                </div>
 
+                {/* RIGHT COLUMN: DETAIL PREVIEW */}
+                <div className="myapp-preview">
+                    {selected ? (
+                        <div className="preview-content">
+                            <div className="preview-header">
+                                <h2 className="preview-title">{selected.type}</h2>
                                 <button
-                                    className="delete-btn"
-                                    onClick={() => handleDelete(a._id)}
+                                    className="btn-edit"
+                                    onClick={() => setEditing({ ...selected })}
                                 >
-                                    Xóa
+                                    ✏️ Sửa
                                 </button>
                             </div>
 
-                            {/* mini map */}
-                            <div className="myapp-map">
-                                <MapContainer
-                                    center={[a.latitude, a.longitude]}
-                                    zoom={13}
-                                    scrollWheelZoom={false}
-                                >
-                                    <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                                    <Marker
-                                        position={[a.latitude, a.longitude]}
-                                        icon={markerIcon}
-                                    />
-                                </MapContainer>
+                            {/* MAP CONTAINER */}
+                            <div
+                                className="map-force-container"
+                                style={{
+                                    height: "500px",
+                                    width: "100%",
+                                    position: "relative",
+                                    zIndex: 1,
+                                    border: "2px solid #e2e8f0",
+                                    borderRadius: "12px",
+                                    overflow: "hidden",
+                                    marginBottom: "20px",
+                                }}
+                            >
+                                <MapPickerLeaflet
+                                    key={selected._id}
+                                    lat={selected.latitude || 21.0285}
+                                    lng={selected.longitude || 105.8542}
+                                    onChange={() => { }} // Read-only
+                                />
+                            </div>
+
+                            <div className="info-grid">
+                                <div className="info-box">
+                                    <label>Thời gian</label>
+                                    <span>{formatDate(selected.dateTime)}</span>
+                                </div>
+                                <div className="info-box">
+                                    <label>Địa điểm</label>
+                                    <span>{selected.city}</span>
+                                </div>
+                                <div className="info-box full-width">
+                                    <label>Lý do / Ghi chú</label>
+                                    <span>{selected.reason || "Không có ghi chú"}</span>
+                                </div>
                             </div>
                         </div>
-                    ))}
+                    ) : (
+                        <div className="empty-state">Chọn một lịch hẹn để xem chi tiết</div>
+                    )}
                 </div>
-            )}
-
-            {/* PAGINATION */}
-            <div className="myapp-pagination">
-                <button disabled={page <= 1} onClick={() => setPage(page - 1)}>
-                    ◀
-                </button>
-                <span>
-                    Trang {page}/{maxPage}
-                </span>
-                <button disabled={page >= maxPage} onClick={() => setPage(page + 1)}>
-                    ▶
-                </button>
             </div>
 
             {/* EDIT POPUP */}
@@ -199,17 +202,13 @@ const MyAppointmentForm = () => {
                         <label>Địa điểm</label>
                         <input
                             value={editing.city}
-                            onChange={(e) =>
-                                setEditing({ ...editing, city: e.target.value })
-                            }
+                            onChange={(e) => setEditing({ ...editing, city: e.target.value })}
                         />
 
                         <label>Loại hẹn</label>
                         <select
                             value={editing.type}
-                            onChange={(e) =>
-                                setEditing({ ...editing, type: e.target.value })
-                            }
+                            onChange={(e) => setEditing({ ...editing, type: e.target.value })}
                         >
                             <option value="Cà Phê">Cà Phê</option>
                             <option value="Ăn trưa">Ăn trưa</option>

@@ -155,7 +155,7 @@ export function DashboardForm() {
                                 </div>
                             </div>
                             <div className="large-6">
-                                <div className="col-inner item-01">
+                                <div className="col-inner item-02">
                                     <div className="title">Hoạt động gần đây</div>
                                     <div className="history-cont">
                                         {data.history.length === 0 ? (

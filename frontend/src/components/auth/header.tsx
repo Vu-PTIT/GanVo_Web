@@ -1,4 +1,4 @@
-import { HeartHandshake, Search, Bell, UserCircle, LogOut, Check, Trash2, X } from "lucide-react";
+import { Bell, UserCircle, LogOut, Check, Trash2, X } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from '../../lib/axios';
@@ -31,6 +31,7 @@ export function Header() {
     const [notifications, setNotifications] = useState<NotificationItem[]>([]);
     const [unreadCount, setUnreadCount] = useState(0);
     const [loadingNotifs, setLoadingNotifs] = useState(false);
+    const [user, setUser] = useState<any>(null);
 
     const navigate = useNavigate();
     const { socket } = useChatStore();
@@ -39,7 +40,27 @@ export function Header() {
     const notifMenuRef = useRef<HTMLLIElement>(null);
     const userMenuRef = useRef<HTMLLIElement>(null);
 
-    const user = JSON.parse(localStorage.getItem("user") || "{}");
+    // Fetch user info from API
+    const fetchUserInfo = async () => {
+        try {
+            const res = await axiosInstance.get('/users/me');
+            console.log('✅ User data from API:', res.data);
+            const userData = res.data?.user || res.data;
+            setUser(userData);
+            // Update localStorage with fresh data
+            localStorage.setItem('user', JSON.stringify(userData));
+        } catch (error) {
+            console.error('❌ Failed to fetch user info', error);
+            // Fallback to localStorage
+            const localUser = JSON.parse(localStorage.getItem("user") || "{}");
+            console.log('📦 Fallback user from localStorage:', localUser);
+            setUser(localUser);
+        }
+    };
+
+    useEffect(() => {
+        fetchUserInfo();
+    }, []);
 
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
@@ -155,6 +176,8 @@ export function Header() {
             navigate('/connect', { state: { tab: 'matches' } });
         }
     };
+
+    console.log('👤 Current user state:', user);
 
     return (
         <header>

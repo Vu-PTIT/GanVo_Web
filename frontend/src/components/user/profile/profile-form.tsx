@@ -5,6 +5,8 @@ import '../../../assets/css/index.css';
 import { Calendar, Users, Sparkles, Heart, Image as ImageIcon, Search, Plus, X } from "lucide-react";
 import { useState, useEffect } from 'react';
 import axiosInstance from '../../../lib/axios';
+import AvatarUploader from "../../ui/avatar-uploader/avatar-uploader";
+import { toast } from "sonner";
 
 type Profile = {
     avatar: string;
@@ -101,23 +103,13 @@ export function ProfileForm() {
 
     const handleEditToggle = () => {
         if (!isEditing) {
-            // Enter edit mode: Reset editData to current profile (but formatted for inputs)
-            // Re-fetching or re-syncing might be safer but for now assume profile state is ok.
-            // Actually, we set editData on fetch. If user edits then cancels, we might want to reset.
-            // Let's just use the current profile state to re-populate editData just in case.
-            // Note: profile.birthDate is strictly for display (DD/MM/YYYY), so we rely on what we had or clears it.
-            // Ideally we should keep raw data. For now, let's keep it simple: 
-            // If we entered edit mode, we use the editData we prepared during fetch, 
-            // OR we might need to parse the display date back if we didn't store raw.
-            // DECISION: Let's fetch pure data again or rely on editData being kept in sync?
-            // Simplest: just toggle. If canceling, we revert changes.
+            // Enter edit mode
         }
         setIsEditing(!isEditing);
     };
 
     const handleCancel = () => {
         setIsEditing(false);
-        // ideally reset editData to original
         fetchProfile();
     };
 
@@ -134,21 +126,44 @@ export function ProfileForm() {
                 interests: typeof editData.hobbies === 'string'
                     ? editData.hobbies.split(',').map(s => s.trim()).filter(s => s)
                     : editData.hobbies,
-                photos: editData.images.map(img => ({ url: img }))
+                photos: editData.images.map(img => ({ url: img })),
+                avatarUrl: editData.avatar // Added avatarUrl to payload
             };
 
             await axiosInstance.put('/users/profile', payload);
             setIsEditing(false);
             await fetchProfile(); // Refresh data
+            toast.success("Cập nhật hồ sơ thành công!");
         } catch (err) {
             console.error('Update failed', err);
-            alert('Cập nhật thất bại. Vui lòng kiểm tra lại thông tin.');
+            toast.error('Cập nhật thất bại. Vui lòng kiểm tra lại thông tin.');
             setLoading(false);
         }
     };
 
     const handleChange = (field: keyof Profile, value: any) => {
         setEditData(prev => ({ ...prev, [field]: value }));
+    };
+
+    const handleAvatarChange = async (file: File | null) => {
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        try {
+            const res = await axiosInstance.post('/upload', formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+
+            if (res.data && res.data.url) {
+                setEditData(prev => ({ ...prev, avatar: res.data.url }));
+                toast.success('Ảnh đại diện đã được tải lên');
+            }
+        } catch (error) {
+            console.error('Avatar upload failed:', error);
+            toast.error('Lỗi khi tải ảnh đại diện');
+        }
     };
 
     const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -169,6 +184,11 @@ export function ProfileForm() {
             // Convert to Base64
             const reader = new FileReader();
             reader.onloadend = () => {
+                // Upload to server directly instead of just base64 preview?
+                // The original code used base64 for 'images'. Let's keep it consistent or upgrade?
+                // For now, let's stick to original logic: base64 first, but backend expects URLs.
+                // Wait, original logic sent { url: img }. If img is base64, backend might not handle it unless tailored.
+                // The user only asked for AVATAR fix. I won't touch gallery upload logic unless asked.
                 const base64String = reader.result as string;
                 setEditData(prev => ({
                     ...prev,
@@ -219,12 +239,20 @@ export function ProfileForm() {
                     {/* Top Info: Avatar & Name */}
                     <div className="profile-main-info">
                         <div className="avatar-container">
-                            <img
-                                src={profile.avatar || '/img/default-avatar.jpg'}
-                                alt="avatar"
-                                className="avatar-img"
-                                onError={(e: any) => { e.currentTarget.src = '/img/default-avatar.jpg'; }}
-                            />
+                            {isEditing ? (
+                                <AvatarUploader
+                                    initialSrc={editData.avatar || '/img/default-avatar.jpg'}
+                                    onChange={handleAvatarChange}
+                                    size={120}
+                                />
+                            ) : (
+                                <img
+                                    src={profile.avatar || '/img/default-avatar.jpg'}
+                                    alt="avatar"
+                                    className="avatar-img"
+                                    onError={(e: any) => { e.currentTarget.src = '/img/default-avatar.jpg'; }}
+                                />
+                            )}
                         </div>
                         {isEditing ? (
                             <div style={{ width: '100%', maxWidth: '300px', display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'center' }}>
@@ -431,7 +459,6 @@ export function ProfileForm() {
                                 Chỉnh Sửa Hồ Sơ
                             </button>
                         )}
-                        {/* Removed: Xem Kết Nối, Bắt Đầu Trò Chuyện */}
                     </div>
 
                 </div>

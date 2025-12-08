@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../../lib/axios";
 import "./admin-appointments.css";
-import MapPickerLeaflet from "../../components/appointment-form/MapPickerLeaflet";
-import { Header } from "../../components/auth/header";
+import MapPickerLeaflet from "../../components/user/appointments/appointment-form/MapPickerLeaflet";
+import { Header } from "../../components/shared/header";
 import { AdminSidebar } from "../../components/admin/AdminSidebar";
 
 const AdminAppointmentsPage: React.FC = () => {
@@ -67,7 +67,7 @@ const AdminAppointmentsPage: React.FC = () => {
 
           <div className="flex-1 bg-white flex flex-col h-full overflow-hidden">
             <div className="admin-content-wrapper">
-              
+
               {/* Header + Search */}
               <div className="admin-header-row">
                 <h1 className="admin-title">Quản Lý Lịch Hẹn</h1>
@@ -126,14 +126,14 @@ const AdminAppointmentsPage: React.FC = () => {
                   {selected ? (
                     <div className="preview-content">
                       <h2 className="preview-title">{selected.type}</h2>
-                      
+
                       {/* --- MAP CONTAINER (Đã fix cứng chiều cao) --- */}
-                      <div 
-                        className="map-force-container" 
-                        style={{ 
-                          height: "500px", 
-                          width: "100%", 
-                          position: "relative", 
+                      <div
+                        className="map-force-container"
+                        style={{
+                          height: "500px",
+                          width: "100%",
+                          position: "relative",
                           zIndex: 1,
                           border: "2px solid #e2e8f0",
                           borderRadius: "12px",
@@ -141,12 +141,12 @@ const AdminAppointmentsPage: React.FC = () => {
                           marginBottom: "20px"
                         }}
                       >
-                         {/* Key quan trọng để map vẽ lại khi đổi item */}
+                        {/* Key quan trọng để map vẽ lại khi đổi item */}
                         <MapPickerLeaflet
-                          key={selected._id} 
+                          key={selected._id}
                           lat={selected.latitude || 21.0285}
                           lng={selected.longitude || 105.8542}
-                          onChange={() => {}} // Chỉ xem
+                          onChange={() => { }} // Chỉ xem
                         />
                       </div>
 

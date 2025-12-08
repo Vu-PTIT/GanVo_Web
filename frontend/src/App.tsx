@@ -2,25 +2,24 @@ import './assets/css/index.css';
 import './assets/css/asset.css';
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { Connect } from './pages/connect';
-import { Profile } from './pages/profile';
+import { Connect } from './pages/user/connect';
+import { Profile } from './pages/user/profile';
 import SignInPage from './pages/SignInPage';
 import SignUpPage from './pages/SignUpPage';
-import { Complete_profile } from './pages/complete-profile';
-import ChatAppPage from './pages/ChatAppPage';
+import { Complete_profile } from './pages/user/complete-profile';
+import ChatAppPage from './pages/user/ChatAppPage';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import RequireAdmin from './components/auth/RequireAdmin';
 import { Toaster } from 'sonner';
 import { useAuthStore } from './stores/useAuthStore';
 
-import AppointmentPage from "./pages/appointment";
-import MyAppointmentsPage from "./pages/my-appointments";
-import OtherAppointmentsPage from "./pages/other-appointments";
+import AppointmentPage from "./pages/user/appointment";
+import MyAppointmentsPage from "./pages/user/my-appointments";
+import OtherAppointmentsPage from "./pages/user/other-appointments";
 import AdminAppointmentsPage from "./pages/admin/AdminAppointmentsPage";
 import AdminUsersPage from "./pages/admin/AdminUsersPage";
 import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
-import DashboardPage from "./pages/DashboardPage";
-import DebugRolePage from "./pages/DebugRolePage";
+import DashboardPage from "./pages/user/DashboardPage";
 
 export function App() {
   const { accessToken, refresh } = useAuthStore();
@@ -57,18 +56,10 @@ export function App() {
 
       <BrowserRouter>
         <Routes>
-
-          {/* Default redirect */}
           <Route path="/" element={<Navigate to="/signin" />} />
-
-          {/* Public routes */}
           <Route path="/signin" element={<SignInPage />} />
           <Route path="/signup" element={<SignUpPage />} />
-
-          {/* User Dashboard */}
           <Route path="/dashboard" element={<DashboardPage />} />
-
-          {/* Appointment routes (public hoặc protected tùy bạn) */}
           <Route path="/appointment" element={<AppointmentPage />} />
           <Route
             path="/admin/appointments"
@@ -100,12 +91,7 @@ export function App() {
           <Route path="/connect" element={<Connect />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/complete-profile" element={<Complete_profile />} />
-          {/* Protected routes */}
           <Route element={<ProtectedRoute />}>
-            {/* <Route path="/chat" element={<ChatAppPage />} />
-            <Route path="/connect" element={<Connect />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/complete-profile" element={<Complete_profile />} /> */}
           </Route>
 
         </Routes>

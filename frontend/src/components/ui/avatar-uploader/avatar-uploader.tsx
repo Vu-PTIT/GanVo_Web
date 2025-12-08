@@ -20,6 +20,12 @@ export default function AvatarUploader({
   const fileRef = useRef<HTMLInputElement | null>(null)
 
   useEffect(() => {
+    if (initialSrc) {
+      setSrc(initialSrc)
+    }
+  }, [initialSrc])
+
+  useEffect(() => {
     return () => {
       // revoke object URLs if created
       if (src && src.startsWith('blob:')) URL.revokeObjectURL(src)

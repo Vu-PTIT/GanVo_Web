@@ -1,10 +1,13 @@
 
+
 import './profile-form.css';
 import '../../../assets/css/asset.css';
 import '../../../assets/css/index.css';
 import { Calendar, Users, Sparkles, Heart, Image as ImageIcon, Search, Plus, X } from "lucide-react";
 import { useState, useEffect } from 'react';
 import axiosInstance from '../../../lib/axios';
+import AvatarUploader from '../../ui/avatar-uploader/avatar-uploader';
+import { toast } from 'sonner';
 
 type Profile = {
     avatar: string;
@@ -134,21 +137,46 @@ export function ProfileForm() {
                 interests: typeof editData.hobbies === 'string'
                     ? editData.hobbies.split(',').map(s => s.trim()).filter(s => s)
                     : editData.hobbies,
-                photos: editData.images.map(img => ({ url: img }))
+                photos: editData.images.map(img => ({ url: img })),
+                avatarUrl: editData.avatar
             };
 
             await axiosInstance.put('/users/profile', payload);
             setIsEditing(false);
             await fetchProfile(); // Refresh data
+            toast.success('Cập nhật hồ sơ thành công!');
         } catch (err) {
             console.error('Update failed', err);
-            alert('Cập nhật thất bại. Vui lòng kiểm tra lại thông tin.');
+            toast.error('Cập nhật thất bại. Vui lòng kiểm tra lại thông tin.');
             setLoading(false);
         }
     };
 
     const handleChange = (field: keyof Profile, value: any) => {
         setEditData(prev => ({ ...prev, [field]: value }));
+    };
+
+    const handleAvatarChange = async (file: File | null) => {
+        if (!file) {
+            handleChange('avatar', '');
+            return;
+        }
+
+        const data = new FormData();
+        data.append('file', file);
+
+        try {
+            const res = await axiosInstance.post('/upload', data, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+            handleChange('avatar', res.data.url);
+            toast.success('Ảnh đại diện đã được tải lên');
+        } catch (error) {
+            console.error('Upload error:', error);
+            toast.error('Lỗi khi tải ảnh lên');
+        }
     };
 
     const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -165,24 +193,29 @@ export function ProfileForm() {
             return;
         }
 
+        const data = new FormData();
+        data.append('file', file);
+
         try {
-            // Convert to Base64
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                const base64String = reader.result as string;
-                setEditData(prev => ({
-                    ...prev,
-                    images: [...prev.images, base64String]
-                }));
-                // Reset input
-                e.target.value = '';
-                setUploadingImage(false);
-            };
-            reader.readAsDataURL(file);
+            setUploadingImage(true);
+            const res = await axiosInstance.post('/upload', data, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+
+            setEditData(prev => ({
+                ...prev,
+                images: [...prev.images, res.data.url]
+            }));
+
+            // Reset input
+            e.target.value = '';
+            setUploadingImage(false);
 
         } catch (error) {
-            console.error('Error reading file:', error);
-            alert('Lỗi đọc file ảnh');
+            console.error('Error uploading file:', error);
+            alert('Lỗi tải ảnh lên');
             setUploadingImage(false);
         }
     };
@@ -219,12 +252,20 @@ export function ProfileForm() {
                     {/* Top Info: Avatar & Name */}
                     <div className="profile-main-info">
                         <div className="avatar-container">
-                            <img
-                                src={profile.avatar || '/img/default-avatar.jpg'}
-                                alt="avatar"
-                                className="avatar-img"
-                                onError={(e: any) => { e.currentTarget.src = '/img/default-avatar.jpg'; }}
-                            />
+                            {isEditing ? (
+                                <AvatarUploader
+                                    initialSrc={editData.avatar}
+                                    onChange={handleAvatarChange}
+                                    size={120}
+                                />
+                            ) : (
+                                <img
+                                    src={profile.avatar || '/img/default-avatar.jpg'}
+                                    alt="avatar"
+                                    className="avatar-img"
+                                    onError={(e: any) => { e.currentTarget.src = '/img/default-avatar.jpg'; }}
+                                />
+                            )}
                         </div>
                         {isEditing ? (
                             <div style={{ width: '100%', maxWidth: '300px', display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'center' }}>
@@ -431,7 +472,6 @@ export function ProfileForm() {
                                 Chỉnh Sửa Hồ Sơ
                             </button>
                         )}
-                        {/* Removed: Xem Kết Nối, Bắt Đầu Trò Chuyện */}
                     </div>
 
                 </div>

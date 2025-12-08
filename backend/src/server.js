@@ -20,6 +20,7 @@ import conversationRoute from "./routes/conversationRoute.js";
 import appointmentRoute from "./routes/appointmentRoute.js";
 import notificationRoute from "./routes/notificationRoute.js";
 import dashboardRoute from "./routes/dashboardRoute.js";
+import uploadRoute from "./routes/uploadRoute.js";
 
 // Middlewares
 import { protectedRoute } from "./middlewares/authMiddleware.js";
@@ -50,6 +51,7 @@ const PORT = process.env.PORT || 5001;
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 app.use(cookieParser());
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.use(
   cors({
@@ -88,6 +90,7 @@ app.use("/api/conversations", protectedRoute, conversationRoute);
 app.use("/api/notifications", protectedRoute, notificationRoute);
 app.use("/api/dashboard", protectedRoute, dashboardRoute);
 app.use("/api/appointments", protectedRoute, appointmentRoute);
+app.use("/api/upload", uploadRoute);
 
 
 // ERROR HANDLING 

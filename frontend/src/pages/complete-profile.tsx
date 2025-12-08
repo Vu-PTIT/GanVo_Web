@@ -1,10 +1,10 @@
 import '../assets/css/index.css';
 import '../assets/css/asset.css';
 import './complete-profile.css';
-import avatar from '../assets/img/avatar.jpg';
+import avatarPlaceholder from '../assets/img/avatar.jpg';
 import InputForm from '../components/ui/input-form/input-form';
 import AvatarUploader from '../components/ui/avatar-uploader/avatar-uploader';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../lib/axios';
 import { toast } from 'sonner';
@@ -15,11 +15,55 @@ export function Complete_profile() {
         dateOfBirth: '',
         gender: 'male',
         bio: '',
+        avatarUrl: '',
     });
     const [loading, setLoading] = useState(false);
 
+    useEffect(() => {
+        const fetchProfile = async () => {
+            try {
+                const res = await axiosInstance.get('/users/me');
+                if (res.data.user) {
+                    const u = res.data.user;
+                    setFormData({
+                        dateOfBirth: u.dateOfBirth ? new Date(u.dateOfBirth).toISOString().split('T')[0] : '',
+                        gender: u.gender || 'male',
+                        bio: u.bio || '',
+                        avatarUrl: u.avatarUrl || ''
+                    });
+                }
+            } catch (error) {
+                console.error('Error fetching profile:', error);
+            }
+        };
+        fetchProfile();
+    }, []);
+
     const handleChange = (field: string, value: any) => {
         setFormData(prev => ({ ...prev, [field]: value }));
+    };
+
+    const handleAvatarChange = async (file: File | null) => {
+        if (!file) {
+            handleChange('avatarUrl', '');
+            return;
+        }
+
+        const data = new FormData();
+        data.append('file', file);
+
+        try {
+            const res = await axiosInstance.post('/upload', data, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+            handleChange('avatarUrl', res.data.url);
+            toast.success('Ảnh đại diện đã được tải lên');
+        } catch (error) {
+            console.error('Upload error:', error);
+            toast.error('Lỗi khi tải ảnh lên');
+        }
     };
 
     const handleSubmit = async () => {
@@ -34,10 +78,9 @@ export function Complete_profile() {
                 dateOfBirth: formData.dateOfBirth,
                 gender: formData.gender,
                 bio: formData.bio,
-                // Note: Avatar upload logic pending backend support
+                avatarUrl: formData.avatarUrl
             });
             toast.success('Cập nhật hồ sơ thành công!');
-            // Redirect to dashboard after successful profile completion
             navigate('/dashboard');
         } catch (error: any) {
             console.error('Error updating profile:', error);
@@ -81,8 +124,8 @@ export function Complete_profile() {
                 <div className="input-form-box mb-50">
                     <label>Ảnh đại diện</label>
                     <AvatarUploader
-                        initialSrc={avatar}
-                        onChange={(f) => console.log('avatar file selected (upload pending)', f)}
+                        initialSrc={formData.avatarUrl || avatarPlaceholder}
+                        onChange={handleAvatarChange}
                     />
                 </div>
                 <button

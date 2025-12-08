@@ -57,5 +57,6 @@ export interface ExploreFilters {
     maxAge?: number;
     gender?: string;
     location?: string;
+    name?: string;
     limit?: number;
 }

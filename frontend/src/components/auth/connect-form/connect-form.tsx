@@ -26,11 +26,13 @@ export function ConnectForm() {
         maxAge?: number;
         gender: string;
         location: string;
+        name: string;
     }>({
         minAge: undefined,
         maxAge: undefined,
         gender: 'all',
         location: '',
+        name: '',
     });
 
     return (
@@ -99,6 +101,13 @@ export function ConnectForm() {
                         </select>
 
                         <input
+                            type="text"
+                            placeholder="Tìm theo tên"
+                            value={filters.name}
+                            onChange={(e) => setFilters({ ...filters, name: e.target.value })}
+                            className="filter-input"
+                        />
+                        <input
                             type="number"
                             placeholder="Tuổi từ"
                             value={filters.minAge || ''}
@@ -125,6 +134,7 @@ export function ConnectForm() {
                             onChange={(e) => setFilters({ ...filters, location: e.target.value })}
                             className="filter-input"
                         />
+
                     </div>
                 )}
 
@@ -137,6 +147,7 @@ export function ConnectForm() {
                                 maxAge: filters.maxAge,
                                 gender: filters.gender === 'all' ? undefined : filters.gender,
                                 location: filters.location || undefined,
+                                name: filters.name || undefined,
                             }}
                         />
                     )}

@@ -408,29 +408,6 @@
   gap: 8px;
 }
 
-/* footer */
-
-.app-footer {
-  margin-top: 26px;
-  display: flex;
-  justify-content: center;
-  gap: 24px;
-  font-size: 12px;
-  color: #9ca3af;
-}
-
-.app-footer__link {
-  background: transparent;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  color: #9ca3af;
-}
-
-.app-footer__link:hover {
-  color: #0369a1;
-}
-
 .map-search-input:focus {
   outline: none;
   border-color: #0ea5e9;

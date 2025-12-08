@@ -9,7 +9,7 @@ export function Connect(){
         <div className="layout">
             <Header />
             <main id="connect">
-                <div className="connect scoll-auto">
+                <div className="connect">
                     <Menu />
                     <ConnectForm />
                 </div>

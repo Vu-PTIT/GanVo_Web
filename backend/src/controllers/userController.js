@@ -24,7 +24,7 @@ export const getUsers = async (req, res) => {
     const { search, limit = 20 } = req.query;
     const sanitizedSearch = search ? search.trim() : "";
 
-    let query = {};
+    let query = { role: { $ne: "admin" } };
 
     if (sanitizedSearch) {
       query.$or = [

@@ -51,7 +51,7 @@ export const getExplorations = async (req, res) => {
     ];
 
     // Bước 3: Build query với filters
-    let query = { _id: { $nin: excludeIds } };
+    let query = { _id: { $nin: excludeIds }, role: { $ne: "admin" } };
 
     // Filter theo tuổi
     if (minAge || maxAge) {

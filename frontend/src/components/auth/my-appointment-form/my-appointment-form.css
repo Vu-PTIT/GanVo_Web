@@ -1,0 +1,268 @@
+.myapp-shell {
+    padding: 40px;
+    max-width: 900px;
+    margin: auto;
+}
+
+.myapp-header {
+    margin-bottom: 20px;
+}
+
+.myapp-title {
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.myapp-subtitle {
+    color: #6b7280;
+    margin-top: 4px;
+}
+
+.myapp-loading {
+    font-size: 16px;
+    color: #555;
+}
+
+.myapp-empty {
+    margin-top: 20px;
+    font-size: 16px;
+    color: #888;
+}
+
+.myapp-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.myapp-card {
+    padding: 16px;
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.myapp-card-row {
+    margin: 4px 0;
+    display: flex;
+    gap: 10px;
+}
+
+.myapp-label {
+    font-weight: 600;
+    color: #374151;
+}
+
+.myapp-delete-btn {
+    padding: 8px 14px;
+    color: white;
+    background-color: #dc2626;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.myapp-delete-btn:hover {
+    background-color: #b91c1c;
+}
+
+/* Additional styles for the appointment form */
+.myapp-filter {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+
+.myapp-filter input,
+.myapp-filter select {
+    padding: 8px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.myapp-filter button {
+    padding: 8px 16px;
+    background-color: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.myapp-filter button:hover {
+    background-color: #2563eb;
+}
+
+.myapp-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.myapp-info div {
+    font-size: 14px;
+    color: #374151;
+}
+
+.myapp-info button {
+    margin-top: 8px;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: 0.2s;
+}
+
+.edit-btn {
+    background-color: #10b981;
+    color: white;
+}
+
+.edit-btn:hover {
+    background-color: #059669;
+}
+
+.delete-btn {
+    background-color: #ef4444;
+    color: white;
+}
+
+.delete-btn:hover {
+    background-color: #dc2626;
+}
+
+.myapp-map {
+    width: 300px;
+    height: 200px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.myapp-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    margin-top: 24px;
+}
+
+.myapp-pagination button {
+    padding: 8px 16px;
+    background-color: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.myapp-pagination button:hover:not(:disabled) {
+    background-color: #2563eb;
+}
+
+.myapp-pagination button:disabled {
+    background-color: #9ca3af;
+    cursor: not-allowed;
+}
+
+.myapp-pagination span {
+    font-size: 14px;
+    color: #374151;
+}
+
+/* Edit popup styles */
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.popup {
+    background: white;
+    padding: 24px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.popup h2 {
+    margin-bottom: 20px;
+    font-size: 20px;
+    font-weight: 700;
+    color: #111827;
+}
+
+.popup label {
+    display: block;
+    margin-top: 12px;
+    margin-bottom: 4px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+}
+
+.popup input,
+.popup select,
+.popup textarea {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.popup textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+.popup-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+    justify-content: flex-end;
+}
+
+.popup-actions button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: 0.2s;
+}
+
+.popup-actions button:first-child {
+    background-color: #e5e7eb;
+    color: #374151;
+}
+
+.popup-actions button:first-child:hover {
+    background-color: #d1d5db;
+}
+
+.save-btn {
+    background-color: #3b82f6;
+    color: white;
+}
+
+.save-btn:hover {
+    background-color: #2563eb;
+}

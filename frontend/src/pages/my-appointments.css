@@ -1,71 +1,53 @@
-.myapp-shell {
-  padding: 40px;
-  max-width: 900px;
-  margin: auto;
-}
-
-.myapp-header {
-  margin-bottom: 20px;
-}
-
-.myapp-title {
-  font-size: 28px;
-  font-weight: 700;
-}
-
-.myapp-subtitle {
-  color: #6b7280;
-  margin-top: 4px;
-}
-
-.myapp-loading {
-  font-size: 16px;
-  color: #555;
-}
-
-.myapp-empty {
-  margin-top: 20px;
-  font-size: 16px;
-  color: #888;
-}
-
-.myapp-list {
+/* Layout styles for My Appointments page */
+.layout {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  min-height: 100vh;
 }
 
-.myapp-card {
-  padding: 16px;
-  background: white;
-  border-radius: 12px;
-  border: 1px solid #e5e7eb;
+#my-appointments {
+  flex: 1;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
 }
 
-.myapp-card-row {
-  margin: 4px 0;
+.my-appointments {
   display: flex;
-  gap: 10px;
+  flex: 1;
+  overflow: hidden;
 }
 
-.myapp-label {
-  font-weight: 600;
-  color: #374151;
+.scoll-auto {
+  overflow-y: auto;
 }
 
-.myapp-delete-btn {
-  padding: 8px 14px;
-  color: white;
-  background-color: #dc2626;
+.my-appointments-right-site {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+/* Footer styles */
+.app-footer {
+  margin-top: auto;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.app-footer__link {
+  background: none;
   border: none;
-  border-radius: 6px;
+  color: #6b7280;
+  font-size: 14px;
   cursor: pointer;
-  transition: 0.2s;
+  transition: color 0.2s;
 }
 
-.myapp-delete-btn:hover {
-  background-color: #b91c1c;
+.app-footer__link:hover {
+  color: #3b82f6;
 }

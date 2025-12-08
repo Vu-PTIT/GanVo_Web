@@ -2,13 +2,14 @@ import './menu.css';
 import '../../../assets/css/asset.css';
 import { useEffect, useState } from 'react';
 
-import { Calendar, Users, Box, MessageSquare, NotepadText } from 'lucide-react';
+import { Calendar, CalendarCheck, Users, Box, MessageSquare, NotepadText } from 'lucide-react';
 
 const MENU_ITEMS = [
-    { path: '/appointment', label: 'Lên Lịch Hẹn', Icon: Calendar },
-    { path: '/profile', label: 'Thông Tin Cá Nhân', Icon: Users },
-    { path: '/connect', label: 'Kết Nối', Icon: Box },
-    { path: '/chat', label: 'Nhắn Tin', Icon: MessageSquare },
+    { path: '/appointment', label: 'Lên Lịch Hẹn', Icon: Calendar },
+    { path: '/my-appointments', label: 'Lịch Hẹn Của Tôi', Icon: CalendarCheck },
+    { path: '/profile', label: 'Thông Tin Cá Nhân', Icon: Users },
+    { path: '/connect', label: 'Kết Nối', Icon: Box },
+    { path: '/chat', label: 'Nhắn Tin', Icon: MessageSquare },
     { path: '/dashboard', label: 'Thông Tin', Icon: NotepadText },
 ];
 

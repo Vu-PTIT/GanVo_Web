@@ -182,7 +182,7 @@ export function Header() {
     return (
         <header>
             <div className="header">
-                <div className="header-left-site" onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>
+                <div className="header-left-site" onClick={() => navigate('/appointment')} style={{ cursor: 'pointer' }}>
                     <div className="logo"></div>
                     <p className="name-web">Kết nối vui vẻ</p>
                 </div>

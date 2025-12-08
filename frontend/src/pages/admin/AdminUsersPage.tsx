@@ -108,7 +108,7 @@ const AdminUsersPage: React.FC = () => {
                     <AdminSidebar />
 
                     {/* Container chính: Đảm bảo chiều cao full và chặn tràn */}
-                    <div className="flex-1 bg-base-100 rounded-lg shadow-xl overflow-hidden flex flex-col border border-base-300 h-full m-2">
+                    <div className="flex-1 bg-base-100 rounded-lg shadow-xl overflow-hidden flex flex-col  h-full m-2">
 
                         {/* Wrapper nội dung: ĐÂY LÀ CHỖ SỬA LỖI CUỘN */}
                         {/* Thêm overflow-y-auto để chỉ vùng này cuộn được */}

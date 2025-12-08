@@ -56,10 +56,13 @@ export function App() {
 
       <BrowserRouter>
         <Routes>
+
           <Route path="/" element={<Navigate to="/signin" />} />
+
+
           <Route path="/signin" element={<SignInPage />} />
           <Route path="/signup" element={<SignUpPage />} />
-          <Route path="/dashboard" element={<DashboardPage />} />
+
           <Route path="/appointment" element={<AppointmentPage />} />
           <Route
             path="/admin/appointments"
@@ -85,13 +88,15 @@ export function App() {
               </RequireAdmin>
             }
           />
-          <Route path="/my-appointments" element={<MyAppointmentsPage />} />
-          <Route path="/other-appointments" element={<OtherAppointmentsPage />} />
-          <Route path="/chat" element={<ChatAppPage />} />
-          <Route path="/connect" element={<Connect />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/complete-profile" element={<Complete_profile />} />
+
           <Route element={<ProtectedRoute />}>
+            <Route path="/my-appointments" element={<MyAppointmentsPage />} />
+            <Route path="/other-appointments" element={<OtherAppointmentsPage />} />
+            <Route path="/chat" element={<ChatAppPage />} />
+            <Route path="/connect" element={<Connect />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/complete-profile" element={<Complete_profile />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
           </Route>
 
         </Routes>

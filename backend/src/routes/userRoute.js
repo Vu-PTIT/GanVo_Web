@@ -6,12 +6,14 @@ import {
   getUsers,
   getPreferences,
   updatePreferences,
+} from "../controllers/userController.js";
+import {
+  getAdminStats,
   getAllUsers,
   createUser,
   updateUser,
-  deleteUser,
-  getAdminStats
-} from "../controllers/userController.js";
+  deleteUser
+} from "../controllers/adminController.js";
 
 const router = express.Router();
 

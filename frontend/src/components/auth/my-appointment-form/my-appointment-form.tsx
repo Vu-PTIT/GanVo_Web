@@ -143,18 +143,7 @@ const MyAppointmentForm = () => {
 
                             {/* MAP CONTAINER */}
                             <div
-                                className="map-force-container"
-                                style={{
-                                    height: "500px",
-                                    width: "100%",
-                                    position: "relative",
-                                    zIndex: 1,
-                                    border: "2px solid #e2e8f0",
-                                    borderRadius: "12px",
-                                    overflow: "hidden",
-                                    marginBottom: "20px",
-                                }}
-                            >
+                                className="map-force-container">                            
                                 <MapPickerLeaflet
                                     key={selected._id}
                                     lat={selected.latitude || 21.0285}

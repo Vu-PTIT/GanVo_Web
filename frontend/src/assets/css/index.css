@@ -465,6 +465,14 @@ textarea {
   flex: 1;
   padding: 20px;
 }
+.appointment-right-site .leaflet-top.leaflet-left {
+    top: auto;
+    bottom: 20px;
+    left: 10px;
+}
+.appointment-right-site .leaflet-left .leaflet-control{
+    margin: 0;
+}
 
 .input-form-box select {
   font-size: 14px;

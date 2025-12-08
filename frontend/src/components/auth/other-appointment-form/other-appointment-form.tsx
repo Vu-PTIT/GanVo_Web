@@ -9,6 +9,8 @@ const OtherAppointmentForm = () => {
     const [selected, setSelected] = useState<any | null>(null);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
+    const [connectedIds, setConnectedIds] = useState<string[]>([]);
+    const [connecting, setConnecting] = useState(false);
 
     const fetchAppointments = async () => {
         try {
@@ -45,16 +47,50 @@ const OtherAppointmentForm = () => {
         );
     });
 
-    const handleLike = async () => {
-        if (!selected || !selected.userId) return;
+
+    const handleToggleConnect = async () => {
+        if (!selected) {
+            console.log('No appointment selected');
+            return;
+        }
+
+        if (!selected.userId || !selected.userId._id) {
+            console.log('Missing userId data:', selected.userId);
+            toast.error("Không thể kết nối: Thiếu thông tin người dùng!");
+            return;
+        }
+
+        if (connecting) {
+            console.log('Already connecting, please wait');
+            return;
+        }
+
+        const isConnected = connectedIds.includes(selected._id);
+        console.log('Toggle connect - Current state:', isConnected, 'Appointment ID:', selected._id, 'User ID:', selected.userId._id);
+
+        setConnecting(true);
         try {
-            await axiosInstance.post("/match/swipe", {
-                targetUserId: selected.userId._id,
-                action: "like",
-            });
-            toast.success(`Đã thích lịch hẹn của ${selected.userId.displayName || "người này"}!`);
+            if (isConnected) {
+                // Disconnect - remove from array
+                setConnectedIds(connectedIds.filter(id => id !== selected._id));
+                console.log('Disconnected successfully');
+                toast.success("Đã hủy kết nối!");
+            } else {
+                // Connect - call API and add to array
+                console.log('Calling API to connect...');
+                await axiosInstance.post("/match/swipe", {
+                    targetUserId: selected.userId._id,
+                    action: "like",
+                });
+                setConnectedIds([...connectedIds, selected._id]);
+                console.log('Connected successfully');
+                toast.success(`Đã kết nối với ${selected.userId.displayName || "người này"}!`);
+            }
         } catch (error: any) {
+            console.error('Connection error:', error);
             toast.error(error.response?.data?.message || "Không thể thực hiện!");
+        } finally {
+            setConnecting(false);
         }
     };
 
@@ -114,27 +150,22 @@ const OtherAppointmentForm = () => {
                             <div className="preview-header">
                                 <h2 className="preview-title">{selected.type}</h2>
                                 <button
-                                    className="btn-like-connect"
-                                    onClick={handleLike}
+                                    className={`btn-like-connect ${connectedIds.includes(selected._id) ? 'connected' : ''}`}
+                                    onClick={handleToggleConnect}
+                                    disabled={connecting}
                                 >
-                                    ❤️ Kết nối
+                                    {connecting
+                                        ? '⏳ Đang xử lý...'
+                                        : connectedIds.includes(selected._id)
+                                            ? '✓ Đã kết nối'
+                                            : '❤️ Kết nối'
+                                    }
                                 </button>
                             </div>
 
                             {/* MAP CONTAINER */}
                             <div
-                                className="map-force-container"
-                                style={{
-                                    height: "500px",
-                                    width: "100%",
-                                    position: "relative",
-                                    zIndex: 1,
-                                    border: "2px solid #e2e8f0",
-                                    borderRadius: "12px",
-                                    overflow: "hidden",
-                                    marginBottom: "20px",
-                                }}
-                            >
+                                className="map-force-container">
                                 <MapPickerLeaflet
                                     key={selected._id}
                                     lat={selected.latitude || 21.0285}

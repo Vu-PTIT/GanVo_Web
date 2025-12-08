@@ -76,7 +76,7 @@
 .otherapp-list-scroll {
     flex: 1;
     overflow-y: auto;
-    padding: 12px;
+    padding: 12px 6px 12px 12px;
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -137,7 +137,7 @@
     border-radius: 12px;
     border: 1px solid #e2e8f0;
     overflow-y: auto;
-    padding: 24px;
+    padding: 18px 12px 18px 18px;
 }
 
 .preview-header {
@@ -156,7 +156,51 @@
     margin: 0;
 }
 
-/* Detail info */
+/* Connect Button */
+.btn-like-connect {
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    background-color: #0ea5e9;
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(14, 165, 233, 0.25);
+}
+
+.btn-like-connect:hover {
+    background-color: #0284d0;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(14, 165, 233, 0.35);
+}
+
+.btn-like-connect.connected {
+    background-color: #22c55e;
+    box-shadow: 0 2px 8px rgba(34, 197, 94, 0.25);
+}
+
+.btn-like-connect.connected:hover {
+    background-color: #16a34a;
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.35);
+}
+
+.btn-like-connect:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+.otherapp-preview .leaflet-top.leaflet-left {
+    top: auto;
+    bottom: 20px;
+    left: 10px;
+}
+.otherapp-preview .leaflet-left .leaflet-control{
+    margin: 0;
+}
+
 .info-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -249,4 +293,13 @@
     .info-box.full-width {
         grid-column: span 1;
     }
+}
+
+.map-force-container {
+    width: 100%;
+    position: relative;
+    z-index: 1;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 20px;
 }

@@ -122,7 +122,7 @@ export function DashboardForm() {
                     </div>
 
                     <div className="dashboard-content-02">
-                        <div className="row">
+                        <div className="row align-stretch">
                             <div className="large-6">
                                 <div className="col-inner item-01">
                                     <div className="title">Xu hướng Lượt match & Lịch hẹn</div>
